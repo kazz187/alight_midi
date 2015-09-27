@@ -17,7 +17,7 @@ public class PreferencesWindow {
     private PreferencesWindow() {
         Parent root = null;
         try {
-            root = FXMLLoader.load(getClass().getClassLoader().getResource("zone/kaz/alight_midi/gui/Preferences.fxml"));
+            root = FXMLLoader.load(getClass().getClassLoader().getResource("zone/kaz/alight_midi/gui/preferences/Preferences.fxml"));
         } catch (IOException e) {
             e.printStackTrace();
         }
