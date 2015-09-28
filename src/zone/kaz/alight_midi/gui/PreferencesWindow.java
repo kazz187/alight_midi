@@ -1,8 +1,14 @@
 package zone.kaz.alight_midi.gui;
 
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -22,7 +28,6 @@ public class PreferencesWindow {
             e.printStackTrace();
         }
         stage.setScene(new Scene(root, 800, 600));
-
     }
 
     static PreferencesWindow getInstance() {
@@ -32,4 +37,5 @@ public class PreferencesWindow {
     public void show() {
         stage.show();
     }
+
 }
