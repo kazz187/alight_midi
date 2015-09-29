@@ -39,16 +39,16 @@
                               <Insets left="50.0" />
                            </GridPane.margin>
                         </Label>
-                        <SplitMenuButton fx:id="preferencesMidiInput" mnemonicParsing="false" prefHeight="26.0" prefWidth="534.0" text="-" GridPane.columnIndex="1">
+                        <ComboBox fx:id="preferencesMidiOutput" prefHeight="26.0" prefWidth="588.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <GridPane.margin>
                               <Insets left="50.0" right="50.0" />
                            </GridPane.margin>
-                        </SplitMenuButton>
-                        <SplitMenuButton fx:id="preferencesMidiOutput" mnemonicParsing="false" prefHeight="26.0" prefWidth="523.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        </ComboBox>
+                        <ComboBox fx:id="preferencesMidiInput" prefHeight="26.0" prefWidth="706.0" GridPane.columnIndex="1">
                            <GridPane.margin>
                               <Insets left="50.0" right="50.0" />
                            </GridPane.margin>
-                        </SplitMenuButton>
+                        </ComboBox>
                      </children>
                   </GridPane>
                </children></AnchorPane>
