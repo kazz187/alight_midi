@@ -5,14 +5,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<TabPane fx:id="preferences" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zone.kaz.alight_midi.gui.preferences.PreferencesController">
   <tabs>
-    <Tab fx:id="preference_general" text="General">
+    <Tab fx:id="preferencesGeneral" text="General">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
       </content>
     </Tab>
-    <Tab fx:id="preference_midi" text="MIDI">
+    <Tab fx:id="preferencesMidi" text="MIDI">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
@@ -39,12 +39,12 @@
                               <Insets left="50.0" />
                            </GridPane.margin>
                         </Label>
-                        <SplitMenuButton fx:id="preferences_midi_input" mnemonicParsing="false" prefHeight="26.0" prefWidth="534.0" text="-" GridPane.columnIndex="1">
+                        <SplitMenuButton fx:id="preferencesMidiInput" mnemonicParsing="false" prefHeight="26.0" prefWidth="534.0" text="-" GridPane.columnIndex="1">
                            <GridPane.margin>
                               <Insets left="50.0" right="50.0" />
                            </GridPane.margin>
                         </SplitMenuButton>
-                        <SplitMenuButton fx:id="preferences_midi_output" mnemonicParsing="false" prefHeight="26.0" prefWidth="523.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <SplitMenuButton fx:id="preferencesMidiOutput" mnemonicParsing="false" prefHeight="26.0" prefWidth="523.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <GridPane.margin>
                               <Insets left="50.0" right="50.0" />
                            </GridPane.margin>
