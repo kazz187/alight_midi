@@ -5,12 +5,15 @@ import com.sun.media.sound.MidiOutDeviceProvider;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import zone.kaz.alight_midi.device.MidiDeviceManager;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiSystem;
@@ -74,11 +77,6 @@ public class PreferencesController implements Initializable {
         preferencesMidiOutput.setConverter(converter);
     }
 
-    @FXML
-    public void onSelectMidiTab(ActionEvent event) {
-        System.out.println("midi selected");
-    }
-
     private void prepareDeviceList() {
         MidiDevice.Info[] devices = MidiSystem.getMidiDeviceInfo();
         ObservableList<MidiDevice.Info> inputItems = preferencesMidiInput.getItems();
@@ -94,6 +92,22 @@ public class PreferencesController implements Initializable {
                 }
             }
         }
+
+        preferencesMidiInput.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+            @Override
+            public void handle(javafx.event.ActionEvent event) {
+                MidiDevice.Info deviceInfo = preferencesMidiInput.getValue();
+                MidiDeviceManager.getInstance().registerInputDevice(deviceInfo);
+            }
+        });
+        preferencesMidiOutput.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
+            @Override
+            public void handle(javafx.event.ActionEvent event) {
+                MidiDevice.Info deviceInfo = preferencesMidiOutput.getValue();
+                MidiDeviceManager.getInstance().registerOutputDevice(deviceInfo);
+            }
+        });
+
         if (preferencesMidiInput.getValue() == null && inputItems.size() > 0) {
             preferencesMidiInput.setValue(inputItems.get(0));
         }

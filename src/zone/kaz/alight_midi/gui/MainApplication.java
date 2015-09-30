@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import zone.kaz.alight_midi.device.MidiDeviceManager;
 
 public class MainApplication extends Application {
 
@@ -40,4 +41,12 @@ public class MainApplication extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
+    @Override
+    public void stop() throws Exception {
+        MidiDeviceManager.getInstance().finish();
+        System.out.println("Device finished");
+        super.stop();
+    }
+
 }
