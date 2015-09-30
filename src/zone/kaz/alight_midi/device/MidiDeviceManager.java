@@ -19,6 +19,26 @@ public class MidiDeviceManager {
         return midiDeviceManager;
     }
 
+    public MidiDevice getInputMidiDevice(int index) {
+        return getMidiDevice(index, inputDevices);
+    }
+
+    public MidiDevice getOutputMidiDevice(int index) {
+        return getMidiDevice(index, outputDevices);
+    }
+
+    private MidiDevice getMidiDevice(int index, HashMap<MidiDevice.Info, MidiDevice> devices) {
+        if (devices.values().size() > index) {
+            int i = 0;
+            for (MidiDevice inputDevice : devices.values()) {
+                if (i++ == index) {
+                    return inputDevice;
+                }
+            }
+        }
+        return null;
+    }
+
     public void registerInputDevice(MidiDevice.Info deviceInfo) {
         final MidiDevice device = registerDevice(deviceInfo, inputDevices);
         if (device == null) return;
@@ -29,9 +49,18 @@ public class MidiDeviceManager {
                 try {
                     Transmitter transmitter = device.getTransmitter();
                     transmitter.setReceiver(new Receiver() {
+                        MidiDevice sendDevice = null;
                         @Override
                         public void send(MidiMessage message, long timeStamp) {
-                            System.out.println(message);
+                            if (sendDevice == null) {
+                                sendDevice = getOutputMidiDevice(0);
+                            }
+                            try {
+                                Receiver receiver = sendDevice.getReceiver();
+                                receiver.send(message, timeStamp);
+                            } catch (MidiUnavailableException e) {
+                                e.printStackTrace();
+                            }
                         }
 
                         @Override
