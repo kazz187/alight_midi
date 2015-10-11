@@ -1,15 +1,8 @@
-package zone.kaz.alight_midi.gui;
+package zone.kaz.alight_midi.gui.preferences;
 
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SplitMenuButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -19,19 +12,20 @@ import java.io.IOException;
  */
 public class PreferencesWindow {
     static private PreferencesWindow preferencesWindow = new PreferencesWindow();
+    static private final String resource_filename = "Preferences.fxml";
     private Stage stage = new Stage();
 
     private PreferencesWindow() {
         Parent root = null;
         try {
-            root = FXMLLoader.load(getClass().getClassLoader().getResource("zone/kaz/alight_midi/gui/preferences/Preferences.fxml"));
+            root = FXMLLoader.load(getClass().getClassLoader().getResource(resource_filename));
         } catch (IOException e) {
             e.printStackTrace();
         }
         stage.setScene(new Scene(root, 800, 600));
     }
 
-    static PreferencesWindow getInstance() {
+    static public PreferencesWindow getInstance() {
         return preferencesWindow;
     }
 
