@@ -21,9 +21,6 @@ import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/**
- * Created by kazz on 2015/09/28.
- */
 public class PreferencesController implements Initializable {
 
     private static final Class MIDI_IN = MidiInDeviceProvider.class;
@@ -44,17 +41,14 @@ public class PreferencesController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         initializePreferencesMidi();
         preferences.getSelectionModel().selectedItemProperty().addListener(
-                new ChangeListener<Tab>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
-                        if (newValue.getId() != null) {
-                            switch (newValue.getId()) {
-                                case "preferencesMidi":
-                                    prepareDeviceList();
-                                    break;
-                                default:
-                                    break;
-                            }
+                (observable, oldValue, newValue) -> {
+                    if (newValue.getId() != null) {
+                        switch (newValue.getId()) {
+                            case "preferencesMidi":
+                                prepareDeviceList();
+                                break;
+                            default:
+                                break;
                         }
                     }
                 }
@@ -93,19 +87,13 @@ public class PreferencesController implements Initializable {
             }
         }
 
-        preferencesMidiInput.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent event) {
-                MidiDevice.Info deviceInfo = preferencesMidiInput.getValue();
-                MidiDeviceManager.getInstance().registerInputDevice(deviceInfo);
-            }
+        preferencesMidiInput.setOnAction(event -> {
+            MidiDevice.Info deviceInfo = preferencesMidiInput.getValue();
+            MidiDeviceManager.getInstance().registerInputDevice(deviceInfo);
         });
-        preferencesMidiOutput.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-            @Override
-            public void handle(javafx.event.ActionEvent event) {
-                MidiDevice.Info deviceInfo = preferencesMidiOutput.getValue();
-                MidiDeviceManager.getInstance().registerOutputDevice(deviceInfo);
-            }
+        preferencesMidiOutput.setOnAction(event -> {
+            MidiDevice.Info deviceInfo = preferencesMidiOutput.getValue();
+            MidiDeviceManager.getInstance().registerOutputDevice(deviceInfo);
         });
 
         if (preferencesMidiInput.getValue() == null && inputItems.size() > 0) {

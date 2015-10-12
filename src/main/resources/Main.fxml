@@ -5,14 +5,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zone.kaz.alight_midi.gui.main.MainController">
    <center>
       <GridPane BorderPane.alignment="CENTER">
          <children>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Button maxHeight="26.0" maxWidth="26.0" minHeight="26.0" minWidth="26.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="26.0" text="▶" />
-                  <Button maxHeight="26.0" maxWidth="26.0" minHeight="26.0" minWidth="26.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="26.0" text="■" />
+                  <Button fx:id="playButton" maxHeight="26.0" maxWidth="26.0" minHeight="26.0" minWidth="26.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="26.0" text="▶" />
+                  <Button fx:id="stopButton" maxHeight="26.0" maxWidth="26.0" minHeight="26.0" minWidth="26.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="26.0" text="■" />
                </children>
                <padding>
                   <Insets left="5.0" top="5.0" />
@@ -23,8 +23,10 @@
             </HBox>
             <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1">
                <children>
-                  <Button mnemonicParsing="false" text="TAP" />
-                  <TextField maxHeight="26.0" maxWidth="60.0" text="135.00" />
+                  <Button fx:id="tapButton" mnemonicParsing="false" text="TAP" />
+                  <TextField fx:id="bpmField" maxHeight="26.0" maxWidth="60.0" text="135.00" />
+                  <Button fx:id="nudgeDownButton" mnemonicParsing="false" text="←" />
+                  <Button fx:id="nudgeUpButton" mnemonicParsing="false" text="→" />
                </children>
                <GridPane.margin>
                   <Insets left="5.0" top="5.0" />

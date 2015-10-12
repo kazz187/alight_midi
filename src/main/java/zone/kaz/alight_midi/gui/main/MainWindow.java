@@ -10,9 +10,6 @@ import zone.kaz.alight_midi.gui.preferences.PreferencesWindow;
 
 import java.io.IOException;
 
-/**
- * Created by kazz on 2015/10/11.
- */
 public class MainWindow {
     static private final String resource_filename = "Main.fxml";
     private Stage stage;
