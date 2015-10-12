@@ -7,9 +7,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-/**
- * Created by kazz on 2015/09/28.
- */
 public class PreferencesWindow {
     static private PreferencesWindow preferencesWindow = new PreferencesWindow();
     static private final String resource_filename = "Preferences.fxml";

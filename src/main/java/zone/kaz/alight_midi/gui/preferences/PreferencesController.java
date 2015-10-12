@@ -1,30 +1,19 @@
 package zone.kaz.alight_midi.gui.preferences;
 
-import com.sun.media.sound.MidiInDeviceProvider;
-import com.sun.media.sound.MidiOutDeviceProvider;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.util.Callback;
 import javafx.util.StringConverter;
 import zone.kaz.alight_midi.device.MidiDeviceManager;
+import zone.kaz.alight_midi.device.MidiDevicePair;
+import zone.kaz.alight_midi.inject.DIContainer;
 
 import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiSystem;
-import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class PreferencesController implements Initializable {
-
-    private static final Class MIDI_IN = MidiInDeviceProvider.class;
-    private static final Class MIDI_OUT = MidiOutDeviceProvider.class;
 
     @FXML
     private Parent root;
@@ -72,36 +61,33 @@ public class PreferencesController implements Initializable {
     }
 
     private void prepareDeviceList() {
-        MidiDevice.Info[] devices = MidiSystem.getMidiDeviceInfo();
-        ObservableList<MidiDevice.Info> inputItems = preferencesMidiInput.getItems();
-        ObservableList<MidiDevice.Info> outputItems = preferencesMidiOutput.getItems();
-        for (MidiDevice.Info device : devices) {
-            if (device.getClass().getEnclosingClass().equals(MIDI_IN)) {
-                if (!inputItems.contains(device)) {
-                    inputItems.add(device);
-                }
-            } else if (device.getClass().getEnclosingClass().equals(MIDI_OUT)) {
-                if (!outputItems.contains(device)) {
-                    outputItems.add(device);
-                }
-            }
-        }
+        MidiDeviceManager manager = DIContainer.getInjector().getInstance(MidiDeviceManager.class);
+        manager.reloadDevices();
+
+        preferencesMidiInput.getItems().retainAll(manager.getInputDevices());
+        preferencesMidiOutput.getItems().retainAll(manager.getOutputDevices());
 
         preferencesMidiInput.setOnAction(event -> {
-            MidiDevice.Info deviceInfo = preferencesMidiInput.getValue();
-            MidiDeviceManager.getInstance().registerInputDevice(deviceInfo);
+            MidiDevice.Info inputDeviceInfo = preferencesMidiInput.getValue();
+            MidiDevice.Info outputDeviceInfo = preferencesMidiOutput.getValue();
+            manager.registerDevice(0, inputDeviceInfo, outputDeviceInfo);
         });
         preferencesMidiOutput.setOnAction(event -> {
-            MidiDevice.Info deviceInfo = preferencesMidiOutput.getValue();
-            MidiDeviceManager.getInstance().registerOutputDevice(deviceInfo);
+            MidiDevice.Info inputDeviceInfo = preferencesMidiInput.getValue();
+            MidiDevice.Info outputDeviceInfo = preferencesMidiOutput.getValue();
+            manager.registerDevice(0, inputDeviceInfo, outputDeviceInfo);
         });
 
-        if (preferencesMidiInput.getValue() == null && inputItems.size() > 0) {
-            preferencesMidiInput.setValue(inputItems.get(0));
+        MidiDevicePair pair = manager.getEnabledDevice(0);
+        MidiDevice inputDevice = pair.getInputDevice();
+        if (inputDevice != null) {
+            preferencesMidiInput.setValue(inputDevice.getDeviceInfo());
         }
-        if (preferencesMidiOutput.getValue() == null && outputItems.size() > 0) {
-            preferencesMidiOutput.setValue(outputItems.get(0));
+        MidiDevice outputDevice = pair.getOutputDevice();
+        if (outputDevice != null) {
+            preferencesMidiOutput.setValue(outputDevice.getDeviceInfo());
         }
+
     }
 
 }

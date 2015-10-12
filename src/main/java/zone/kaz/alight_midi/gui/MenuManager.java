@@ -1,18 +1,11 @@
 package zone.kaz.alight_midi.gui;
 
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 
 import java.util.HashMap;
 
-/**
- * Created by kazz on 2015/09/28.
- */
 public class MenuManager {
 
     private MenuBar menuBar = new MenuBar();

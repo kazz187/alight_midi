@@ -1,117 +1,74 @@
 package zone.kaz.alight_midi.device;
 
+import com.google.inject.Singleton;
+import com.sun.media.sound.MidiInDeviceProvider;
+import com.sun.media.sound.MidiOutDeviceProvider;
+
 import javax.sound.midi.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by kazz on 2015/09/30.
- */
+@Singleton
 public class MidiDeviceManager {
 
-    private static MidiDeviceManager midiDeviceManager = new MidiDeviceManager();
+    private static final Class MIDI_IN = MidiInDeviceProvider.class;
+    private static final Class MIDI_OUT = MidiOutDeviceProvider.class;
 
-    private HashMap<MidiDevice.Info, MidiDevice> inputDevices = new HashMap<>();
-    private HashMap<MidiDevice.Info, MidiDevice> outputDevices = new HashMap<>();
+    private ArrayList<MidiDevice.Info> inputDevices = new ArrayList<>();
+    private ArrayList<MidiDevice.Info> outputDevices = new ArrayList<>();
+    private HashMap<Integer, MidiDevicePair> enabledDevices = new HashMap<>();
 
-    private MidiDeviceManager() {}
+    public MidiDeviceManager() {}
 
-    public static MidiDeviceManager getInstance() {
-        return midiDeviceManager;
-    }
-
-    public MidiDevice getInputMidiDevice(int index) {
-        return getMidiDevice(index, inputDevices);
-    }
-
-    public MidiDevice getOutputMidiDevice(int index) {
-        return getMidiDevice(index, outputDevices);
-    }
-
-    private MidiDevice getMidiDevice(int index, HashMap<MidiDevice.Info, MidiDevice> devices) {
-        if (devices.values().size() > index) {
-            int i = 0;
-            for (MidiDevice inputDevice : devices.values()) {
-                if (i++ == index) {
-                    return inputDevice;
+    public void reloadDevices() {
+        ArrayList<MidiDevice.Info> inputDevices = new ArrayList<>();
+        ArrayList<MidiDevice.Info> outputDevices = new ArrayList<>();
+        MidiDevice.Info[] devices = MidiSystem.getMidiDeviceInfo();
+        for (MidiDevice.Info device : devices) {
+            if (device.getClass().getEnclosingClass().equals(MIDI_IN)) {
+                if (!inputDevices.contains(device)) {
+                    inputDevices.add(device);
+                }
+            } else if (device.getClass().getEnclosingClass().equals(MIDI_OUT)) {
+                if (!outputDevices.contains(device)) {
+                    outputDevices.add(device);
                 }
             }
         }
-        return null;
+        this.inputDevices = inputDevices;
+        this.outputDevices = outputDevices;
     }
 
-    public void registerInputDevice(MidiDevice.Info deviceInfo) {
-        final MidiDevice device = registerDevice(deviceInfo, inputDevices);
-        if (device == null) return;
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    Transmitter transmitter = device.getTransmitter();
-                    transmitter.setReceiver(new Receiver() {
-                        MidiDevice sendDevice = null;
-                        @Override
-                        public void send(MidiMessage message, long timeStamp) {
-                            if (sendDevice == null) {
-                                sendDevice = getOutputMidiDevice(0);
-                            }
-                            try {
-                                Receiver receiver = sendDevice.getReceiver();
-                                receiver.send(message, timeStamp);
-                            } catch (MidiUnavailableException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void close() {
-
-                        }
-                    });
-                } catch (MidiUnavailableException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+    public ArrayList<MidiDevice.Info> getInputDevices() {
+        return inputDevices;
     }
 
-    public void registerOutputDevice(MidiDevice.Info deviceInfo) {
-        final MidiDevice device = registerDevice(deviceInfo, outputDevices);
+    public ArrayList<MidiDevice.Info> getOutputDevices() {
+        return outputDevices;
     }
 
-    private MidiDevice registerDevice(MidiDevice.Info deviceInfo, HashMap<MidiDevice.Info, MidiDevice> devices) {
-        MidiDevice device;
-        if (devices.containsKey(deviceInfo)) {
-            device = devices.get(deviceInfo);
+    public MidiDevicePair getEnabledDevice(int index) {
+        return enabledDevices.get(index);
+    }
+
+    public void registerDevice(int index, MidiDevice.Info inputDeviceInfo, MidiDevice.Info outputDeviceInfo) {
+        MidiDevicePair devicePair;
+        if (enabledDevices.containsKey(index)) {
+            devicePair = enabledDevices.get(index);
         } else {
-            try {
-                device = MidiSystem.getMidiDevice(deviceInfo);
-                devices.put(deviceInfo, device);
-            } catch (MidiUnavailableException e) {
-                e.printStackTrace();
-                return null;
-            }
+            devicePair = new MidiDevicePair();
         }
-        if (!device.isOpen()) {
-            try {
-                device.open();
-                System.out.println("Connect to " + deviceInfo);
-            } catch (MidiUnavailableException e) {
-                e.printStackTrace();
-            }
+        try {
+            devicePair.registerInputDevice(inputDeviceInfo);
+            devicePair.registerOutputDevice(outputDeviceInfo);
+        } catch (MidiUnavailableException e) {
+            e.printStackTrace();
         }
-        return device;
+        enabledDevices.put(index, devicePair);
     }
 
     public void finish() {
-        for (MidiDevice device : inputDevices.values()) {
-            System.out.println("input close");
-            device.close();
-        }
-        for (MidiDevice device : outputDevices.values()) {
-            System.out.println("output close");
-            device.close();
-        }
+        enabledDevices.values().forEach(MidiDevicePair::finish);
     }
 
 }
