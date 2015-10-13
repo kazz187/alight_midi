@@ -4,8 +4,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import java.net.URL;
+import java.time.Clock;
 import java.util.ResourceBundle;
 import javafx.scene.control.*;
+import zone.kaz.alight_midi.inject.DIContainer;
+import zone.kaz.alight_midi.sequencer.ClockManager;
 
 public class MainController implements Initializable {
 
@@ -27,11 +30,12 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         playButton.setOnAction(event -> {
-            System.out.println("test");
+            ClockManager clockManager = DIContainer.getInjector().getInstance(ClockManager.class);
+            clockManager.playSequencer();
         });
         stopButton.setOnAction(event -> {
-            System.out.println("test");
-
+            ClockManager clockManager = DIContainer.getInjector().getInstance(ClockManager.class);
+            clockManager.stopSequencer();
         });
         tapButton.setOnAction(event -> {
             System.out.println("test");
@@ -58,7 +62,8 @@ public class MainController implements Initializable {
     }
 
     private void applyBpm() {
-        System.out.println(bpmField.getText());
+        ClockManager clockManager = DIContainer.getInjector().getInstance(ClockManager.class);
+        clockManager.setBpm(Double.valueOf(bpmField.getText()));
     }
 
     private void prepareDeviceList() {

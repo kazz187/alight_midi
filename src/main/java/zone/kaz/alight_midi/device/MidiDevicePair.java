@@ -25,6 +25,10 @@ public class MidiDevicePair {
         return null;
     }
 
+    public Receiver getReceiver() {
+        return receiver;
+    }
+
     public void registerInputDevice(MidiDevice.Info deviceInfo) throws MidiUnavailableException {
         if (deviceInfo == null) {
             return;

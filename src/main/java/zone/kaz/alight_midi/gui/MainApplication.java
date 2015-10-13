@@ -6,8 +6,10 @@ import zone.kaz.alight_midi.device.MidiDeviceManager;
 import zone.kaz.alight_midi.gui.main.MainWindow;
 import zone.kaz.alight_midi.inject.AlightModule;
 import zone.kaz.alight_midi.inject.DIContainer;
+import zone.kaz.alight_midi.sequencer.ClockManager;
 
 import javax.sound.midi.MidiDevice;
+import java.time.Clock;
 
 public class MainApplication extends Application {
 
@@ -23,6 +25,8 @@ public class MainApplication extends Application {
             outputDevice = deviceManager.getOutputDevices().get(0);
         }
         deviceManager.registerDevice(0, inputDevice, outputDevice);
+        ClockManager clockManager = DIContainer.getInjector().getInstance(ClockManager.class);
+        clockManager.start();
         launch(args);
     }
 
