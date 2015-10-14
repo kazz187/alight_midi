@@ -8,13 +8,19 @@ import zone.kaz.alight_midi.inject.DIContainer;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.ShortMessage;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import static javax.sound.midi.ShortMessage.*;
 
 @Singleton
 public class ClockManager extends Thread {
 
     private boolean isPlaying = false;
+    private boolean isInit = false;
     private double bpm = 135.0;
+    private LocalDateTime clock;
+    private int clockInterval = 1; // ms
 
     public ClockManager() {}
 
@@ -23,6 +29,7 @@ public class ClockManager extends Thread {
             return;
         }
         isPlaying = true;
+        isInit = true;
         interrupt();
     }
 
@@ -34,24 +41,45 @@ public class ClockManager extends Thread {
         this.bpm = bpm;
     }
 
+    public void initialize() {
+        clock = LocalDateTime.now();
+        isInit = false;
+    }
+
     @Override
     public void run() {
+        long clockCounter = 0;
+        long playTime = 0;
         long i = 0;
         MidiDeviceManager deviceManager = DIContainer.getInjector().getInstance(MidiDeviceManager.class);
         while (true) {
             if (isPlaying) {
-                MidiDevicePair devicePair = deviceManager.getEnabledDevice(0);
-                try {
-                    devicePair.getReceiver().send(new ShortMessage(NOTE_ON, 0, (int) (11 + i % 4), (int) (i % 128)), 0);
-                    devicePair.getReceiver().send(new ShortMessage(NOTE_OFF, 0, (int) (11 + (i-1) % 4), (int) (i % 128)), 0);
-                    System.out.println(i%128);
-                } catch (InvalidMidiDataException e) {
-                    e.printStackTrace();
+                if (isInit) {
+                    initialize();
                 }
-                i++;
+                int bpmInterval = (int) (60 * 1000 / bpm);
+                if (clockCounter * clockInterval > playTime) {
+                    MidiDevicePair devicePair = deviceManager.getEnabledDevice(0);
+                    try {
+                        devicePair.getReceiver().send(new ShortMessage(NOTE_ON, 0, (int) (11 + i % 4), 10), 0);
+                        devicePair.getReceiver().send(new ShortMessage(NOTE_OFF, 0, (int) (11 + (i-1) % 4), 127), 0);
+                    } catch (InvalidMidiDataException e) {
+                        e.printStackTrace();
+                    }
+                    i++;
+                    playTime += bpmInterval;
+                }
+                clockCounter++;
+                clock = clock.plusNanos(clockInterval * 1000000); // ns
+                LocalDateTime now = LocalDateTime.now();
+                Duration duration = Duration.between(now, clock);
+                int realInterval = duration.getNano();
+                if (duration.isNegative()) {
+                    realInterval = 0;
+                    System.err.println("minimize");
+                }
                 try {
-                    int delay = (int) (60 * 1000 / bpm);
-                    Thread.sleep(delay);
+                    Thread.sleep(realInterval / 1000000, realInterval % 1000000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
