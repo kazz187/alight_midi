@@ -1,6 +1,10 @@
 package zone.kaz.alight_midi.device;
 
+import zone.kaz.alight_midi.device.sequence_display.MidiSequenceDisplay;
+import zone.kaz.alight_midi.inject.DIContainer;
+
 import javax.sound.midi.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MidiDevicePair {
@@ -10,6 +14,7 @@ public class MidiDevicePair {
     }
     private HashMap<Type, MidiDevice> devices = new HashMap<>();
     private Receiver receiver;
+    private MidiSequenceDisplay display = null;
 
     public MidiDevice getInputDevice() {
         if (devices.containsKey(Type.INPUT)) {
@@ -44,6 +49,16 @@ public class MidiDevicePair {
         }
         if (registerDevice(Type.OUTPUT, deviceInfo)) {
             createReceiver();
+            SequenceDisplayManager manager = DIContainer.getInjector().getInstance(SequenceDisplayManager.class);
+            ArrayList<Integer> noteList = new ArrayList<>();
+            for (int i = 0; i < 4; i++) {
+                noteList.add(11 + i);
+            }
+            if (display != null) {
+                manager.remove(display);
+            }
+            display = new MidiSequenceDisplay(this, noteList);
+            manager.add(display);
         }
     }
 

@@ -9,7 +9,6 @@ import zone.kaz.alight_midi.inject.DIContainer;
 import zone.kaz.alight_midi.sequencer.ClockManager;
 
 import javax.sound.midi.MidiDevice;
-import java.time.Clock;
 
 public class MainApplication extends Application {
 

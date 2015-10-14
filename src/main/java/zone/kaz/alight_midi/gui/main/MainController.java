@@ -4,9 +4,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import java.net.URL;
-import java.time.Clock;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.scene.control.*;
+import javafx.scene.shape.Rectangle;
+import zone.kaz.alight_midi.device.SequenceDisplayManager;
+import zone.kaz.alight_midi.device.sequence_display.VirtualSequenceDisplay;
 import zone.kaz.alight_midi.inject.DIContainer;
 import zone.kaz.alight_midi.sequencer.ClockManager;
 
@@ -26,6 +29,14 @@ public class MainController implements Initializable {
     private Button nudgeDownButton;
     @FXML
     private TextField bpmField;
+    @FXML
+    private Rectangle sequenceDisplay0;
+    @FXML
+    private Rectangle sequenceDisplay1;
+    @FXML
+    private Rectangle sequenceDisplay2;
+    @FXML
+    private Rectangle sequenceDisplay3;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -59,15 +70,22 @@ public class MainController implements Initializable {
                 applyBpm();
             }
         });
+        setupSequenceDisplay();
+    }
+
+    private void setupSequenceDisplay() {
+        ArrayList<Rectangle> sequenceDisplayList = new ArrayList<>();
+        sequenceDisplayList.add(sequenceDisplay0);
+        sequenceDisplayList.add(sequenceDisplay1);
+        sequenceDisplayList.add(sequenceDisplay2);
+        sequenceDisplayList.add(sequenceDisplay3);
+        SequenceDisplayManager manager = DIContainer.getInjector().getInstance(SequenceDisplayManager.class);
+        manager.add(new VirtualSequenceDisplay(sequenceDisplayList));
     }
 
     private void applyBpm() {
         ClockManager clockManager = DIContainer.getInjector().getInstance(ClockManager.class);
         clockManager.setBpm(Double.valueOf(bpmField.getText()));
-    }
-
-    private void prepareDeviceList() {
-
     }
 
 }

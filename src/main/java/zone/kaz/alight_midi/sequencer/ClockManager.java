@@ -2,16 +2,11 @@ package zone.kaz.alight_midi.sequencer;
 
 import com.google.inject.Singleton;
 import zone.kaz.alight_midi.device.MidiDeviceManager;
-import zone.kaz.alight_midi.device.MidiDevicePair;
+import zone.kaz.alight_midi.device.SequenceDisplayManager;
 import zone.kaz.alight_midi.inject.DIContainer;
-
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.ShortMessage;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-
-import static javax.sound.midi.ShortMessage.*;
 
 @Singleton
 public class ClockManager extends Thread {
@@ -52,6 +47,7 @@ public class ClockManager extends Thread {
         long playTime = 0;
         long i = 0;
         MidiDeviceManager deviceManager = DIContainer.getInjector().getInstance(MidiDeviceManager.class);
+        SequenceDisplayManager displayManager = DIContainer.getInjector().getInstance(SequenceDisplayManager.class);
         while (true) {
             if (isPlaying) {
                 if (isInit) {
@@ -59,13 +55,7 @@ public class ClockManager extends Thread {
                 }
                 int bpmInterval = (int) (60 * 1000 / bpm);
                 if (clockCounter * clockInterval > playTime) {
-                    MidiDevicePair devicePair = deviceManager.getEnabledDevice(0);
-                    try {
-                        devicePair.getReceiver().send(new ShortMessage(NOTE_ON, 0, (int) (11 + i % 4), 10), 0);
-                        devicePair.getReceiver().send(new ShortMessage(NOTE_OFF, 0, (int) (11 + (i-1) % 4), 127), 0);
-                    } catch (InvalidMidiDataException e) {
-                        e.printStackTrace();
-                    }
+                    displayManager.setNumber((int) (i % 4));
                     i++;
                     playTime += bpmInterval;
                 }
@@ -76,7 +66,7 @@ public class ClockManager extends Thread {
                 int realInterval = duration.getNano();
                 if (duration.isNegative()) {
                     realInterval = 0;
-                    System.err.println("minimize");
+                    System.err.println("minimized: " + now);
                 }
                 try {
                     Thread.sleep(realInterval / 1000000, realInterval % 1000000);
