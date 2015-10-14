@@ -16,6 +16,10 @@ public class ClockManager extends Thread {
     private double bpm = 135.0;
     private LocalDateTime clock;
     private int clockInterval = 1; // ms
+    private long clockCounter = 0;
+    private long playTime = 0;
+    private long beatCounter = 0;
+    private SequenceDisplayManager displayManager = DIContainer.getInjector().getInstance(SequenceDisplayManager.class);
 
     public ClockManager() {}
 
@@ -29,7 +33,17 @@ public class ClockManager extends Thread {
     }
 
     public void stopSequencer() {
+        if (!isPlaying) {
+            resetSequencer();
+        }
         isPlaying = false;
+    }
+
+    public void resetSequencer() {
+        clockCounter = 0;
+        playTime = 0;
+        beatCounter = 0;
+        displayManager.setNumber(0);
     }
 
     public void setBpm(double bpm) {
@@ -43,11 +57,7 @@ public class ClockManager extends Thread {
 
     @Override
     public void run() {
-        long clockCounter = 0;
-        long playTime = 0;
-        long i = 0;
-        MidiDeviceManager deviceManager = DIContainer.getInjector().getInstance(MidiDeviceManager.class);
-        SequenceDisplayManager displayManager = DIContainer.getInjector().getInstance(SequenceDisplayManager.class);
+        resetSequencer();
         while (true) {
             if (isPlaying) {
                 if (isInit) {
@@ -55,8 +65,8 @@ public class ClockManager extends Thread {
                 }
                 int bpmInterval = (int) (60 * 1000 / bpm);
                 if (clockCounter * clockInterval > playTime) {
-                    displayManager.setNumber((int) (i % 4));
-                    i++;
+                    displayManager.setNumber((int) (beatCounter % 4));
+                    beatCounter++;
                     playTime += bpmInterval;
                 }
                 clockCounter++;
