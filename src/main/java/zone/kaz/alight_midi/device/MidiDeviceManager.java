@@ -60,8 +60,14 @@ public class MidiDeviceManager {
             devicePair = new MidiDevicePair();
         }
         try {
-            EnabledMidiDevice inputDevice = factory.getDevice(inputDeviceInfo);
-            EnabledMidiDevice outputDevice = factory.getDevice(outputDeviceInfo);
+            EnabledMidiDevice inputDevice = null;
+            if (inputDeviceInfo != null) {
+                inputDevice = factory.getDevice(inputDeviceInfo);
+            }
+            EnabledMidiDevice outputDevice = null;
+            if (outputDeviceInfo != null) {
+                outputDevice = factory.getDevice(outputDeviceInfo);
+            }
             devicePair.registerInputDevice(inputDevice);
             devicePair.registerOutputDevice(outputDevice);
         } catch (MidiUnavailableException e) {

@@ -67,7 +67,9 @@ public class MidiDevicePair {
     public void finish() {
         finish(Type.INPUT);
         finish(Type.OUTPUT);
-        controllerReceiver.close();
+        if (controllerReceiver != null) {
+            controllerReceiver.close();
+        }
     }
 
     private void finish(Type type) {

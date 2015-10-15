@@ -11,7 +11,9 @@ public class MidiDeviceFactory {
         if (devices.containsKey(deviceInfo)) {
             return devices.get(deviceInfo);
         }
-        return new EnabledMidiDevice(deviceInfo);
+        EnabledMidiDevice device = new EnabledMidiDevice(deviceInfo);
+        devices.put(deviceInfo, device);
+        return device;
     }
 
     public void close() {
