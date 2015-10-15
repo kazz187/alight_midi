@@ -29,4 +29,8 @@ public class DIContainer {
         return instance._getInjector();
     }
 
+    public static <T> T get(Class<T> clazz) {
+        return getInjector().getInstance(clazz);
+    }
+
 }

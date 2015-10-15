@@ -51,7 +51,7 @@ public class MidiDevicePair {
         }
         if (registerDevice(Type.OUTPUT, device)) {
             createReceiver();
-            SequenceDisplayManager manager = DIContainer.getInjector().getInstance(SequenceDisplayManager.class);
+            SequenceDisplayManager manager = DIContainer.get(SequenceDisplayManager.class);
             ArrayList<Integer> noteList = new ArrayList<>();
             for (int i = 0; i < 4; i++) {
                 noteList.add(11 + i);

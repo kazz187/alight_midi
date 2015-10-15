@@ -14,7 +14,7 @@ public class MainApplication extends Application {
 
     public static void main(String[] args) {
         DIContainer.setModule(new AlightModule());
-        MidiDeviceManager deviceManager = DIContainer.getInjector().getInstance(MidiDeviceManager.class);
+        MidiDeviceManager deviceManager = DIContainer.get(MidiDeviceManager.class);
         deviceManager.reloadDevices();
         MidiDevice.Info inputDevice = null, outputDevice = null;
         if (deviceManager.getInputDevices().size() > 0) {
@@ -24,7 +24,7 @@ public class MainApplication extends Application {
             outputDevice = deviceManager.getOutputDevices().get(0);
         }
         deviceManager.registerDevice(0, inputDevice, outputDevice);
-        ClockManager clockManager = DIContainer.getInjector().getInstance(ClockManager.class);
+        ClockManager clockManager = DIContainer.get(ClockManager.class);
         clockManager.start();
         launch(args);
     }
@@ -37,7 +37,7 @@ public class MainApplication extends Application {
 
     @Override
     public void stop() throws Exception {
-        DIContainer.getInjector().getInstance(MidiDeviceManager.class).finish();
+        DIContainer.get(MidiDeviceManager.class).finish();
         System.out.println("Device finished");
         super.stop();
         System.exit(0);

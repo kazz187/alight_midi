@@ -62,7 +62,7 @@ public class PreferencesController implements Initializable {
     }
 
     private void prepareDeviceList() {
-        MidiDeviceManager manager = DIContainer.getInjector().getInstance(MidiDeviceManager.class);
+        MidiDeviceManager manager = DIContainer.get(MidiDeviceManager.class);
         manager.reloadDevices();
 
         preferencesMidiInput.getItems().retainAll(manager.getInputDevices());

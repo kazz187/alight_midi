@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class MidiControllerMapping {
 
     private HashMap<Byte, Processor> mapping = new HashMap<>();
-    private ClockManager clockManager = DIContainer.getInjector().getInstance(ClockManager.class);
+    private ClockManager clockManager = DIContainer.get(ClockManager.class);
 
     public MidiControllerMapping() {
         mapping.put((byte) 19, (v) ->{

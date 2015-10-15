@@ -1,7 +1,6 @@
 package zone.kaz.alight_midi.sequencer;
 
 import com.google.inject.Singleton;
-import zone.kaz.alight_midi.device.MidiDeviceManager;
 import zone.kaz.alight_midi.device.SequenceDisplayManager;
 import zone.kaz.alight_midi.inject.DIContainer;
 
@@ -19,7 +18,7 @@ public class ClockManager extends Thread {
     private long clockCounter = 0;
     private long playTime = 0;
     private long beatCounter = 0;
-    private SequenceDisplayManager displayManager = DIContainer.getInjector().getInstance(SequenceDisplayManager.class);
+    private SequenceDisplayManager displayManager = DIContainer.get(SequenceDisplayManager.class);
 
     public ClockManager() {}
 

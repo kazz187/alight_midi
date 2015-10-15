@@ -41,11 +41,11 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         playButton.setOnAction(event -> {
-            ClockManager clockManager = DIContainer.getInjector().getInstance(ClockManager.class);
+            ClockManager clockManager = DIContainer.get(ClockManager.class);
             clockManager.playSequencer();
         });
         stopButton.setOnAction(event -> {
-            ClockManager clockManager = DIContainer.getInjector().getInstance(ClockManager.class);
+            ClockManager clockManager = DIContainer.get(ClockManager.class);
             clockManager.stopSequencer();
         });
         tapButton.setOnAction(event -> {
@@ -79,12 +79,12 @@ public class MainController implements Initializable {
         sequenceDisplayList.add(sequenceDisplay1);
         sequenceDisplayList.add(sequenceDisplay2);
         sequenceDisplayList.add(sequenceDisplay3);
-        SequenceDisplayManager manager = DIContainer.getInjector().getInstance(SequenceDisplayManager.class);
+        SequenceDisplayManager manager = DIContainer.get(SequenceDisplayManager.class);
         manager.add(new VirtualSequenceDisplay(sequenceDisplayList));
     }
 
     private void applyBpm() {
-        ClockManager clockManager = DIContainer.getInjector().getInstance(ClockManager.class);
+        ClockManager clockManager = DIContainer.get(ClockManager.class);
         clockManager.setBpm(Double.valueOf(bpmField.getText()));
     }
 
