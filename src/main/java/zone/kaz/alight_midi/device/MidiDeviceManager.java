@@ -16,7 +16,8 @@ public class MidiDeviceManager {
 
     private ArrayList<MidiDevice.Info> inputDevices = new ArrayList<>();
     private ArrayList<MidiDevice.Info> outputDevices = new ArrayList<>();
-    private HashMap<Integer, MidiDevicePair> enabledDevices = new HashMap<>();
+    private HashMap<Integer, MidiDevicePair> enabledDevicePairs = new HashMap<>();
+    private MidiDeviceFactory factory = new MidiDeviceFactory();
 
     public MidiDeviceManager() {}
 
@@ -47,28 +48,30 @@ public class MidiDeviceManager {
         return outputDevices;
     }
 
-    public MidiDevicePair getEnabledDevice(int index) {
-        return enabledDevices.get(index);
+    public MidiDevicePair getEnabledDevicePair(int index) {
+        return enabledDevicePairs.get(index);
     }
 
     public void registerDevice(int index, MidiDevice.Info inputDeviceInfo, MidiDevice.Info outputDeviceInfo) {
         MidiDevicePair devicePair;
-        if (enabledDevices.containsKey(index)) {
-            devicePair = enabledDevices.get(index);
+        if (enabledDevicePairs.containsKey(index)) {
+            devicePair = enabledDevicePairs.get(index);
         } else {
             devicePair = new MidiDevicePair();
         }
         try {
-            devicePair.registerInputDevice(inputDeviceInfo);
-            devicePair.registerOutputDevice(outputDeviceInfo);
+            EnabledMidiDevice inputDevice = factory.getDevice(inputDeviceInfo);
+            EnabledMidiDevice outputDevice = factory.getDevice(outputDeviceInfo);
+            devicePair.registerInputDevice(inputDevice);
+            devicePair.registerOutputDevice(outputDevice);
         } catch (MidiUnavailableException e) {
             e.printStackTrace();
         }
-        enabledDevices.put(index, devicePair);
+        enabledDevicePairs.put(index, devicePair);
     }
 
     public void finish() {
-        enabledDevices.values().forEach(MidiDevicePair::finish);
+        enabledDevicePairs.values().forEach(MidiDevicePair::finish);
     }
 
 }

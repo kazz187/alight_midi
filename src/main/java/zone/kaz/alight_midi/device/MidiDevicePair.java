@@ -7,23 +7,25 @@ import javax.sound.midi.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static javax.sound.midi.ShortMessage.*;
+
 public class MidiDevicePair {
 
     private enum Type {
         INPUT, OUTPUT;
     }
-    private HashMap<Type, MidiDevice> devices = new HashMap<>();
-    private Receiver receiver;
+    private HashMap<Type, EnabledMidiDevice> devices = new HashMap<>();
     private MidiSequenceDisplay display = null;
+    private ControllerReceiver controllerReceiver = null;
 
-    public MidiDevice getInputDevice() {
+    public EnabledMidiDevice getInputDevice() {
         if (devices.containsKey(Type.INPUT)) {
             return devices.get(Type.INPUT);
         }
         return null;
     }
 
-    public MidiDevice getOutputDevice() {
+    public EnabledMidiDevice getOutputDevice() {
         if (devices.containsKey(Type.OUTPUT)) {
             return devices.get(Type.OUTPUT);
         }
@@ -31,23 +33,23 @@ public class MidiDevicePair {
     }
 
     public Receiver getReceiver() {
-        return receiver;
+        return controllerReceiver;
     }
 
-    public void registerInputDevice(MidiDevice.Info deviceInfo) throws MidiUnavailableException {
-        if (deviceInfo == null) {
+    public void registerInputDevice(EnabledMidiDevice device) throws MidiUnavailableException {
+        if (device == null) {
             return;
         }
-        if (registerDevice(Type.INPUT, deviceInfo)) {
+        if (registerDevice(Type.INPUT, device)) {
             createReceiver();
         }
     }
 
-    public void registerOutputDevice(MidiDevice.Info deviceInfo) throws MidiUnavailableException {
-        if (deviceInfo == null) {
+    public void registerOutputDevice(EnabledMidiDevice device) throws MidiUnavailableException {
+        if (device == null) {
             return;
         }
-        if (registerDevice(Type.OUTPUT, deviceInfo)) {
+        if (registerDevice(Type.OUTPUT, device)) {
             createReceiver();
             SequenceDisplayManager manager = DIContainer.getInjector().getInstance(SequenceDisplayManager.class);
             ArrayList<Integer> noteList = new ArrayList<>();
@@ -63,73 +65,67 @@ public class MidiDevicePair {
     }
 
     public void finish() {
-        if (receiver != null) {
-            receiver.close();
-        }
         finish(Type.INPUT);
         finish(Type.OUTPUT);
+        controllerReceiver.close();
     }
 
     private void finish(Type type) {
-        MidiDevice device = devices.get(type);
+        EnabledMidiDevice device = devices.get(type);
         if (device != null) {
             device.close();
             devices.remove(type);
         }
     }
 
-    private boolean registerDevice(Type type, MidiDevice.Info deviceInfo) throws MidiUnavailableException {
-        if (deviceInfo == null) {
+    private boolean registerDevice(Type type, EnabledMidiDevice device) throws MidiUnavailableException {
+        if (device == null) {
             return false;
         }
-        MidiDevice device;
         boolean ret = false;
         if (devices.containsKey(type)) {
-            MidiDevice currentDevice = devices.get(type);
-            if (currentDevice.getDeviceInfo().equals(deviceInfo)) {
-                device = currentDevice;
-            } else {
+            EnabledMidiDevice currentDevice = devices.get(type);
+            if (!currentDevice.equals(device)) {
                 currentDevice.close();
-                receiver.close();
-                device = MidiSystem.getMidiDevice(deviceInfo);
                 ret = true;
             }
         } else {
-            device = MidiSystem.getMidiDevice(deviceInfo);
             ret = true;
         }
-        if (!device.isOpen()) {
-            device.open();
-            System.out.println("Connect to " + deviceInfo);
+        if (!device.getDevice().isOpen()) {
+            device.getDevice().open();
+            System.out.println("Connect to " + device.getDevice());
         }
         devices.put(type, device);
         return ret;
     }
 
     private void createReceiver() {
-        MidiDevice inputDevice = getInputDevice();
-        MidiDevice outputDevice = getOutputDevice();
-        ControllerReceiver controllerReceiver;
-        try {
-            if (outputDevice != null) {
-                Receiver receiver = outputDevice.getReceiver();
+        System.out.println("create");
+        EnabledMidiDevice inputDevice = getInputDevice();
+        EnabledMidiDevice outputDevice = getOutputDevice();
+        if (outputDevice != null) {
+            Receiver receiver = outputDevice.getReceiver();
+            if (controllerReceiver == null) {
                 controllerReceiver = new ControllerReceiver(receiver);
             } else {
+                controllerReceiver.setReceiver(receiver);
+            }
+        } else {
+            if (controllerReceiver == null) {
                 controllerReceiver = new ControllerReceiver(null);
             }
-            if (inputDevice != null) {
-                Transmitter transmitter = inputDevice.getTransmitter();
-                transmitter.setReceiver(controllerReceiver);
-            }
-            this.receiver = controllerReceiver;
-        } catch (MidiUnavailableException e) {
-            e.printStackTrace();
+        }
+        if (inputDevice != null) {
+            Transmitter transmitter = inputDevice.getTransmitter();
+            transmitter.setReceiver(controllerReceiver);
         }
     }
 
     private class ControllerReceiver implements Receiver {
 
         private Receiver receiver;
+        private MidiControllerMapping mapping = new MidiControllerMapping();
 
         public ControllerReceiver(Receiver receiver) {
             this.receiver = receiver;
@@ -137,10 +133,26 @@ public class MidiDevicePair {
 
         @Override
         public void send(MidiMessage message, long timeStamp) {
+            byte[] buf = message.getMessage();
+            switch (buf[0] & 0xF0) {
+                case NOTE_ON:
+                    if (buf[2] != 0) {
+                        mapping.invoke(buf[1], buf[2]);
+                    }
+                    break;
+                case NOTE_OFF:
+                    break;
+                default:
+                    break;
+            }
             if (receiver == null) {
                 return;
             }
             receiver.send(message, timeStamp);
+        }
+
+        public void setReceiver(Receiver receiver) {
+            this.receiver = receiver;
         }
 
         @Override

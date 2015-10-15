@@ -5,6 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.util.StringConverter;
+import zone.kaz.alight_midi.device.EnabledMidiDevice;
 import zone.kaz.alight_midi.device.MidiDeviceManager;
 import zone.kaz.alight_midi.device.MidiDevicePair;
 import zone.kaz.alight_midi.inject.DIContainer;
@@ -78,15 +79,20 @@ public class PreferencesController implements Initializable {
             manager.registerDevice(0, inputDeviceInfo, outputDeviceInfo);
         });
 
-        MidiDevicePair pair = manager.getEnabledDevice(0);
-        MidiDevice inputDevice = pair.getInputDevice();
-        if (inputDevice != null) {
-            preferencesMidiInput.setValue(inputDevice.getDeviceInfo());
+        MidiDevicePair pair = manager.getEnabledDevicePair(0);
+        if (pair.getInputDevice() != null) {
+            MidiDevice inputDevice = pair.getInputDevice().getDevice();
+            if (inputDevice != null) {
+                preferencesMidiInput.setValue(inputDevice.getDeviceInfo());
+            }
         }
-        MidiDevice outputDevice = pair.getOutputDevice();
-        if (outputDevice != null) {
-            preferencesMidiOutput.setValue(outputDevice.getDeviceInfo());
+        if (pair.getOutputDevice() != null) {
+            MidiDevice outputDevice = pair.getOutputDevice().getDevice();
+            if (outputDevice != null) {
+                preferencesMidiOutput.setValue(outputDevice.getDeviceInfo());
+            }
         }
+
 
     }
 

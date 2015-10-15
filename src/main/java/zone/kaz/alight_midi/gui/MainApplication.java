@@ -40,7 +40,7 @@ public class MainApplication extends Application {
         DIContainer.getInjector().getInstance(MidiDeviceManager.class).finish();
         System.out.println("Device finished");
         super.stop();
-        System.exit(0);
+        //System.exit(0);
     }
 
 }
