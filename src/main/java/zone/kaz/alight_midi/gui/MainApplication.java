@@ -2,6 +2,7 @@ package zone.kaz.alight_midi.gui;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import zone.kaz.alight_midi.device.LedDeviceManager;
 import zone.kaz.alight_midi.device.MidiDeviceManager;
 import zone.kaz.alight_midi.gui.main.MainWindow;
 import zone.kaz.alight_midi.inject.AlightModule;
@@ -24,6 +25,8 @@ public class MainApplication extends Application {
             outputDevice = deviceManager.getOutputDevices().get(0);
         }
         deviceManager.registerDevice(0, inputDevice, outputDevice);
+        LedDeviceManager ledDeviceManager = DIContainer.get(LedDeviceManager.class);
+        ledDeviceManager.openDevice("localhost", 7890);
         ClockManager clockManager = DIContainer.get(ClockManager.class);
         clockManager.start();
         launch(args);
@@ -38,6 +41,7 @@ public class MainApplication extends Application {
     @Override
     public void stop() throws Exception {
         DIContainer.get(MidiDeviceManager.class).finish();
+        DIContainer.get(LedDeviceManager.class).closeAllDevices();
         System.out.println("Device finished");
         super.stop();
         System.exit(0);

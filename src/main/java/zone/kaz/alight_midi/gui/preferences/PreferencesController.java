@@ -5,9 +5,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.util.StringConverter;
-import zone.kaz.alight_midi.device.EnabledMidiDevice;
 import zone.kaz.alight_midi.device.MidiDeviceManager;
-import zone.kaz.alight_midi.device.MidiDevicePair;
+import zone.kaz.alight_midi.device.midi.MidiDevicePair;
 import zone.kaz.alight_midi.inject.DIContainer;
 
 import javax.sound.midi.MidiDevice;

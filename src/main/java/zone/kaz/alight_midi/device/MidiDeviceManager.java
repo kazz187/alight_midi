@@ -3,6 +3,9 @@ package zone.kaz.alight_midi.device;
 import com.google.inject.Singleton;
 import com.sun.media.sound.MidiInDeviceProvider;
 import com.sun.media.sound.MidiOutDeviceProvider;
+import zone.kaz.alight_midi.device.midi.EnabledMidiDevice;
+import zone.kaz.alight_midi.device.midi.MidiDeviceFactory;
+import zone.kaz.alight_midi.device.midi.MidiDevicePair;
 
 import javax.sound.midi.*;
 import java.util.ArrayList;

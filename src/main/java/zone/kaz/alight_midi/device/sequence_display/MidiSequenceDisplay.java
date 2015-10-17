@@ -1,6 +1,6 @@
 package zone.kaz.alight_midi.device.sequence_display;
 
-import zone.kaz.alight_midi.device.MidiDevicePair;
+import zone.kaz.alight_midi.device.midi.MidiDevicePair;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;

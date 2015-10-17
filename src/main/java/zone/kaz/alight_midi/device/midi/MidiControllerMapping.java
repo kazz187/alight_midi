@@ -1,4 +1,4 @@
-package zone.kaz.alight_midi.device;
+package zone.kaz.alight_midi.device.midi;
 
 import zone.kaz.alight_midi.inject.DIContainer;
 import zone.kaz.alight_midi.sequencer.ClockManager;

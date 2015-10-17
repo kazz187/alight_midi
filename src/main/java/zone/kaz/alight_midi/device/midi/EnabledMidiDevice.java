@@ -1,4 +1,4 @@
-package zone.kaz.alight_midi.device;
+package zone.kaz.alight_midi.device.midi;
 
 import javax.sound.midi.*;
 

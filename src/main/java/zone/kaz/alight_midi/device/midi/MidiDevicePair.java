@@ -1,5 +1,6 @@
-package zone.kaz.alight_midi.device;
+package zone.kaz.alight_midi.device.midi;
 
+import zone.kaz.alight_midi.device.SequenceDisplayManager;
 import zone.kaz.alight_midi.device.sequence_display.MidiSequenceDisplay;
 import zone.kaz.alight_midi.inject.DIContainer;
 
