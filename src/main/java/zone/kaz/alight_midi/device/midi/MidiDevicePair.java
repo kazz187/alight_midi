@@ -140,7 +140,9 @@ public class MidiDevicePair {
             switch (buf[0] & 0xF0) {
                 case NOTE_ON:
                     if (buf[2] != 0) {
-                        mapping.invoke(buf[1], buf[2]);
+                        mapping.invoke(NOTE_ON, buf[1], buf[2]);
+                    } else {
+                        mapping.invoke(NOTE_OFF, buf[1], buf[2]);
                     }
                     break;
                 case NOTE_OFF:

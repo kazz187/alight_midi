@@ -40,25 +40,28 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        ClockManager clockManager = DIContainer.get(ClockManager.class);
         playButton.setOnAction(event -> {
-            ClockManager clockManager = DIContainer.get(ClockManager.class);
             clockManager.playSequencer();
         });
         stopButton.setOnAction(event -> {
-            ClockManager clockManager = DIContainer.get(ClockManager.class);
             clockManager.stopSequencer();
         });
         tapButton.setOnAction(event -> {
             System.out.println("test");
 
         });
-        nudgeUpButton.setOnAction(event -> {
-            System.out.println("test");
-
+        nudgeUpButton.setOnMousePressed(event -> {
+            clockManager.onNudgePressed(1);
         });
-        nudgeDownButton.setOnAction(event -> {
-            System.out.println("test");
-
+        nudgeUpButton.setOnMouseReleased(event -> {
+            clockManager.onNudgeReleased();
+        });
+        nudgeDownButton.setOnMousePressed(event -> {
+            clockManager.onNudgePressed(-1);
+        });
+        nudgeDownButton.setOnMouseReleased(event -> {
+            clockManager.onNudgeReleased();
         });
         bpmField.setOnKeyTyped(event -> {
             if (event.getCharacter().equals("\r")) {

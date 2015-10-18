@@ -3,23 +3,48 @@ package zone.kaz.alight_midi.device.midi;
 import zone.kaz.alight_midi.inject.DIContainer;
 import zone.kaz.alight_midi.sequencer.ClockManager;
 
+import javax.sound.midi.ShortMessage;
 import java.util.HashMap;
 
 public class MidiControllerMapping {
 
-    private HashMap<Byte, Processor> mapping = new HashMap<>();
+    private HashMap<Byte, Processor> mapping_on = new HashMap<>();
+    private HashMap<Byte, Processor> mapping_off = new HashMap<>();
     private ClockManager clockManager = DIContainer.get(ClockManager.class);
 
     public MidiControllerMapping() {
-        mapping.put((byte) 19, (v) ->{
+        mapping_on.put((byte) 19, (v) ->{
             clockManager.stopSequencer();
         });
-        mapping.put((byte) 29, (v) ->{
+        mapping_on.put((byte) 29, (v) ->{
             clockManager.playSequencer();
+        });
+        mapping_on.put((byte) 39, (v) -> {
+            clockManager.onNudgePressed(-1);
+        });
+        mapping_on.put((byte) 49, (v) -> {
+            clockManager.onNudgePressed(1);
+        });
+        mapping_off.put((byte) 39, (v) -> {
+            clockManager.onNudgeReleased();
+        });
+        mapping_off.put((byte) 49, (v) -> {
+            clockManager.onNudgeReleased();
         });
     }
 
-    public void invoke(byte note, byte velocity) {
+    public void invoke(int event, byte note, byte velocity) {
+        HashMap<Byte, Processor> mapping;
+        switch (event) {
+            case ShortMessage.NOTE_ON:
+                mapping = mapping_on;
+                break;
+            case ShortMessage.NOTE_OFF:
+                mapping = mapping_off;
+                break;
+            default:
+                return;
+        }
         Processor processor = mapping.get(note);
         if (processor == null) {
             return;

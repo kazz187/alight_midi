@@ -13,10 +13,13 @@ public class ClockManager extends Thread {
     private boolean isPlaying = false;
     private boolean isInit = false;
     private double bpm = 135.0;
+    private double realBpm = 135.0;
+    private double nudgeDir;
     private LocalDateTime clock;
-    private int clockInterval = 1; // ms
+    private int clockInterval = 3; // ms
     private long clockCounter = 0;
     private long playTime = 0;
+    private long beforePlayTime = 0;
     private long beatCounter = 0;
     private SequenceDisplayManager displayManager = DIContainer.get(SequenceDisplayManager.class);
 
@@ -40,13 +43,26 @@ public class ClockManager extends Thread {
 
     public void resetSequencer() {
         clockCounter = 0;
-        playTime = 0;
+        playTime = beforePlayTime = 0;
         beatCounter = 0;
+        nudgeDir = 0;
         displayManager.setNumber(0);
     }
 
+    public void onNudgePressed(int nudgeDir) {
+        if (nudgeDir != -1 && nudgeDir != 1) {
+            return;
+        }
+        this.nudgeDir = nudgeDir;
+    }
+
+    public void onNudgeReleased() {
+        nudgeDir = 0;
+        realBpm = bpm;
+    }
+
     public void setBpm(double bpm) {
-        this.bpm = bpm;
+        this.bpm = realBpm = bpm;
     }
 
     public void initialize() {
@@ -62,10 +78,22 @@ public class ClockManager extends Thread {
                 if (isInit) {
                     initialize();
                 }
-                int bpmInterval = (int) (60 * 1000 / bpm);
+
+                if (nudgeDir != 0) {
+                    double d = nudgeDir * 0.001;
+                    realBpm += d;
+                    if (realBpm <= 0 ) {
+                        realBpm = 1;
+                    }
+                    int bpmInterval = (int) (60 * 1000 / realBpm);
+                    playTime = beforePlayTime + bpmInterval;
+                }
+
                 if (clockCounter * clockInterval > playTime) {
                     displayManager.setNumber((int) (beatCounter % 4));
                     beatCounter++;
+                    beforePlayTime = playTime;
+                    int bpmInterval = (int) (60 * 1000 / realBpm);
                     playTime += bpmInterval;
                 }
                 clockCounter++;
