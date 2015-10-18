@@ -1,8 +1,6 @@
 package zone.kaz.alight_midi.sequencer;
 
 import com.google.inject.Singleton;
-import zone.kaz.alight_midi.device.SequenceDisplayManager;
-import zone.kaz.alight_midi.inject.DIContainer;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -18,10 +16,11 @@ public class ClockManager extends Thread {
     private LocalDateTime clock;
     private int clockInterval = 3; // ms
     private long clockCounter = 0;
-    private long playTime = 0;
-    private long beforePlayTime = 0;
-    private long beatCounter = 0;
-    private SequenceDisplayManager displayManager = DIContainer.get(SequenceDisplayManager.class);
+    private double playTime = 0;
+    private double beforePlayTime = 0;
+    private long tickCounter = 0;
+    private int baseTick = 480;
+    Sequencer sequencer = new Sequencer(baseTick, 4, 4);
 
     public ClockManager() {}
 
@@ -44,9 +43,9 @@ public class ClockManager extends Thread {
     public void resetSequencer() {
         clockCounter = 0;
         playTime = beforePlayTime = 0;
-        beatCounter = 0;
+        tickCounter = 0;
         nudgeDir = 0;
-        displayManager.setNumber(0);
+        sequencer.reset();
     }
 
     public void onNudgePressed(int nudgeDir) {
@@ -70,7 +69,6 @@ public class ClockManager extends Thread {
         isInit = false;
     }
 
-    @Override
     public void run() {
         resetSequencer();
         while (true) {
@@ -85,28 +83,31 @@ public class ClockManager extends Thread {
                     if (realBpm <= 0 ) {
                         realBpm = 1;
                     }
-                    int bpmInterval = (int) (60 * 1000 / realBpm);
-                    playTime = beforePlayTime + bpmInterval;
+                    double tickInterval = 60.0 * 1000 / realBpm / baseTick;
+                    playTime = beforePlayTime + tickInterval;
                 }
 
-                if (clockCounter * clockInterval > playTime) {
-                    displayManager.setNumber((int) (beatCounter % 4));
-                    beatCounter++;
+                while (clockCounter * clockInterval > playTime) {
+                    sequencer.setTick(tickCounter);
+                    tickCounter++;
                     beforePlayTime = playTime;
-                    int bpmInterval = (int) (60 * 1000 / realBpm);
-                    playTime += bpmInterval;
+                    double tickInterval = 60.0 * 1000 / realBpm / baseTick;
+                    playTime += tickInterval;
                 }
-                clockCounter++;
-                clock = clock.plusNanos(clockInterval * 1000000); // ns
+
+                clock = clock.plus(Duration.ofMillis(clockInterval));
                 LocalDateTime now = LocalDateTime.now();
                 Duration duration = Duration.between(now, clock);
-                int realInterval = duration.getNano();
-                if (duration.isNegative()) {
-                    realInterval = 0;
-                    System.err.println("minimized: " + now);
+                clockCounter++;
+                while (duration.isNegative()) {
+                    duration = duration.plus(Duration.ofMillis(clockInterval));
+                    clockCounter++;
                 }
+                long durationSecs = duration.getSeconds();
+                long durationNs = duration.getNano();
                 try {
-                    Thread.sleep(realInterval / 1000000, realInterval % 1000000);
+                    Thread.sleep(durationSecs * 1000 + durationNs / 1000000,
+                            (int) (durationNs % 1000000));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
