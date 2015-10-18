@@ -29,7 +29,7 @@ public class DeviceBufferManager {
 
     public DeviceBuffer createDeviceBuffer(String key) {
         if (deviceInfoList.containsKey(key)) {
-            return new DeviceBuffer(deviceInfoList.get(key));
+            return new DeviceBuffer(key, deviceInfoList.get(key));
         }
         return null;
     }

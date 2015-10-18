@@ -1,5 +1,6 @@
 package zone.kaz.alight_midi.sequencer;
 
+import zone.kaz.alight_midi.device.DeviceBufferManager;
 import zone.kaz.alight_midi.device.SequenceDisplayManager;
 import zone.kaz.alight_midi.inject.DIContainer;
 
@@ -12,6 +13,8 @@ public class Sequencer {
     private long tick = 0;
     private long nextTick = 0;
     private SequenceDisplayManager sequenceDisplayManager = DIContainer.get(SequenceDisplayManager.class);
+    private AnimationManager animationManager = DIContainer.get(AnimationManager.class);
+    private DeviceBufferManager deviceBufferManager = DIContainer.get(DeviceBufferManager.class);
 
     public Sequencer(int baseTick, int baseBeats, int baseParts) {
         this.baseTick = baseTick;
@@ -29,10 +32,12 @@ public class Sequencer {
 
     public void setTick(long tick) {
         while (tick > nextTick) {
+            animationManager.register(new AllFlashAnimation(tick, 240, deviceBufferManager.createDeviceBuffer("stripe_test")));
             sequenceDisplayManager.setNumber(getBeats());
             beats++;
             nextTick += baseTick * baseParts / 4;
         }
+        animationManager.setTick(tick);
     }
 
     public long getTick() {

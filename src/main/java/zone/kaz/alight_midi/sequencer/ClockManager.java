@@ -1,12 +1,16 @@
 package zone.kaz.alight_midi.sequencer;
 
 import com.google.inject.Singleton;
+import zone.kaz.alight_midi.device.LedDeviceManager;
+import zone.kaz.alight_midi.inject.DIContainer;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Singleton
 public class ClockManager extends Thread {
+
+    LedDeviceManager ledDevicemanager = DIContainer.get(LedDeviceManager.class);
 
     private boolean isPlaying = false;
     private boolean isInit = false;
@@ -69,6 +73,10 @@ public class ClockManager extends Thread {
         isInit = false;
     }
 
+    public Sequencer getSequencer() {
+        return sequencer;
+    }
+
     public void run() {
         resetSequencer();
         while (true) {
@@ -94,6 +102,10 @@ public class ClockManager extends Thread {
                     double tickInterval = 60.0 * 1000 / realBpm / baseTick;
                     playTime += tickInterval;
                 }
+
+
+
+
 
                 clock = clock.plus(Duration.ofMillis(clockInterval));
                 LocalDateTime now = LocalDateTime.now();

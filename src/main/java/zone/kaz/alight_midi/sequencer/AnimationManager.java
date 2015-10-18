@@ -1,6 +1,9 @@
 package zone.kaz.alight_midi.sequencer;
 
 import com.google.inject.Singleton;
+import zone.kaz.alight_midi.device.LedDevice;
+import zone.kaz.alight_midi.device.LedDeviceManager;
+import zone.kaz.alight_midi.inject.DIContainer;
 
 import java.util.ArrayList;
 
@@ -8,14 +11,33 @@ import java.util.ArrayList;
 public class AnimationManager {
 
     private ArrayList<Animation> animationList = new ArrayList<>();
+    private LedDeviceManager ledDeviceManager = DIContainer.get(LedDeviceManager.class);
 
-    public void create(Animation animation) {
+    public void register(Animation animation) {
         animationList.add(animation);
     }
 
-    public void setTick(int tick) {
+    public void setTick(long tick) {
+        ArrayList<Animation> removeList = new ArrayList<>();
         for (Animation animation : animationList) {
             animation.setTick(tick);
+            if (animation.isEnd(tick)) {
+                removeList.add(animation);
+            }
+            String deviceKey = animation.getDeviceBuffer().getDeviceKey();
+            LedDevice device = ledDeviceManager.getDevice(deviceKey);
+            if (device != null) {
+                device.send(animation.getDeviceBuffer());
+            }
+        }
+        for (Animation animation : removeList) {
+            animation.reset();
+            animationList.remove(animation);
+            String deviceKey = animation.getDeviceBuffer().getDeviceKey();
+            LedDevice device = ledDeviceManager.getDevice(deviceKey);
+            if (device != null) {
+                device.send(animation.getDeviceBuffer());
+            }
         }
     }
 

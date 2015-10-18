@@ -4,11 +4,13 @@ import java.util.ArrayList;
 
 public class DeviceBuffer {
 
+    private final String deviceKey;
     DeviceInfo deviceInfo;
     ArrayList<Stripe> stripes = new ArrayList<>();
     int dataLength = 0;
 
-    public DeviceBuffer(DeviceInfo deviceInfo) {
+    public DeviceBuffer(String deviceKey, DeviceInfo deviceInfo) {
+        this.deviceKey = deviceKey;
         this.deviceInfo = deviceInfo;
         int[][] mapping = deviceInfo.getMapping();
         for (int i = 0; i < mapping.length; i++) {
@@ -19,6 +21,10 @@ public class DeviceBuffer {
 
     public ArrayList<Stripe> getStripes() {
         return stripes;
+    }
+
+    public String getDeviceKey() {
+        return deviceKey;
     }
 
     public int getStripesLength() {
@@ -36,7 +42,7 @@ public class DeviceBuffer {
             for (int j = 0; j < mapping[i].length; j++) {
                 Stripe stripe = stripes.get(i);
                 for (int k = 0; k < 3; k++) {
-                    data[mapping[i][j*3+k]] = stripe.getBuffer()[j*3+k];
+                    data[mapping[i][j]*3+k] = stripe.getBuffer()[j*3+k];
                 }
             }
         }
