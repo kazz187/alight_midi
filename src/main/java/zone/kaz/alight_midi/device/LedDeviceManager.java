@@ -2,39 +2,35 @@ package zone.kaz.alight_midi.device;
 
 import com.google.inject.Singleton;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 @Singleton
 public class LedDeviceManager {
 
-    private ArrayList<LedDevice> ledDevices = new ArrayList<>();
+    private HashMap<String, LedDevice> ledDevices = new HashMap<>();
 
-    public LedDevice openDevice(String hostname, int port) {
+    public LedDevice openDevice(String deviceKey, String hostname, int port) {
         LedDevice device = new LedDevice(hostname, port);
-        ledDevices.add(device);
+        ledDevices.put(deviceKey, device);
         return device;
     }
 
-    public LedDevice getDevice(int index) {
-        if (ledDevices.size() > index) {
-            return ledDevices.get(index);
+    public LedDevice getDevice(String key) {
+        if (ledDevices.containsKey(key)) {
+            return ledDevices.get(key);
         }
         return null;
     }
 
-    public void closeDevice(int index) {
-        if (ledDevices.size() > index) {
-            ledDevices.get(index).close();
-            ledDevices.remove(index);
+    public void closeDevice(String key) {
+        if (ledDevices.containsKey(key)) {
+            ledDevices.get(key).close();
+            ledDevices.remove(key);
         }
     }
 
     public void closeAllDevices() {
-        ledDevices.forEach(LedDevice::close);
-    }
-
-    public ArrayList<LedDevice> getDevices() {
-        return ledDevices;
+        ledDevices.values().forEach(LedDevice::close);
     }
 
 }

@@ -2,6 +2,7 @@ package zone.kaz.alight_midi.gui;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import zone.kaz.alight_midi.device.DeviceBufferManager;
 import zone.kaz.alight_midi.device.LedDeviceManager;
 import zone.kaz.alight_midi.device.MidiDeviceManager;
 import zone.kaz.alight_midi.gui.main.MainWindow;
@@ -25,8 +26,15 @@ public class MainApplication extends Application {
             outputDevice = deviceManager.getOutputDevices().get(0);
         }
         deviceManager.registerDevice(0, inputDevice, outputDevice);
+
+        DeviceBufferManager bufferManager = DIContainer.get(DeviceBufferManager.class);
+
+        // TODO: move to preference
+        String deviceKey = "stripe_test";
+        bufferManager.registerDeviceInfo(deviceKey, "./src/main/resources/stripe_test.json");
         LedDeviceManager ledDeviceManager = DIContainer.get(LedDeviceManager.class);
-        ledDeviceManager.openDevice("localhost", 7890);
+        ledDeviceManager.openDevice(deviceKey, "localhost", 7890);
+
         ClockManager clockManager = DIContainer.get(ClockManager.class);
         clockManager.start();
         launch(args);

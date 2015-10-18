@@ -42,6 +42,9 @@ public class LedDevice {
     }
 
     public void close() {
+        if (socket == null) {
+            return;
+        }
         try {
             socket.close();
         } catch (IOException e) {
