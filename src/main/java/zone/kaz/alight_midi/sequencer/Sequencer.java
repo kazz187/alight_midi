@@ -28,6 +28,7 @@ public class Sequencer {
         nextTick = 0;
         beats = 0;
         sequenceDisplayManager.setNumber(0);
+        animationManager.removeAll();
     }
 
     public void setTick(long tick) {

@@ -41,4 +41,15 @@ public class AnimationManager {
         }
     }
 
+    public void removeAll() {
+        for (Animation animation : animationList) {
+            animation.reset();
+            String deviceKey = animation.getDeviceBuffer().getDeviceKey();
+            LedDevice device = ledDeviceManager.getDevice(deviceKey);
+            if (device != null) {
+                device.send(animation.getDeviceBuffer());
+            }
+            animationList.remove(animation);
+        }
+    }
 }

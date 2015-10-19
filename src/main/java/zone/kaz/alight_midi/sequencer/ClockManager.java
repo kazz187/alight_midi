@@ -30,6 +30,7 @@ public class ClockManager extends Thread {
 
     public void playSequencer() {
         if (isPlaying) {
+            resetSequencer();
             return;
         }
         isPlaying = true;
