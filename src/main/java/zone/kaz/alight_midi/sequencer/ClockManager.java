@@ -6,11 +6,13 @@ import zone.kaz.alight_midi.inject.DIContainer;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Singleton
 public class ClockManager extends Thread {
 
     LedDeviceManager ledDevicemanager = DIContainer.get(LedDeviceManager.class);
+
 
     private boolean isPlaying = false;
     private boolean isInit = false;
@@ -25,6 +27,11 @@ public class ClockManager extends Thread {
     private long tickCounter = 0;
     private int baseTick = 480;
     Sequencer sequencer = new Sequencer(baseTick, 4, 4);
+
+    // for calculating BPM
+    private LocalDateTime prevTap, nowTap;
+    private double dtSum;
+    private double weight = 0;
 
     public ClockManager() {}
 
@@ -51,6 +58,36 @@ public class ClockManager extends Thread {
         tickCounter = 0;
         nudgeDir = 0;
         sequencer.reset();
+    }
+
+    public void tapBpm() {
+        nowTap = LocalDateTime.now();
+        if (prevTap == null) {
+            System.out.println("tap null");
+            prevTap = nowTap;
+            return;
+        }
+        Duration duration = Duration.between(prevTap, nowTap);
+        if (duration.getSeconds() > 2) {
+            resetBpmCounter();
+            return;
+        }
+        double dt = duration.getSeconds() + duration.getNano() / 1000000000.0;
+
+        prevTap = nowTap;
+
+        int halfSecs = 2;
+        double pow = Math.pow(0.5, dt / halfSecs);
+        dtSum = dtSum * pow + (1 - pow) * dt;
+        weight = weight * pow + (1 - pow);
+        double averageDt = dtSum / weight;
+        setBpm(60 / averageDt);
+        System.out.println("bpm: " + 60 / averageDt);
+    }
+
+    private void resetBpmCounter() {
+        prevTap = nowTap = null;
+        dtSum = weight = 0;
     }
 
     public void onNudgePressed(int nudgeDir) {

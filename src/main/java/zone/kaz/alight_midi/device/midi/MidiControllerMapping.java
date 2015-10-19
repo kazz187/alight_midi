@@ -31,6 +31,9 @@ public class MidiControllerMapping {
         mapping_off.put((byte) 49, (v) -> {
             clockManager.onNudgeReleased();
         });
+        mapping_on.put((byte) 59, (v) -> {
+            clockManager.tapBpm();
+        });
     }
 
     public void invoke(int event, byte note, byte velocity) {
