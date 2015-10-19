@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.util.StringConverter;
 import zone.kaz.alight_midi.device.MidiDeviceManager;
 import zone.kaz.alight_midi.device.midi.MidiDevicePair;
+import zone.kaz.alight_midi.gui.ControllerManager;
 import zone.kaz.alight_midi.inject.DIContainer;
 
 import javax.sound.midi.MidiDevice;
@@ -42,6 +43,8 @@ public class PreferencesController implements Initializable {
                     }
                 }
         );
+        ControllerManager controllerManager = DIContainer.get(ControllerManager.class);
+        controllerManager.register(this);
     }
 
     private void initializePreferencesMidi() {

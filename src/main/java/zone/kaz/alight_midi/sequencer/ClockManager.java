@@ -1,18 +1,20 @@
 package zone.kaz.alight_midi.sequencer;
 
 import com.google.inject.Singleton;
+import javafx.application.Platform;
 import zone.kaz.alight_midi.device.LedDeviceManager;
+import zone.kaz.alight_midi.gui.ControllerManager;
+import zone.kaz.alight_midi.gui.main.MainController;
 import zone.kaz.alight_midi.inject.DIContainer;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 @Singleton
 public class ClockManager extends Thread {
 
     LedDeviceManager ledDevicemanager = DIContainer.get(LedDeviceManager.class);
-
+    ControllerManager controllerManager = DIContainer.get(ControllerManager.class);
 
     private boolean isPlaying = false;
     private boolean isInit = false;
@@ -63,7 +65,6 @@ public class ClockManager extends Thread {
     public void tapBpm() {
         nowTap = LocalDateTime.now();
         if (prevTap == null) {
-            System.out.println("tap null");
             prevTap = nowTap;
             return;
         }
@@ -76,13 +77,15 @@ public class ClockManager extends Thread {
 
         prevTap = nowTap;
 
-        int halfSecs = 2;
+        int halfSecs = 20;
         double pow = Math.pow(0.5, dt / halfSecs);
         dtSum = dtSum * pow + (1 - pow) * dt;
         weight = weight * pow + (1 - pow);
         double averageDt = dtSum / weight;
-        setBpm(60 / averageDt);
-        System.out.println("bpm: " + 60 / averageDt);
+        double averageBpm = 60 / averageDt;
+        setBpm(averageBpm);
+        MainController mainController = (MainController) controllerManager.get(MainController.class);
+        Platform.runLater(() -> mainController.setBpm(averageBpm));
     }
 
     private void resetBpmCounter() {

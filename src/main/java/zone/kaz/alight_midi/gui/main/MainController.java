@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.shape.Rectangle;
 import zone.kaz.alight_midi.device.SequenceDisplayManager;
 import zone.kaz.alight_midi.device.sequence_display.VirtualSequenceDisplay;
+import zone.kaz.alight_midi.gui.ControllerManager;
 import zone.kaz.alight_midi.inject.DIContainer;
 import zone.kaz.alight_midi.sequencer.ClockManager;
 
@@ -74,6 +75,8 @@ public class MainController implements Initializable {
             }
         });
         setupSequenceDisplay();
+        ControllerManager controllerManager = DIContainer.get(ControllerManager.class);
+        controllerManager.register(this);
     }
 
     private void setupSequenceDisplay() {
@@ -91,4 +94,7 @@ public class MainController implements Initializable {
         clockManager.setBpm(Double.valueOf(bpmField.getText()));
     }
 
+    public void setBpm(double bpm) {
+        bpmField.setText(String.valueOf(bpm));
+    }
 }

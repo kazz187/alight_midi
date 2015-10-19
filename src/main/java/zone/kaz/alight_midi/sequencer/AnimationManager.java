@@ -6,11 +6,12 @@ import zone.kaz.alight_midi.device.LedDeviceManager;
 import zone.kaz.alight_midi.inject.DIContainer;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Singleton
 public class AnimationManager {
 
-    private ArrayList<Animation> animationList = new ArrayList<>();
+    private CopyOnWriteArrayList<Animation> animationList = new CopyOnWriteArrayList<>();
     private LedDeviceManager ledDeviceManager = DIContainer.get(LedDeviceManager.class);
 
     public void register(Animation animation) {
