@@ -12,6 +12,7 @@ public class LedDevice {
     private final int port;
     private Socket socket;
     private OutputStream outputStream;
+    private boolean isConnecting = false;
 
     public LedDevice(String hostname, int port) {
         this.hostname = hostname;
@@ -26,9 +27,13 @@ public class LedDevice {
     private void connect() throws IOException {
         socket = new Socket(hostname, port);
         outputStream = socket.getOutputStream();
+        isConnecting = true;
     }
 
     public void send(DeviceBuffer deviceBuffer) {
+        if (!isConnecting) {
+            return;
+        }
         byte[] message = deviceBuffer.getData();
         char len = (char) message.length;
         byte[] header = {0, 0, (byte) (len >> 8), (byte) (len & 255)};
@@ -47,6 +52,7 @@ public class LedDevice {
         }
         try {
             socket.close();
+            isConnecting = false;
         } catch (IOException e) {
             e.printStackTrace();
         }
