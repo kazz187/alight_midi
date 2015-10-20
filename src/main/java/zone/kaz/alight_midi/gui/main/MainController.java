@@ -38,6 +38,12 @@ public class MainController implements Initializable {
     private Rectangle sequenceDisplay2;
     @FXML
     private Rectangle sequenceDisplay3;
+    @FXML
+    private Slider channelFader1;
+    @FXML
+    private Slider channelFader2;
+    @FXML
+    private Slider crossFader;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -97,4 +103,9 @@ public class MainController implements Initializable {
     public void setBpm(double bpm) {
         bpmField.setText(String.valueOf(bpm));
     }
+
+    public double getFader1() {
+        return channelFader1.getValue();
+    }
+
 }
