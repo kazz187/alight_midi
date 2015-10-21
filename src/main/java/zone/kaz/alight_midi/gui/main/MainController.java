@@ -55,8 +55,7 @@ public class MainController implements Initializable {
             clockManager.stopSequencer();
         });
         tapButton.setOnAction(event -> {
-            System.out.println("test");
-
+            clockManager.tapBpm();
         });
         nudgeUpButton.setOnMousePressed(event -> {
             clockManager.onNudgePressed(1);
