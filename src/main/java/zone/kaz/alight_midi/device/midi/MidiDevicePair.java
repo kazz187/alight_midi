@@ -97,14 +97,13 @@ public class MidiDevicePair {
         }
         if (!device.getDevice().isOpen()) {
             device.getDevice().open();
-            System.out.println("Connect to " + device.getDevice());
+            System.err.println("Connect to " + device.getDevice());
         }
         devices.put(type, device);
         return ret;
     }
 
     private void createReceiver() {
-        System.out.println("create");
         EnabledMidiDevice inputDevice = getInputDevice();
         EnabledMidiDevice outputDevice = getOutputDevice();
         if (outputDevice != null) {

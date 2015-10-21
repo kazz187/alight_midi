@@ -20,7 +20,7 @@ public class LedDevice {
         try {
             connect();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Failed to connect to LED device server. (" + hostname + ":" + port + ")");
         }
     }
 
