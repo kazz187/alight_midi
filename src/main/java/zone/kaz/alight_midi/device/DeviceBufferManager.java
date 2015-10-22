@@ -16,20 +16,17 @@ public class DeviceBufferManager {
 
     HashMap<String, DeviceInfo> deviceInfoList = new HashMap<>();
 
-    public void registerDeviceInfo(String key, String fileName) {
+    public DeviceInfo registerDeviceInfo(String fileName) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            String json = Files.readAllLines(Paths.get(fileName)).stream().collect(Collectors.joining());
-            DeviceInfo deviceInfo = objectMapper.readValue(json, DeviceInfo.class);
-            deviceInfoList.put(key, deviceInfo);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String json = Files.readAllLines(Paths.get(fileName)).stream().collect(Collectors.joining());
+        DeviceInfo deviceInfo = objectMapper.readValue(json, DeviceInfo.class);
+        deviceInfoList.put(deviceInfo.getName(), deviceInfo);
+        return deviceInfo;
     }
 
-    public DeviceBuffer createDeviceBuffer(String key) {
-        if (deviceInfoList.containsKey(key)) {
-            return new DeviceBuffer(key, deviceInfoList.get(key));
+    public DeviceBuffer createDeviceBuffer(String name) {
+        if (deviceInfoList.containsKey(name)) {
+            return new DeviceBuffer(deviceInfoList.get(name));
         }
         return null;
     }

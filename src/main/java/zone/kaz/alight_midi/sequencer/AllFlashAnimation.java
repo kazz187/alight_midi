@@ -10,19 +10,12 @@ import java.util.ArrayList;
 
 public class AllFlashAnimation extends Animation {
 
-    ControllerManager controllerManager = DIContainer.get(ControllerManager.class);
-
     public AllFlashAnimation(long startTick, int tickSize, DeviceBuffer deviceBuffer) {
         super(startTick, tickSize, deviceBuffer);
     }
 
     @Override
     public void setTick(long tick) {
-        double fader = 0;
-        MainController mainController = (MainController) controllerManager.get(MainController.class);
-        if (mainController != null) {
-            fader = mainController.getFader1() / 100;
-        }
         ArrayList<Stripe> stripes = deviceBuffer.getStripes();
         long pos = tick - startTick;
         double alpha = 1;
@@ -32,7 +25,7 @@ public class AllFlashAnimation extends Animation {
         for (Stripe stripe : stripes) {
             byte[] buffer = stripe.getBuffer();
             for (int i = 0; i < buffer.length; i++) {
-                buffer[i] = (byte) (0xff * alpha * fader);
+                buffer[i] = (byte) (0xff * alpha);
             }
         }
     }

@@ -1,6 +1,7 @@
 package zone.kaz.alight_midi.device;
 
 import com.google.inject.Singleton;
+import zone.kaz.alight_midi.device.led.DeviceInfo;
 
 import java.util.HashMap;
 
@@ -9,9 +10,9 @@ public class LedDeviceManager {
 
     private HashMap<String, LedDevice> ledDevices = new HashMap<>();
 
-    public LedDevice openDevice(String deviceKey, String hostname, int port) {
-        LedDevice device = new LedDevice(hostname, port);
-        ledDevices.put(deviceKey, device);
+    public LedDevice openDevice(DeviceInfo deviceInfo) {
+        LedDevice device = new LedDevice(deviceInfo.getHostname(), deviceInfo.getPort());
+        ledDevices.put(deviceInfo.getName(), device);
         return device;
     }
 

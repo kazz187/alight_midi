@@ -6,6 +6,8 @@ public class DeviceInfo {
 
     private String name;
     private int[][] mapping;
+    private String hostname;
+    private int port;
 
     @JsonProperty("name")
     public String getName() {
@@ -25,6 +27,26 @@ public class DeviceInfo {
     @JsonProperty("mapping")
     public void setMapping(int[][] mapping) {
         this.mapping = mapping;
+    }
+
+    @JsonProperty("hostname")
+    public String getHostname() {
+        return hostname;
+    }
+
+    @JsonProperty("hostname")
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    @JsonProperty("port")
+    public int getPort() {
+        return port;
+    }
+
+    @JsonProperty("port")
+    public void setPort(int port) {
+        this.port = port;
     }
 
 }

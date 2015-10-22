@@ -44,6 +44,8 @@ public class MainController implements Initializable {
     private Slider channelFader2;
     @FXML
     private Slider crossFader;
+    @FXML
+    private Slider masterFader;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -105,6 +107,18 @@ public class MainController implements Initializable {
 
     public double getFader1() {
         return channelFader1.getValue();
+    }
+
+    public double getFader2() {
+        return channelFader2.getValue();
+    }
+
+    public double getMasterFader() {
+        return masterFader.getValue();
+    }
+
+    public double getCrossFader() {
+        return crossFader.getValue();
     }
 
 }

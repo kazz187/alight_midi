@@ -1,16 +1,16 @@
 package zone.kaz.alight_midi.device.led;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class DeviceBuffer {
 
-    private final String deviceKey;
     DeviceInfo deviceInfo;
     ArrayList<Stripe> stripes = new ArrayList<>();
     int dataLength = 0;
 
-    public DeviceBuffer(String deviceKey, DeviceInfo deviceInfo) {
-        this.deviceKey = deviceKey;
+    public DeviceBuffer(DeviceInfo deviceInfo) {
         this.deviceInfo = deviceInfo;
         int[][] mapping = deviceInfo.getMapping();
         for (int i = 0; i < mapping.length; i++) {
@@ -19,12 +19,12 @@ public class DeviceBuffer {
         }
     }
 
-    public ArrayList<Stripe> getStripes() {
-        return stripes;
+    public DeviceInfo getDeviceInfo() {
+        return deviceInfo;
     }
 
-    public String getDeviceKey() {
-        return deviceKey;
+    public ArrayList<Stripe> getStripes() {
+        return stripes;
     }
 
     public int getStripesLength() {
@@ -47,6 +47,31 @@ public class DeviceBuffer {
             }
         }
         return data;
+    }
+
+    public void add(DeviceBuffer deviceBuffer) {
+        if (!Objects.equals(deviceBuffer.getDeviceInfo().getName(), deviceInfo.getName())) {
+            return;
+        }
+
+        ArrayList<Stripe> stripes = deviceBuffer.getStripes();
+        for (int i = 0; i < stripes.size(); i++) {
+            byte[] buffer = stripes.get(i).getBuffer();
+            byte[] bufferOrigin = this.stripes.get(i).getBuffer();
+            for (int j = 0; j < bufferOrigin.length; j++) {
+                int data = (bufferOrigin[j] & 0xff) + (buffer[j] & 0xff);
+                bufferOrigin[j] = (byte) (data > 0xff ? 0xff : data);
+            }
+        }
+    }
+
+    public void multiply(double filter) {
+        for (Stripe stripe : stripes) {
+            byte[] buffer = stripe.getBuffer();
+            for (int i = 0; i < buffer.length; i++) {
+                buffer[i] = (byte) ((buffer[i] & 0xff) * filter);
+            }
+        }
     }
 
 }

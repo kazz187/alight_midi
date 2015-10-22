@@ -6,9 +6,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zone.kaz.alight_midi.gui.main.MainController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zone.kaz.alight_midi.gui.main.MainController">
    <center>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="585.0" prefWidth="1026.0" BorderPane.alignment="CENTER">
          <children>
             <GridPane>
                <children>
@@ -35,7 +35,7 @@
                         <Insets left="5.0" top="5.0" />
                      </GridPane.margin>
                   </HBox>
-                  <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2">
+                  <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3">
                      <children>
                         <Rectangle fx:id="sequenceDisplay0" arcHeight="2.0" arcWidth="5.0" fill="#ffdd87" height="26.0" stroke="#ffd15c" strokeType="INSIDE" width="26.0" />
                         <Rectangle fx:id="sequenceDisplay1" arcHeight="5.0" arcWidth="5.0" fill="#ffdd87" height="26.0" stroke="#ffd15c" strokeType="INSIDE" width="26.0" />
@@ -46,11 +46,17 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </HBox>
+                  <Slider fx:id="masterFader" value="50.0" GridPane.columnIndex="2">
+                     <GridPane.margin>
+                        <Insets left="40.0" right="40.0" />
+                     </GridPane.margin>
+                  </Slider>
                </children>
                <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="195.65110778808594" minWidth="10.0" prefWidth="90.63150787353516" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="445.2333068847656" minWidth="10.0" prefWidth="192.98037719726562" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="445.2333068847656" minWidth="10.0" prefWidth="180.01962280273438" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="172.77618408203125" minWidth="10.0" prefWidth="142.333984375" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints maxHeight="36.0" minHeight="36.0" prefHeight="36.0" vgrow="SOMETIMES" />
@@ -65,8 +71,8 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Slider fx:id="channelFader1" orientation="VERTICAL" value="50.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                  <Slider fx:id="channelFader2" orientation="VERTICAL" value="50.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Slider fx:id="channelFader1" orientation="VERTICAL" value="100.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Slider fx:id="channelFader2" orientation="VERTICAL" value="100.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                </children>
             </GridPane>
             <GridPane>

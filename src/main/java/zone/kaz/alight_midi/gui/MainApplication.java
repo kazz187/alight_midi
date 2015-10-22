@@ -5,12 +5,14 @@ import javafx.stage.Stage;
 import zone.kaz.alight_midi.device.DeviceBufferManager;
 import zone.kaz.alight_midi.device.LedDeviceManager;
 import zone.kaz.alight_midi.device.MidiDeviceManager;
+import zone.kaz.alight_midi.device.led.DeviceInfo;
 import zone.kaz.alight_midi.gui.main.MainWindow;
 import zone.kaz.alight_midi.inject.AlightModule;
 import zone.kaz.alight_midi.inject.DIContainer;
 import zone.kaz.alight_midi.sequencer.ClockManager;
 
 import javax.sound.midi.MidiDevice;
+import java.io.IOException;
 
 public class MainApplication extends Application {
 
@@ -30,10 +32,13 @@ public class MainApplication extends Application {
         DeviceBufferManager bufferManager = DIContainer.get(DeviceBufferManager.class);
 
         // TODO: move to preference
-        String deviceKey = "stripe_test";
-        bufferManager.registerDeviceInfo(deviceKey, "./src/main/resources/stripe_test.json");
-        LedDeviceManager ledDeviceManager = DIContainer.get(LedDeviceManager.class);
-        ledDeviceManager.openDevice(deviceKey, "localhost", 7890);
+        try {
+            DeviceInfo deviceInfo = bufferManager.registerDeviceInfo("./src/main/resources/stripe_test.json");
+            LedDeviceManager ledDeviceManager = DIContainer.get(LedDeviceManager.class);
+            ledDeviceManager.openDevice(deviceInfo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         ClockManager clockManager = DIContainer.get(ClockManager.class);
         clockManager.start();

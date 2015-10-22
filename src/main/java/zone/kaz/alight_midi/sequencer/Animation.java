@@ -22,7 +22,7 @@ public abstract class Animation {
     public abstract void setTick(long tick);
 
     public boolean isEnd(long tick) {
-        return tick >= startTick + tickSize;
+        return tick > startTick + tickSize;
     }
 
     public void reset() {
