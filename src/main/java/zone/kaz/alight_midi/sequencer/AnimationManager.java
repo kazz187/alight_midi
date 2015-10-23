@@ -5,8 +5,6 @@ import zone.kaz.alight_midi.device.LedDevice;
 import zone.kaz.alight_midi.device.LedDeviceManager;
 import zone.kaz.alight_midi.inject.DIContainer;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;

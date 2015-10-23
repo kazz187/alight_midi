@@ -41,6 +41,7 @@ public class MainApplication extends Application {
         }
 
         ClockManager clockManager = DIContainer.get(ClockManager.class);
+        clockManager.setPriority(Thread.MAX_PRIORITY);
         clockManager.start();
         launch(args);
     }

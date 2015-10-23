@@ -3,6 +3,7 @@ package zone.kaz.alight_midi.sequencer;
 import com.google.inject.Singleton;
 import javafx.application.Platform;
 import zone.kaz.alight_midi.device.LedDeviceManager;
+import zone.kaz.alight_midi.device.MixerManager;
 import zone.kaz.alight_midi.gui.ControllerManager;
 import zone.kaz.alight_midi.gui.main.MainController;
 import zone.kaz.alight_midi.inject.DIContainer;
@@ -13,7 +14,6 @@ import java.time.LocalDateTime;
 @Singleton
 public class ClockManager extends Thread {
 
-    LedDeviceManager ledDevicemanager = DIContainer.get(LedDeviceManager.class);
     ControllerManager controllerManager = DIContainer.get(ControllerManager.class);
 
     private boolean isPlaying = false;
@@ -28,7 +28,7 @@ public class ClockManager extends Thread {
     private double beforePlayTime = 0;
     private long tickCounter = 0;
     private int baseTick = 480;
-    Sequencer sequencer = new Sequencer(baseTick, 4, 4);
+    private Sequencer sequencer = new Sequencer(baseTick, 4, 4);
 
     // for calculating BPM
     private LocalDateTime prevTap, nowTap;
@@ -50,6 +50,7 @@ public class ClockManager extends Thread {
     public void stopSequencer() {
         if (!isPlaying) {
             resetSequencer();
+            initialize();
         }
         isPlaying = false;
     }
@@ -136,17 +137,13 @@ public class ClockManager extends Thread {
                     playTime = beforePlayTime + tickInterval;
                 }
 
+                sequencer.setTick(tickCounter);
+                double tickInterval = 60.0 * 1000 / realBpm / baseTick;
                 while (clockCounter * clockInterval > playTime) {
-                    sequencer.setTick(tickCounter);
                     tickCounter++;
                     beforePlayTime = playTime;
-                    double tickInterval = 60.0 * 1000 / realBpm / baseTick;
                     playTime += tickInterval;
                 }
-
-
-
-
 
                 clock = clock.plus(Duration.ofMillis(clockInterval));
                 LocalDateTime now = LocalDateTime.now();
@@ -166,7 +163,7 @@ public class ClockManager extends Thread {
                 }
             } else {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(1);
                 } catch (InterruptedException e) {
                     // DO NOTHING
                 }

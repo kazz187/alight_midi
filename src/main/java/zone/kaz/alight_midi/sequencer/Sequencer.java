@@ -5,8 +5,6 @@ import zone.kaz.alight_midi.device.MixerManager;
 import zone.kaz.alight_midi.device.SequenceDisplayManager;
 import zone.kaz.alight_midi.inject.DIContainer;
 
-import javax.sound.sampled.Mixer;
-
 public class Sequencer {
 
     private int baseTick;

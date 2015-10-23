@@ -1,6 +1,5 @@
 package zone.kaz.alight_midi.device.led;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Objects;
 
