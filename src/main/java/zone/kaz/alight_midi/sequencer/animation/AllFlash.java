@@ -1,16 +1,17 @@
-package zone.kaz.alight_midi.sequencer;
+package zone.kaz.alight_midi.sequencer.animation;
 
 import zone.kaz.alight_midi.device.led.DeviceBuffer;
 import zone.kaz.alight_midi.device.led.Stripe;
 import zone.kaz.alight_midi.gui.ControllerManager;
 import zone.kaz.alight_midi.gui.main.MainController;
 import zone.kaz.alight_midi.inject.DIContainer;
+import zone.kaz.alight_midi.sequencer.Animation;
 
 import java.util.ArrayList;
 
-public class AllFlashAnimation extends Animation {
+public class AllFlash extends Animation {
 
-    public AllFlashAnimation(long startTick, int tickSize, DeviceBuffer deviceBuffer) {
+    public AllFlash(long startTick, int tickSize, DeviceBuffer deviceBuffer) {
         super(startTick, tickSize, deviceBuffer);
     }
 

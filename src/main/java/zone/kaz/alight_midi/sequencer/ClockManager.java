@@ -163,7 +163,7 @@ public class ClockManager extends Thread {
                 }
             } else {
                 try {
-                    Thread.sleep(1);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     // DO NOTHING
                 }

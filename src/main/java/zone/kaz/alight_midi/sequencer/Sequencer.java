@@ -4,6 +4,8 @@ import zone.kaz.alight_midi.device.DeviceBufferManager;
 import zone.kaz.alight_midi.device.MixerManager;
 import zone.kaz.alight_midi.device.SequenceDisplayManager;
 import zone.kaz.alight_midi.inject.DIContainer;
+import zone.kaz.alight_midi.sequencer.animation.AllFlash;
+import zone.kaz.alight_midi.sequencer.animation.Wave;
 
 public class Sequencer {
 
@@ -36,8 +38,9 @@ public class Sequencer {
     public void setTick(long tick) {
         while (tick > nextTick) {
             animationManager.register(
-                    new AllFlashAnimation(
-                            tick, 240,
+//                    new AllFlash(
+                    new Wave(
+                            tick, 120,
                             deviceBufferManager.createDeviceBuffer("stripe_test")
                     ), MixerChannel.CHANNEL1);
             sequenceDisplayManager.setNumber(getBeats());

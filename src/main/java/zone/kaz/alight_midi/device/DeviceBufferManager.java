@@ -9,12 +9,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Singleton
 public class DeviceBufferManager {
 
-    HashMap<String, DeviceInfo> deviceInfoList = new HashMap<>();
+    private HashMap<String, DeviceInfo> deviceInfoList = new HashMap<>();
 
     public DeviceInfo registerDeviceInfo(String fileName) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -29,6 +30,10 @@ public class DeviceBufferManager {
             return new DeviceBuffer(deviceInfoList.get(name));
         }
         return null;
+    }
+
+    public Set<String> getDeviceNames() {
+        return deviceInfoList.keySet();
     }
 
 }

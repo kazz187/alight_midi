@@ -10,6 +10,7 @@ import zone.kaz.alight_midi.sequencer.AnimationManager;
 import zone.kaz.alight_midi.sequencer.MixerChannel;
 
 import java.util.HashMap;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Singleton
@@ -24,20 +25,26 @@ public class MixerManager {
         MainController controller = (MainController) controllerManager.get(MainController.class);
         double filter1 = (controller.getFader1() / 100) * (1.0 - controller.getCrossFader() / 100);
         double filter2 = (controller.getFader2() / 100) * (controller.getCrossFader() / 100);
+
+        HashMap<String, DeviceBuffer> mixedBufferMap = new HashMap<>();
+        Set<String> deviceNames = deviceBufferManager.getDeviceNames();
+        for (String deviceName : deviceNames) {
+            mixedBufferMap.put(deviceName, deviceBufferManager.createDeviceBuffer(deviceName));
+        }
         HashMap<String, DeviceBuffer> mixedBufferMap1
                 = runChannel(MixerChannel.CHANNEL1, filter1);
         HashMap<String, DeviceBuffer> mixedBufferMap2
                 = runChannel(MixerChannel.CHANNEL2, filter2);
+        for (String deviceName : mixedBufferMap1.keySet()) {
+            DeviceBuffer mixedBuffer = mixedBufferMap.get(deviceName);
+            mixedBuffer.add(mixedBufferMap1.get(deviceName));
+        }
         for (String deviceName : mixedBufferMap2.keySet()) {
-            if (mixedBufferMap1.containsKey(deviceName)) {
-                DeviceBuffer mixedBuffer = mixedBufferMap1.get(deviceName);
-                mixedBuffer.add(mixedBufferMap2.get(deviceName));
-            } else {
-                mixedBufferMap1.put(deviceName, mixedBufferMap2.get(deviceName));
-            }
+            DeviceBuffer mixedBuffer = mixedBufferMap.get(deviceName);
+            mixedBuffer.add(mixedBufferMap2.get(deviceName));
         }
         double masterFilter = controller.getMasterFader() / 100;
-        for (DeviceBuffer mixedBuffer : mixedBufferMap1.values()) {
+        for (DeviceBuffer mixedBuffer : mixedBufferMap.values()) {
             mixedBuffer.multiply(masterFilter);
             String deviceName = mixedBuffer.getDeviceInfo().getName();
             LedDevice ledDevice = ledDeviceManager.getDevice(deviceName);
