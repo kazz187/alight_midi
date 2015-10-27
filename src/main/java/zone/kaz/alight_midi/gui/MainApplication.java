@@ -7,6 +7,7 @@ import zone.kaz.alight_midi.device.LedDeviceManager;
 import zone.kaz.alight_midi.device.MidiDeviceManager;
 import zone.kaz.alight_midi.device.led.DeviceInfo;
 import zone.kaz.alight_midi.gui.main.MainWindow;
+import zone.kaz.alight_midi.gui.sequencer.StepSequencerWindow;
 import zone.kaz.alight_midi.inject.AlightModule;
 import zone.kaz.alight_midi.inject.DIContainer;
 import zone.kaz.alight_midi.sequencer.ClockManager;
@@ -50,6 +51,8 @@ public class MainApplication extends Application {
     public void start(Stage stage) {
         MainWindow mainWindow = new MainWindow(stage);
         mainWindow.show();
+        StepSequencerWindow stepSequencerWindow = DIContainer.get(StepSequencerWindow.class);
+        stepSequencerWindow.show();
     }
 
     @Override
