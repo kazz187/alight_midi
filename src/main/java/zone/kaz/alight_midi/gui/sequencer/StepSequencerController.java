@@ -63,6 +63,9 @@ public class StepSequencerController implements Initializable {
                     stepSequencerManager.getBeats()
             ));
         });
+        sequencerGrid.widthProperty().addListener(event-> {
+            System.out.println(event);
+        });
         stepSequencerManager.setClock(0);
     }
 

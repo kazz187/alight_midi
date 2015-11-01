@@ -40,6 +40,7 @@ public class StepSequencer {
         if (this.clock >= clock) {
             for (int i = this.clock - 1; i >= clock; i--) {
                 Rectangle button = buttons.remove(i);
+                GridPane.clearConstraints(button);
                 gridPane.getChildren().remove(button);
             }
             this.clock = clock;

@@ -61,7 +61,7 @@ public class StepSequencerManager {
         int currentClock = getCalcClock();
         ObservableList<ColumnConstraints> constraintsList = gridPane.getColumnConstraints();
         if (constraintsList.size() - COLUMN_INDEX_BOX >= currentClock) {
-            constraintsList.remove(constraintsList.size() - COLUMN_INDEX_BOX, currentClock);
+            constraintsList.remove(currentClock, constraintsList.size() - COLUMN_INDEX_BOX);
             return;
         }
         double minWidth = 10;
