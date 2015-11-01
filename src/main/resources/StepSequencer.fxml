@@ -5,7 +5,6 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zone.kaz.alight_midi.gui.sequencer.StepSequencerController">
    <center>
       <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
@@ -20,45 +19,36 @@
                 <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0">
+                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0">
                            <children>
-                              <ListView prefHeight="200.0" />
+                              <ListView prefHeight="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                     </content>
                   </ScrollPane>
-                  <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
+                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
                     <content>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0">
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" style="-fx-background-color: #fff;">
                            <children>
-                              <ListView prefHeight="200.0" />
+                              <ListView prefHeight="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                     </content>
                   </ScrollPane>
-                  <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
+                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0">
                            <children>
-                              <ListView prefHeight="200.0" />
+                              <ListView prefHeight="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                     </content>
                   </ScrollPane>
                </children>
             </GridPane>
-            <GridPane fx:id="sequencerGrid">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" />
-                <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="570.0" minWidth="10.0" prefWidth="510.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" percentHeight="0.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-            </GridPane>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <HBox prefHeight="25.0" prefWidth="600.0">
                <children>
                   <Button fx:id="addSequence" maxHeight="26.0" maxWidth="26.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="26.0" text="+">
                      <HBox.margin>
@@ -98,6 +88,15 @@
                   </Slider>
                </children>
             </HBox>
+            <GridPane fx:id="sequencerGrid" gridLinesVisible="true">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" />
+                <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" percentHeight="0.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+            </GridPane>
          </children>
       </VBox>
    </center>
