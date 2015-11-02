@@ -16,10 +16,12 @@ public class StepSequencer {
     private int clock;
     private Label label = new Label();
     private int rowIndex;
+    private double buttonWidth = 0;
 
-    public StepSequencer(GridPane gridPane, int rowIndex, int clock, int beats) {
+    public StepSequencer(GridPane gridPane, int rowIndex, int clock, int beats, double buttonWidth) {
         this.rowIndex = rowIndex;
         this.gridPane = gridPane;
+        this.buttonWidth = buttonWidth;
         label.backgroundProperty().set(new Background(new BackgroundFill(Paint.valueOf("#EFEEEE"), null, null)));
         label.setText("Hoge");
         gridPane.add(label, COLUMN_INDEX_LABEL, rowIndex);
@@ -59,7 +61,7 @@ public class StepSequencer {
         Paint color = Paint.valueOf(isBeat ? "#F4EEE1" : "#EFEEEE");
         Rectangle rectangle = new Rectangle();
         rectangle.setHeight(30);
-        rectangle.setWidth(20);
+        rectangle.setWidth(buttonWidth);
 
         rectangle.setFill(color);
         rectangle.setStroke(Paint.valueOf("#C4BDAC"));
@@ -86,6 +88,13 @@ public class StepSequencer {
 
     public void setLabel(String label) {
         this.label.setText(label);
+    }
+
+    public void setButtonWidth(double buttonWidth) {
+        this.buttonWidth = buttonWidth;
+        for (Rectangle button : buttons) {
+            button.setWidth(buttonWidth);
+        }
     }
 
 }

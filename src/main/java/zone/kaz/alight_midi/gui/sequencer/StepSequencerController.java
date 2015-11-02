@@ -31,6 +31,8 @@ public class StepSequencerController implements Initializable {
     @FXML
     private Slider clockFader;
 
+    private double colWidth = 0;
+
     private StepSequencerManager stepSequencerManager = DIContainer.get(StepSequencerManager.class);
 
     @Override
@@ -42,7 +44,8 @@ public class StepSequencerController implements Initializable {
                     sequencerGrid,
                     i,
                     stepSequencerManager.getCalcClock(),
-                    stepSequencerManager.getBeats()
+                    stepSequencerManager.getBeats(),
+                    colWidth
             ));
         }
         clockFader.valueProperty().addListener(event -> {
@@ -60,11 +63,14 @@ public class StepSequencerController implements Initializable {
                     sequencerGrid,
                     stepSequencerManager.getSize(),
                     stepSequencerManager.getCalcClock(),
-                    stepSequencerManager.getBeats()
-            ));
+                    stepSequencerManager.getBeats(),
+                    colWidth));
         });
-        sequencerGrid.widthProperty().addListener(event-> {
-            System.out.println(event);
+        sequencerGrid.widthProperty().addListener((observableValue, oldValue, newValue) -> {
+            double labelWidth = sequencerGrid.getColumnConstraints().get(0).getPrefWidth();
+            int clock = stepSequencerManager.getCalcClock();
+            colWidth = (newValue.doubleValue() - labelWidth) / clock + 1;
+            stepSequencerManager.setButtonWidth(colWidth);
         });
         stepSequencerManager.setClock(0);
     }

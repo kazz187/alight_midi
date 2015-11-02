@@ -91,4 +91,9 @@ public class StepSequencerManager {
         this.beats = beats;
     }
 
+    public void setButtonWidth(double buttonWidth) {
+        for (StepSequencer stepSequencer : stepSequencerList) {
+            stepSequencer.setButtonWidth(buttonWidth);
+        }
+    }
 }
