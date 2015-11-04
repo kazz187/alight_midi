@@ -1,6 +1,9 @@
 package zone.kaz.alight_midi.gui.sequencer;
 
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -23,7 +26,26 @@ public class StepSequencer {
         this.gridPane = gridPane;
         this.buttonWidth = buttonWidth;
         label.backgroundProperty().set(new Background(new BackgroundFill(Paint.valueOf("#EFEEEE"), null, null)));
-        label.setText("Hoge");
+        label.setPrefWidth(90);
+        label.setPrefHeight(30);
+        label.setPadding(new Insets(0, 0, 0, 5));
+        label.setOnDragOver(event -> {
+            Dragboard db = event.getDragboard();
+            if (db.hasString()) {
+                event.acceptTransferModes(TransferMode.ANY);
+            }
+            event.consume();
+        });
+        label.setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+            if (db.hasString()) {
+                label.setText(db.getString());
+                success = true;
+            }
+            event.setDropCompleted(success);
+            event.consume();
+        });
         gridPane.add(label, COLUMN_INDEX_LABEL, rowIndex);
         double minHeight = 10.0, prefHeight = 30.0, maxHeight = -1.0;
         RowConstraints rowConstraints = new RowConstraints(
