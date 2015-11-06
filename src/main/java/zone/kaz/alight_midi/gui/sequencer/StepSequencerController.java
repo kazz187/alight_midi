@@ -9,7 +9,6 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
 import zone.kaz.alight_midi.gui.ControllerManager;
 import zone.kaz.alight_midi.inject.DIContainer;
 import zone.kaz.alight_midi.sequencer.StepSequencerManager;
@@ -51,7 +50,7 @@ public class StepSequencerController implements Initializable {
         controllerManager.register(this);
         for (int i = 0; i < 3; i++) {
             stepSequencerManager.add(new StepSequencer(
-                    sequencerGrid,
+                    this,
                     i,
                     stepSequencerManager.getCalcClock(),
                     stepSequencerManager.getBeats(),
@@ -70,7 +69,7 @@ public class StepSequencerController implements Initializable {
         });
         addSequence.setOnAction(event -> {
             stepSequencerManager.add(new StepSequencer(
-                    sequencerGrid,
+                    this,
                     stepSequencerManager.getSize(),
                     stepSequencerManager.getCalcClock(),
                     stepSequencerManager.getBeats(),
@@ -86,24 +85,22 @@ public class StepSequencerController implements Initializable {
     }
 
     private void loadAnimationList() {
+        animationList.setOnDragDetected(event -> {
+            MultipleSelectionModel<SequencerItem> items = animationList.getSelectionModel();
+            SequencerItem item = items.getSelectedItem();
+            int index = animationList.itemsProperty().getValue().indexOf(item);
+            Dragboard db = animationList.startDragAndDrop(TransferMode.ANY);
+            ClipboardContent content = new ClipboardContent();
+            content.putString("ANIMATION:" + index);
+            db.setContent(content);
+            event.consume();
+        });
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         try {
             Set<ClassPath.ClassInfo> classInfoSet = ClassPath.from(loader).getTopLevelClasses("zone.kaz.alight_midi.sequencer.animation");
             for (ClassPath.ClassInfo classInfo : classInfoSet) {
                 AnimationItem item = new AnimationItem(classInfo);
                 this.animationList.itemsProperty().getValue().add(item);
-                animationList.setOnDragDetected(event -> {
-                    try {
-                        Text text = (Text) event.getTarget();
-                        Dragboard db = animationList.startDragAndDrop(TransferMode.ANY);
-                        ClipboardContent content = new ClipboardContent();
-                        content.putString(text.getText());
-                        db.setContent(content);
-                        event.consume();
-                    } catch (ClassCastException e) {
-                        // DO NOTHING
-                    }
-                });
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -112,6 +109,10 @@ public class StepSequencerController implements Initializable {
 
     public GridPane getSequencerGrid() {
         return sequencerGrid;
+    }
+
+    public ListView<SequencerItem> getAnimationList() {
+        return animationList;
     }
 
 }

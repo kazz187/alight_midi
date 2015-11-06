@@ -14,4 +14,5 @@ public class AnimationItem implements SequencerItem {
     public String toString() {
         return this.classInfo.getSimpleName();
     }
+
 }

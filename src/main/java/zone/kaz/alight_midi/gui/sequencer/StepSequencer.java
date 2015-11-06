@@ -2,6 +2,7 @@ package zone.kaz.alight_midi.gui.sequencer;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
@@ -14,16 +15,16 @@ public class StepSequencer {
 
     public final static int COLUMN_INDEX_LABEL = 0;
     public final static int COLUMN_INDEX_BOX = 1;
-    private GridPane gridPane;
+    private final StepSequencerController controller;
     private ArrayList<Rectangle> buttons = new ArrayList<>();
     private int clock;
     private Label label = new Label();
     private int rowIndex;
     private double buttonWidth = 0;
 
-    public StepSequencer(GridPane gridPane, int rowIndex, int clock, int beats, double buttonWidth) {
+    public StepSequencer(StepSequencerController controller, int rowIndex, int clock, int beats, double buttonWidth) {
+        this.controller = controller;
         this.rowIndex = rowIndex;
-        this.gridPane = gridPane;
         this.buttonWidth = buttonWidth;
         label.backgroundProperty().set(new Background(new BackgroundFill(Paint.valueOf("#EFEEEE"), null, null)));
         label.setPrefWidth(90);
@@ -40,12 +41,24 @@ public class StepSequencer {
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasString()) {
-                label.setText(db.getString());
+                String data = db.getString();
+                String[] parsedData = data.split(":", 0);
+                switch (parsedData[0]) {
+                    case "ANIMATION":
+                        ListView<SequencerItem> animationList = controller.getAnimationList();
+                        int index = new Integer(parsedData[1]);
+                        SequencerItem item = animationList.itemsProperty().getValue().get(index);
+                        label.setText(item.toString());
+                        break;
+                    default:
+                        break;
+                }
                 success = true;
             }
             event.setDropCompleted(success);
             event.consume();
         });
+        GridPane gridPane = controller.getSequencerGrid();
         gridPane.add(label, COLUMN_INDEX_LABEL, rowIndex);
         double minHeight = 10.0, prefHeight = 30.0, maxHeight = -1.0;
         RowConstraints rowConstraints = new RowConstraints(
@@ -61,6 +74,7 @@ public class StepSequencer {
     }
 
     public void setClock(int clock, int beats) {
+        GridPane gridPane = controller.getSequencerGrid();
         if (this.clock >= clock) {
             for (int i = this.clock - 1; i >= clock; i--) {
                 Rectangle button = buttons.remove(i);
@@ -104,6 +118,7 @@ public class StepSequencer {
     }
 
     public void finish() {
+        GridPane gridPane = controller.getSequencerGrid();
         gridPane.getChildren().remove(label);
         gridPane.getChildren().removeAll(buttons);
     }
