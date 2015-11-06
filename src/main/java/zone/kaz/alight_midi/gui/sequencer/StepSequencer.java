@@ -20,6 +20,7 @@ public class StepSequencer {
     private final StepSequencerController controller;
     private ArrayList<SequencerButton> buttons = new ArrayList<>();
     private int clock;
+    private SequencerInfo sequencerInfo = null;
     private Label label = new Label();
     private int rowIndex;
     private double buttonWidth = 0;
@@ -47,9 +48,10 @@ public class StepSequencer {
                 String[] parsedData = data.split(":", 0);
                 switch (parsedData[0]) {
                     case "ANIMATION":
-                        ListView<SequencerItem> animationList = controller.getAnimationList();
+                        ListView<SequencerInfo> animationList = controller.getAnimationList();
                         int index = new Integer(parsedData[1]);
-                        SequencerItem item = animationList.itemsProperty().getValue().get(index);
+                        SequencerInfo item = animationList.itemsProperty().getValue().get(index);
+                        sequencerInfo = item;
                         label.setText(item.toString());
                         break;
                     default:
@@ -73,6 +75,16 @@ public class StepSequencer {
             gridPane.getRowConstraints().add(rowIndex, rowConstraints);
         }
         setClock(clock, beats);
+    }
+
+    public Boolean[] getBoolArray() {
+        Boolean[] result = new Boolean[buttons.size()];
+        return buttons.stream().map(SequencerButton::isEnable)
+                .collect(Collectors.toList()).toArray(result);
+    }
+
+    public SequencerInfo getSequencerInfo() {
+        return sequencerInfo;
     }
 
     public void setClock(int clock, int beats) {

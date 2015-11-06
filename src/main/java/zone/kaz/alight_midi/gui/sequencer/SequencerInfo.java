@@ -1,6 +1,6 @@
 package zone.kaz.alight_midi.gui.sequencer;
 
-public interface SequencerItem {
+public interface SequencerInfo {
 
     String toString();
 

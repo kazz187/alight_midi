@@ -23,7 +23,7 @@ public class StepSequencerController implements Initializable {
     @FXML
     private Parent root;
     @FXML
-    private ListView<SequencerItem> animationList;
+    private ListView<SequencerInfo> animationList;
     @FXML
     private GridPane sequencerGrid;
     @FXML
@@ -86,8 +86,8 @@ public class StepSequencerController implements Initializable {
 
     private void loadAnimationList() {
         animationList.setOnDragDetected(event -> {
-            MultipleSelectionModel<SequencerItem> items = animationList.getSelectionModel();
-            SequencerItem item = items.getSelectedItem();
+            MultipleSelectionModel<SequencerInfo> items = animationList.getSelectionModel();
+            SequencerInfo item = items.getSelectedItem();
             int index = animationList.itemsProperty().getValue().indexOf(item);
             Dragboard db = animationList.startDragAndDrop(TransferMode.ANY);
             ClipboardContent content = new ClipboardContent();
@@ -99,7 +99,7 @@ public class StepSequencerController implements Initializable {
         try {
             Set<ClassPath.ClassInfo> classInfoSet = ClassPath.from(loader).getTopLevelClasses("zone.kaz.alight_midi.sequencer.animation");
             for (ClassPath.ClassInfo classInfo : classInfoSet) {
-                AnimationItem item = new AnimationItem(classInfo);
+                AnimationInfo item = new AnimationInfo(classInfo);
                 this.animationList.itemsProperty().getValue().add(item);
             }
         } catch (IOException e) {
@@ -111,7 +111,7 @@ public class StepSequencerController implements Initializable {
         return sequencerGrid;
     }
 
-    public ListView<SequencerItem> getAnimationList() {
+    public ListView<SequencerInfo> getAnimationList() {
         return animationList;
     }
 

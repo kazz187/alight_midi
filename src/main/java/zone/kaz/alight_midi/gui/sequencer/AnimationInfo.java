@@ -2,11 +2,11 @@ package zone.kaz.alight_midi.gui.sequencer;
 
 import com.google.common.reflect.ClassPath;
 
-public class AnimationItem implements SequencerItem {
+public class AnimationInfo implements SequencerInfo {
 
     private ClassPath.ClassInfo classInfo;
 
-    public AnimationItem(ClassPath.ClassInfo classInfo) {
+    public AnimationInfo(ClassPath.ClassInfo classInfo) {
         this.classInfo = classInfo;
     }
 
