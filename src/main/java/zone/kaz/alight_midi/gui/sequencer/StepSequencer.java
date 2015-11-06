@@ -10,13 +10,15 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class StepSequencer {
 
     public final static int COLUMN_INDEX_LABEL = 0;
     public final static int COLUMN_INDEX_BOX = 1;
     private final StepSequencerController controller;
-    private ArrayList<Rectangle> buttons = new ArrayList<>();
+    private ArrayList<SequencerButton> buttons = new ArrayList<>();
     private int clock;
     private Label label = new Label();
     private int rowIndex;
@@ -77,50 +79,27 @@ public class StepSequencer {
         GridPane gridPane = controller.getSequencerGrid();
         if (this.clock >= clock) {
             for (int i = this.clock - 1; i >= clock; i--) {
-                Rectangle button = buttons.remove(i);
-                GridPane.clearConstraints(button);
-                gridPane.getChildren().remove(button);
+                SequencerButton button = buttons.remove(i);
+                GridPane.clearConstraints(button.getShape());
+                gridPane.getChildren().remove(button.getShape());
             }
             this.clock = clock;
             return;
         }
         for (int i = this.clock; i < clock; i++) {
             boolean isBeats = i % beats == 0;
-            Rectangle button = createButton(isBeats);
+            SequencerButton button = new SequencerButton(buttonWidth, false, isBeats);
             buttons.add(button);
-            gridPane.add(button, COLUMN_INDEX_BOX + i, rowIndex);
+            gridPane.add(button.getShape(), COLUMN_INDEX_BOX + i, rowIndex);
         }
         this.clock = clock;
-    }
-
-    public Rectangle createButton(boolean isBeat) {
-        Paint color = Paint.valueOf(isBeat ? "#F4EEE1" : "#EFEEEE");
-        Rectangle rectangle = new Rectangle();
-        rectangle.setHeight(30);
-        rectangle.setWidth(buttonWidth);
-
-        rectangle.setFill(color);
-        rectangle.setStroke(Paint.valueOf("#C4BDAC"));
-        rectangle.setStrokeWidth(1.0);
-        rectangle.setOnMouseClicked(event -> {
-            switch (event.getButton()) {
-                case PRIMARY:
-                    rectangle.setFill(Paint.valueOf("#EBCFC4"));
-                    break;
-                case SECONDARY:
-                    rectangle.setFill(color);
-                    break;
-                default:
-                    break;
-            }
-        });
-        return rectangle;
     }
 
     public void finish() {
         GridPane gridPane = controller.getSequencerGrid();
         gridPane.getChildren().remove(label);
-        gridPane.getChildren().removeAll(buttons);
+        List<Rectangle> shapes = buttons.stream().map(SequencerButton::getShape).collect(Collectors.toList());
+        gridPane.getChildren().removeAll(shapes);
     }
 
     public void setLabel(String label) {
@@ -129,9 +108,7 @@ public class StepSequencer {
 
     public void setButtonWidth(double buttonWidth) {
         this.buttonWidth = buttonWidth;
-        for (Rectangle button : buttons) {
-            button.setWidth(buttonWidth);
-        }
+        buttons.forEach(btn -> btn.setWidth(buttonWidth));
     }
 
 }
