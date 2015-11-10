@@ -137,13 +137,13 @@ public class ClockManager extends Thread {
                     playTime = beforePlayTime + tickInterval;
                 }
 
-                sequencer.setTick(tickCounter);
                 double tickInterval = 60.0 * 1000 / realBpm / baseTick;
                 while (clockCounter * clockInterval > playTime) {
                     tickCounter++;
                     beforePlayTime = playTime;
                     playTime += tickInterval;
                 }
+                sequencer.setTick(tickCounter);
 
                 clock = clock.plus(Duration.ofMillis(clockInterval));
                 LocalDateTime now = LocalDateTime.now();

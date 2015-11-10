@@ -96,4 +96,8 @@ public class StepSequencerManager {
             stepSequencer.setButtonWidth(buttonWidth);
         }
     }
+
+    public ArrayList<StepSequencer> getStepSequencerList() {
+        return stepSequencerList;
+    }
 }

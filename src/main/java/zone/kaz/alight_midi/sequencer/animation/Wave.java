@@ -11,6 +11,10 @@ public class Wave extends Animation {
 
     private int r = 0, g = 0, b = 0;
 
+    public Wave() {
+        super();
+    }
+
     public Wave(long startTick, int tickSize, DeviceBuffer deviceBuffer) {
         super(startTick, tickSize, deviceBuffer);
         Random rand = new Random();

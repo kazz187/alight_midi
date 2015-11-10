@@ -15,11 +15,16 @@ import java.util.stream.Collectors;
 
 public class StepSequencer {
 
+    public enum Type {
+        ANIMATION, COLOR;
+    }
+
     public final static int COLUMN_INDEX_LABEL = 0;
     public final static int COLUMN_INDEX_BOX = 1;
     private final StepSequencerController controller;
     private ArrayList<SequencerButton> buttons = new ArrayList<>();
     private int clock;
+    private Type type;
     private SequencerInfo sequencerInfo = null;
     private Label label = new Label();
     private int rowIndex;
@@ -52,6 +57,7 @@ public class StepSequencer {
                         int index = new Integer(parsedData[1]);
                         SequencerInfo item = animationList.itemsProperty().getValue().get(index);
                         sequencerInfo = item;
+                        type = Type.ANIMATION;
                         label.setText(item.toString());
                         break;
                     default:
@@ -85,6 +91,10 @@ public class StepSequencer {
 
     public SequencerInfo getSequencerInfo() {
         return sequencerInfo;
+    }
+
+    public Type getType() {
+        return type;
     }
 
     public void setClock(int clock, int beats) {

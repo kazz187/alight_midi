@@ -5,9 +5,11 @@ import zone.kaz.alight_midi.device.led.Stripe;
 
 public abstract class Animation {
 
-    protected final long startTick;
+    protected long startTick;
     protected DeviceBuffer deviceBuffer;
     protected int tickSize;
+
+    public Animation() {}
 
     public Animation(long startTick, int tickSize, DeviceBuffer deviceBuffer) {
         this.startTick = startTick;
@@ -17,6 +19,19 @@ public abstract class Animation {
 
     public DeviceBuffer getDeviceBuffer() {
         return deviceBuffer;
+    }
+
+
+    public void setTickSize(int tickSize) {
+        this.tickSize = tickSize;
+    }
+
+    public void setStartTick(long startTick) {
+        this.startTick = startTick;
+    }
+
+    public void setDeviceBuffer(DeviceBuffer deviceBuffer) {
+        this.deviceBuffer = deviceBuffer;
     }
 
     public abstract void setTick(long tick);

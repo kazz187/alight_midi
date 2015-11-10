@@ -11,6 +11,10 @@ import java.util.ArrayList;
 
 public class AllFlash extends Animation {
 
+    public AllFlash() {
+        super();
+    }
+
     public AllFlash(long startTick, int tickSize, DeviceBuffer deviceBuffer) {
         super(startTick, tickSize, deviceBuffer);
     }
