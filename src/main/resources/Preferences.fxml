@@ -54,5 +54,41 @@
                </children></AnchorPane>
       </content>
     </Tab>
+      <Tab text="OSC">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <GridPane prefHeight="509.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="396.0" minWidth="10.0" prefWidth="125.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="719.0" minWidth="10.0" prefWidth="675.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints maxHeight="186.0" minHeight="0.0" prefHeight="80.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="380.0" minHeight="0.0" prefHeight="79.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="490.0" minHeight="10.0" prefHeight="411.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <CheckBox fx:id="oscEnabled" mnemonicParsing="false" text="Use OSC" GridPane.columnIndex="1">
+                           <GridPane.margin>
+                              <Insets left="50.0" />
+                           </GridPane.margin>
+                        </CheckBox>
+                        <Label text="Port" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets left="50.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <TextField fx:id="oscPort" text="7001" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets left="50.0" right="50.0" />
+                           </GridPane.margin>
+                        </TextField>
+                     </children>
+                  </GridPane>
+               </children>
+            </AnchorPane>
+        </content>
+      </Tab>
   </tabs>
 </TabPane>

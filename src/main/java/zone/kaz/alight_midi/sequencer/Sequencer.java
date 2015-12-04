@@ -58,6 +58,7 @@ public class Sequencer {
                     && checkStepNum <= currentSeqTick
                     && boolArray[checkStepNum]) {
                 StepSequencer.Type type = stepSequencer.getType();
+                if (type == null) continue;
                 switch (type) {
                     case ANIMATION:
                         AnimationInfo info = (AnimationInfo) stepSequencer.getSequencerInfo();
