@@ -19,7 +19,7 @@ import static zone.kaz.alight_midi.gui.sequencer.StepSequencer.COLUMN_INDEX_BOX;
 @Singleton
 public class StepSequencerManager {
 
-    private int rate = 1;
+    private int rate = 0;
     private int clock = 0;
     private int beats = 4;
     private ArrayList<StepSequencer> stepSequencerList = new ArrayList<>();
