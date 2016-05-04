@@ -30,7 +30,9 @@ public class MainWindow {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.stage.setScene(new Scene(root, 800, 600));
+        this.stage.setX(0);
+        this.stage.setY(0);
+        this.stage.setScene(new Scene(root, 800, 150));
     }
 
     public void show() {
