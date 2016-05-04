@@ -75,6 +75,9 @@ public class StepSequencerController implements Initializable {
                     stepSequencerManager.getBeats(),
                     colWidth));
         });
+        removeSequence.setOnAction(event -> {
+            stepSequencerManager.remove();
+        });
         sequencerGrid.widthProperty().addListener((observableValue, oldValue, newValue) -> {
             double labelWidth = sequencerGrid.getColumnConstraints().get(0).getPrefWidth();
             int clock = stepSequencerManager.getCalcClock();

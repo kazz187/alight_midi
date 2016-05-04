@@ -32,6 +32,16 @@ public class StepSequencerManager {
         stepSequencerList.add(stepSequencer);
     }
 
+    public void remove() {
+        int index = stepSequencerList.size() - 1;
+        if (index < 0) {
+            return;
+        }
+        StepSequencer sequencer = stepSequencerList.get(index);
+        sequencer.finish();
+        stepSequencerList.remove(sequencer);
+    }
+
     public int getSize() {
         return stepSequencerList.size();
     }
@@ -100,4 +110,5 @@ public class StepSequencerManager {
     public ArrayList<StepSequencer> getStepSequencerList() {
         return stepSequencerList;
     }
+
 }
