@@ -1,5 +1,7 @@
 package zone.kaz.alight_midi.gui.preferences;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
@@ -67,8 +69,10 @@ public class PreferencesController implements Initializable {
         MidiDeviceManager manager = DIContainer.get(MidiDeviceManager.class);
         manager.reloadDevices();
 
-        preferencesMidiInput.getItems().retainAll(manager.getInputDevices());
-        preferencesMidiOutput.getItems().retainAll(manager.getOutputDevices());
+        ObservableList<MidiDevice.Info> inputList = FXCollections.observableList(manager.getInputDevices());
+        preferencesMidiInput.setItems(inputList);
+        ObservableList<MidiDevice.Info> outputList = FXCollections.observableList(manager.getOutputDevices());
+        preferencesMidiOutput.setItems(outputList);
 
         preferencesMidiInput.setOnAction(event -> {
             MidiDevice.Info inputDeviceInfo = preferencesMidiInput.getValue();
@@ -94,8 +98,6 @@ public class PreferencesController implements Initializable {
                 preferencesMidiOutput.setValue(outputDevice.getDeviceInfo());
             }
         }
-
-
     }
 
 }
