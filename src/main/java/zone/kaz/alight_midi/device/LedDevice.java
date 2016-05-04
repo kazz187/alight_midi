@@ -34,9 +34,10 @@ public class LedDevice {
         if (!isConnecting) {
             return;
         }
+        int channel = 0; // TODO: Support multi fadecandy.
         byte[] message = deviceBuffer.getData();
         char len = (char) message.length;
-        byte[] header = {0, 0, (byte) (len >> 8), (byte) (len & 255)};
+        byte[] header = {(byte) channel, 0, (byte) (len >> 8), (byte) (len & 255)};
         try {
             outputStream.write(header);
             outputStream.write(message);

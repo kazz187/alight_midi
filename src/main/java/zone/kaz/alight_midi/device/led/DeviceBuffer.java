@@ -5,17 +5,22 @@ import java.util.Objects;
 
 public class DeviceBuffer {
 
-    DeviceInfo deviceInfo;
-    ArrayList<Stripe> stripes = new ArrayList<>();
-    int dataLength = 0;
+    private DeviceInfo deviceInfo;
+    private ArrayList<Stripe> stripes = new ArrayList<>();
+    private int dataLength = 0;
 
     public DeviceBuffer(DeviceInfo deviceInfo) {
         this.deviceInfo = deviceInfo;
         int[][] mapping = deviceInfo.getMapping();
         for (int i = 0; i < mapping.length; i++) {
             stripes.add(i, new Stripe(mapping[i].length));
-            dataLength += mapping[i].length * 3;
+            for (int j = 0; j < mapping[i].length; j++) {
+                if (mapping[i][j] + 1 > dataLength) {
+                    dataLength = mapping[i][j] + 1;
+                }
+            }
         }
+        dataLength *= 3; // pixels
     }
 
     public DeviceInfo getDeviceInfo() {
@@ -40,9 +45,11 @@ public class DeviceBuffer {
         for (int i = 0; i < mapping.length; i++) {
             for (int j = 0; j < mapping[i].length; j++) {
                 Stripe stripe = stripes.get(i);
-                for (int k = 0; k < 3; k++) {
-                    data[mapping[i][j]*3+k] = stripe.getBuffer()[j*3+k];
-                }
+                System.arraycopy(stripe.getBuffer(),
+                        j * 3,
+                        data,
+                        mapping[i][j] * 3,
+                        3);
             }
         }
         return data;
