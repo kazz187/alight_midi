@@ -2,6 +2,7 @@ group 'zone.kaz.alight_midi'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'application'
 
 sourceCompatibility = 1.8
 
@@ -14,4 +15,19 @@ dependencies {
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.3.4'
     compile group: 'com.github.wendykierp', name: 'JTransforms', version: '3.1', classifier: 'with-dependencies'
     testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+mainClassName = 'zone.kaz.alight_midi.gui.MainApplication'
+
+def executableBaseName = "alight_midi"
+
+task executableJar(type: Jar, dependsOn: jar) {
+    archiveName = "${executableBaseName}.jar"
+    manifest {
+        attributes 'Main-Class' : mainClassName
+    }
+
+    from configurations.compile.collect {it.isDirectory() ? it : zipTree(it)}
+    from "$buildDir/classes/main"
+    from "$buildDir/resources/main"
 }
