@@ -38,6 +38,10 @@ public class StepSequencerController implements Initializable {
     private Label clockLabel;
     @FXML
     private Slider clockFader;
+    @FXML
+    private TextField patternNameField;
+    @FXML
+    private Button patternSaveButton;
 
     private double colWidth = 0;
 

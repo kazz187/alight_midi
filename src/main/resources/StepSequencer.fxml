@@ -87,6 +87,8 @@
                         <Insets top="5.0" />
                      </HBox.margin>
                   </Slider>
+                  <TextField fx:id="patternNameField" />
+                  <Button fx:id="patternSave" mnemonicParsing="false" text="Save" />
                </children>
             </HBox>
             <GridPane fx:id="sequencerGrid">
