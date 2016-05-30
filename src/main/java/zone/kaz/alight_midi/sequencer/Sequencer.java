@@ -41,8 +41,8 @@ public class Sequencer {
     }
 
     public void setTick(long tick) {
-        double rate = stepSequencerManager.getRate();
-        ArrayList<StepSequencer> stepSequencerList = stepSequencerManager.getStepSequencerList();
+        double rate = stepSequencerManager.getPattern().getCalcRate();
+        ArrayList<StepSequencer> stepSequencerList = stepSequencerManager.getPattern().getStepSequencerList();
         for (StepSequencer stepSequencer : stepSequencerList) {
             Boolean[] boolArray = stepSequencer.getBoolArray();
             int size = boolArray.length;

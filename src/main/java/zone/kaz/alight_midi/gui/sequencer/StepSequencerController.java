@@ -41,7 +41,7 @@ public class StepSequencerController implements Initializable {
     @FXML
     private TextField patternNameField;
     @FXML
-    private Button patternSaveButton;
+    private Button patternSave;
 
     private double colWidth = 0;
 
@@ -53,42 +53,45 @@ public class StepSequencerController implements Initializable {
         ControllerManager controllerManager = DIContainer.get(ControllerManager.class);
         controllerManager.register(this);
         for (int i = 0; i < 3; i++) {
-            stepSequencerManager.add(new StepSequencer(
+            stepSequencerManager.getPattern().add(new StepSequencer(
                     this,
                     i,
-                    stepSequencerManager.getCalcClock(),
-                    stepSequencerManager.getBeats(),
+                    stepSequencerManager.getPattern().getCalcClock(),
+                    stepSequencerManager.getPattern().getBeats(),
                     colWidth
             ));
         }
         clockFader.valueProperty().addListener(event -> {
-            stepSequencerManager.setClock((int) clockFader.getValue());
-            int clock = stepSequencerManager.getCalcClock();
-            int beats = stepSequencerManager.getBeats();
+            stepSequencerManager.getPattern().setClock((int) clockFader.getValue());
+            int clock = stepSequencerManager.getPattern().getCalcClock();
+            int beats = stepSequencerManager.getPattern().getBeats();
             clockLabel.setText(String.valueOf(clock));
         });
         rateFader.valueProperty().addListener(event -> {
-            stepSequencerManager.setRate((int) rateFader.getValue());
-            rateLabel.setText(String.valueOf(stepSequencerManager.getRate()));
+            stepSequencerManager.getPattern().setRate((int) rateFader.getValue());
+            rateLabel.setText(String.valueOf(stepSequencerManager.getPattern().getCalcRate()));
         });
         addSequence.setOnAction(event -> {
-            stepSequencerManager.add(new StepSequencer(
+            stepSequencerManager.getPattern().add(new StepSequencer(
                     this,
-                    stepSequencerManager.getSize(),
-                    stepSequencerManager.getCalcClock(),
-                    stepSequencerManager.getBeats(),
+                    stepSequencerManager.getPattern().getSize(),
+                    stepSequencerManager.getPattern().getCalcClock(),
+                    stepSequencerManager.getPattern().getBeats(),
                     colWidth));
         });
         removeSequence.setOnAction(event -> {
-            stepSequencerManager.remove();
+            stepSequencerManager.getPattern().remove();
         });
         sequencerGrid.widthProperty().addListener((observableValue, oldValue, newValue) -> {
             double labelWidth = sequencerGrid.getColumnConstraints().get(0).getPrefWidth();
-            int clock = stepSequencerManager.getCalcClock();
+            int clock = stepSequencerManager.getPattern().getCalcClock();
             colWidth = (newValue.doubleValue() - labelWidth) / clock + 1;
-            stepSequencerManager.setButtonWidth(colWidth);
+            stepSequencerManager.getPattern().setButtonWidth(colWidth);
         });
-        stepSequencerManager.setClock(0);
+        stepSequencerManager.getPattern().setClock(0);
+        patternSave.setOnAction(event -> {
+            System.out.println(patternNameField.getText());
+        });
     }
 
     private void loadAnimationList() {
