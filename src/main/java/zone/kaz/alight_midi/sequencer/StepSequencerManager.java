@@ -19,4 +19,7 @@ public class StepSequencerManager {
         return pattern;
     }
 
+    public void setPattern(StepSequencerPattern pattern) {
+        this.pattern = pattern;
+    }
 }

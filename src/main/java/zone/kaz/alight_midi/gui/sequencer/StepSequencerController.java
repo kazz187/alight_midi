@@ -1,15 +1,16 @@
 package zone.kaz.alight_midi.gui.sequencer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.reflect.ClassPath;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -22,6 +23,8 @@ import static zone.kaz.alight_midi.gui.sequencer.StepSequencer.COLUMN_INDEX_BOX;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -53,6 +56,8 @@ public class StepSequencerController implements Initializable {
     private double colWidth = 0;
 
     private StepSequencerManager stepSequencerManager = DIContainer.get(StepSequencerManager.class);
+
+    private HashMap<String, AnimationInfo> animationInfoMap = new HashMap<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -102,7 +107,33 @@ public class StepSequencerController implements Initializable {
             pattern.setButtonWidth(colWidth);
         });
         patternSave.setOnAction(event -> {
-            System.out.println(patternNameField.getText());
+            StepSequencerPattern pattern = stepSequencerManager.getPattern();
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                if (!Objects.equals(patternNameField.getText(), "")) {
+                    StepSequencerPattern p = objectMapper.readValue(patternNameField.getText(), StepSequencerPattern.class);
+                    while (pattern.getSize() != 0) {
+                        pattern.remove();
+                    }
+                    int i = 0;
+                    for (StepSequencer stepSequencer : p.getStepSequencerList()) {
+                        stepSequencer.setController(this);
+                        stepSequencer.setRowIndex(i++);
+                        stepSequencer.initGridPane();
+                        stepSequencer.setButtonWidth(colWidth);
+                        stepSequencer.updateSequencerInfo();
+                        stepSequencer.setClock(p.getCalcClock(), p.getBeats());
+                        stepSequencer.updateButtons();
+                    }
+                    p.setClock(p.getClock());
+
+                    stepSequencerManager.setPattern(p);
+                    rateFader.valueProperty().set(p.getRate());
+                    clockFader.valueProperty().set(p.getClock());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
         stepSequencerManager.getPattern().setClock(0);
         updateStepSequencer(stepSequencerManager.getPattern());
@@ -112,10 +143,9 @@ public class StepSequencerController implements Initializable {
         animationList.setOnDragDetected(event -> {
             MultipleSelectionModel<SequencerInfo> items = animationList.getSelectionModel();
             SequencerInfo item = items.getSelectedItem();
-            int index = animationList.itemsProperty().getValue().indexOf(item);
             Dragboard db = animationList.startDragAndDrop(TransferMode.ANY);
             ClipboardContent content = new ClipboardContent();
-            content.putString("ANIMATION:" + index);
+            content.putString("ANIMATION:" + item);
             db.setContent(content);
             event.consume();
         });
@@ -125,6 +155,7 @@ public class StepSequencerController implements Initializable {
             for (ClassPath.ClassInfo classInfo : classInfoSet) {
                 AnimationInfo item = new AnimationInfo(classInfo);
                 this.animationList.itemsProperty().getValue().add(item);
+                animationInfoMap.put(item.toString(), item);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -165,4 +196,7 @@ public class StepSequencerController implements Initializable {
         }
     }
 
+    public SequencerInfo getAnimationInfo(String key) {
+        return animationInfoMap.get(key);
+    }
 }

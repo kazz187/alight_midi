@@ -1,5 +1,6 @@
 package zone.kaz.alight_midi.sequencer;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import zone.kaz.alight_midi.gui.sequencer.StepSequencer;
 
@@ -26,10 +27,12 @@ public class StepSequencerPattern {
         stepSequencerList.remove(sequencer);
     }
 
+    @JsonIgnore
     public int getSize() {
         return stepSequencerList.size();
     }
 
+    @JsonIgnore
     public double getCalcRate() {
         return Math.pow(2, rate);
     }
@@ -44,6 +47,7 @@ public class StepSequencerPattern {
         this.rate = rate;
     }
 
+    @JsonIgnore
     public int getCalcClock() {
         return (int) Math.pow(2, clock) * beats;
     }

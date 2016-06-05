@@ -1,5 +1,7 @@
 package zone.kaz.alight_midi.gui.sequencer;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -21,19 +23,68 @@ public class StepSequencer {
 
     public final static int COLUMN_INDEX_LABEL = 0;
     public final static int COLUMN_INDEX_BOX = 1;
-    private final StepSequencerController controller;
+    @JsonIgnore
+    private StepSequencerController controller = null;
+    @JsonIgnore
     private ArrayList<SequencerButton> buttons = new ArrayList<>();
-    private int clock;
-    private Type type;
+    @JsonIgnore
+    private Type type = null;
+    @JsonIgnore
     private SequencerInfo sequencerInfo = null;
+    @JsonIgnore
     private Label label = new Label();
+    @JsonIgnore
     private int rowIndex;
+    @JsonIgnore
     private double buttonWidth = 0;
+    @JsonIgnore
+    private int clock;
+    @JsonProperty
+    private String[] sequencerInfoData = null;
+    @JsonProperty
+    private Boolean[] boolArray = null;
+
+    public StepSequencer() {
+        initLabel();
+    }
 
     public StepSequencer(StepSequencerController controller, int rowIndex, int clock, int beats, double buttonWidth) {
         this.controller = controller;
         this.rowIndex = rowIndex;
         this.buttonWidth = buttonWidth;
+        initLabel();
+        initGridPane();
+        setClock(clock, beats);
+    }
+
+    public void setRowIndex(int rowIndex) {
+        this.rowIndex = rowIndex;
+    }
+
+    public String[] getSequencerInfoData() {
+        return sequencerInfoData;
+    }
+
+    public void setSequencerInfoData(String[] sequencerInfoData) {
+        this.sequencerInfoData = sequencerInfoData;
+    }
+
+    public void initGridPane() {
+        GridPane gridPane = controller.getSequencerGrid();
+        gridPane.add(label, COLUMN_INDEX_LABEL, rowIndex);
+        double minHeight = 10.0, prefHeight = 30.0, maxHeight = -1.0;
+        RowConstraints rowConstraints = new RowConstraints(
+                minHeight, prefHeight, maxHeight
+        );
+        rowConstraints.setPercentHeight(-1);
+        if (gridPane.getRowConstraints().size() > rowIndex) {
+            gridPane.getRowConstraints().set(rowIndex, rowConstraints);
+        } else {
+            gridPane.getRowConstraints().add(rowIndex, rowConstraints);
+        }
+    }
+
+    private void initLabel() {
         label.backgroundProperty().set(new Background(new BackgroundFill(Paint.valueOf("#EFEEEE"), null, null)));
         label.setPrefWidth(90);
         label.setPrefHeight(30);
@@ -50,43 +101,53 @@ public class StepSequencer {
             boolean success = false;
             if (db.hasString()) {
                 String data = db.getString();
-                String[] parsedData = data.split(":", 0);
-                switch (parsedData[0]) {
-                    case "ANIMATION":
-                        ListView<SequencerInfo> animationList = controller.getAnimationList();
-                        int index = new Integer(parsedData[1]);
-                        SequencerInfo item = animationList.itemsProperty().getValue().get(index);
-                        sequencerInfo = item;
-                        type = Type.ANIMATION;
-                        label.setText(item.toString());
-                        break;
-                    default:
-                        break;
-                }
+                sequencerInfoData = data.split(":", 0);
+                updateSequencerInfo();
                 success = true;
             }
             event.setDropCompleted(success);
             event.consume();
         });
-        GridPane gridPane = controller.getSequencerGrid();
-        gridPane.add(label, COLUMN_INDEX_LABEL, rowIndex);
-        double minHeight = 10.0, prefHeight = 30.0, maxHeight = -1.0;
-        RowConstraints rowConstraints = new RowConstraints(
-                minHeight, prefHeight, maxHeight
-        );
-        rowConstraints.setPercentHeight(-1);
-        if (gridPane.getRowConstraints().size() > rowIndex) {
-            gridPane.getRowConstraints().set(rowIndex, rowConstraints);
-        } else {
-            gridPane.getRowConstraints().add(rowIndex, rowConstraints);
+    }
+
+    public void setController(StepSequencerController controller) {
+        this.controller = controller;
+    }
+
+    public void updateSequencerInfo() {
+        if (sequencerInfoData == null) {
+            return;
         }
-        setClock(clock, beats);
+        switch (sequencerInfoData[0]) {
+            case "ANIMATION":
+                type = Type.ANIMATION;
+                sequencerInfo = controller.getAnimationInfo(sequencerInfoData[1]);;
+                label.setText(sequencerInfo.toString());
+                break;
+            default:
+                break;
+        }
     }
 
     public Boolean[] getBoolArray() {
         Boolean[] result = new Boolean[buttons.size()];
         return buttons.stream().map(SequencerButton::isEnable)
                 .collect(Collectors.toList()).toArray(result);
+    }
+
+    public void setBoolArray(Boolean[] boolArray) {
+        this.boolArray = boolArray;
+    }
+
+    public void updateButtons() {
+        int i = 0;
+        for (SequencerButton button : buttons) {
+            if (boolArray.length <= i) {
+                button.setEnable(false);
+            } else {
+                button.setEnable(boolArray[i++]);
+            }
+        }
     }
 
     public SequencerInfo getSequencerInfo() {
