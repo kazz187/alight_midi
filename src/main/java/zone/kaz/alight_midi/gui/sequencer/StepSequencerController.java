@@ -1,17 +1,24 @@
 package zone.kaz.alight_midi.gui.sequencer;
 
 import com.google.common.reflect.ClassPath;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.HPos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import zone.kaz.alight_midi.gui.ControllerManager;
 import zone.kaz.alight_midi.inject.DIContainer;
 import zone.kaz.alight_midi.sequencer.StepSequencerManager;
+import zone.kaz.alight_midi.sequencer.StepSequencerPattern;
+
+import static zone.kaz.alight_midi.gui.sequencer.StepSequencer.COLUMN_INDEX_BOX;
 
 import java.io.IOException;
 import java.net.URL;
@@ -53,45 +60,52 @@ public class StepSequencerController implements Initializable {
         ControllerManager controllerManager = DIContainer.get(ControllerManager.class);
         controllerManager.register(this);
         for (int i = 0; i < 3; i++) {
-            stepSequencerManager.getPattern().add(new StepSequencer(
+            StepSequencerPattern pattern = stepSequencerManager.getPattern();
+            pattern.add(new StepSequencer(
                     this,
                     i,
-                    stepSequencerManager.getPattern().getCalcClock(),
-                    stepSequencerManager.getPattern().getBeats(),
+                    pattern.getCalcClock(),
+                    pattern.getBeats(),
                     colWidth
             ));
         }
         clockFader.valueProperty().addListener(event -> {
-            stepSequencerManager.getPattern().setClock((int) clockFader.getValue());
-            int clock = stepSequencerManager.getPattern().getCalcClock();
-            int beats = stepSequencerManager.getPattern().getBeats();
+            StepSequencerPattern pattern = stepSequencerManager.getPattern();
+            pattern.setClock((int) clockFader.getValue());
+            updateStepSequencer(pattern);
+            int clock = pattern.getCalcClock();
+            int beats = pattern.getBeats();
             clockLabel.setText(String.valueOf(clock));
         });
         rateFader.valueProperty().addListener(event -> {
-            stepSequencerManager.getPattern().setRate((int) rateFader.getValue());
-            rateLabel.setText(String.valueOf(stepSequencerManager.getPattern().getCalcRate()));
+            StepSequencerPattern pattern = stepSequencerManager.getPattern();
+            pattern.setRate((int) rateFader.getValue());
+            rateLabel.setText(String.valueOf(pattern.getCalcRate()));
         });
         addSequence.setOnAction(event -> {
-            stepSequencerManager.getPattern().add(new StepSequencer(
+            StepSequencerPattern pattern = stepSequencerManager.getPattern();
+            pattern.add(new StepSequencer(
                     this,
-                    stepSequencerManager.getPattern().getSize(),
-                    stepSequencerManager.getPattern().getCalcClock(),
-                    stepSequencerManager.getPattern().getBeats(),
+                    pattern.getSize(),
+                    pattern.getCalcClock(),
+                    pattern.getBeats(),
                     colWidth));
         });
         removeSequence.setOnAction(event -> {
             stepSequencerManager.getPattern().remove();
         });
         sequencerGrid.widthProperty().addListener((observableValue, oldValue, newValue) -> {
+            StepSequencerPattern pattern = stepSequencerManager.getPattern();
             double labelWidth = sequencerGrid.getColumnConstraints().get(0).getPrefWidth();
-            int clock = stepSequencerManager.getPattern().getCalcClock();
+            int clock = pattern.getCalcClock();
             colWidth = (newValue.doubleValue() - labelWidth) / clock + 1;
-            stepSequencerManager.getPattern().setButtonWidth(colWidth);
+            pattern.setButtonWidth(colWidth);
         });
-        stepSequencerManager.getPattern().setClock(0);
         patternSave.setOnAction(event -> {
             System.out.println(patternNameField.getText());
         });
+        stepSequencerManager.getPattern().setClock(0);
+        updateStepSequencer(stepSequencerManager.getPattern());
     }
 
     private void loadAnimationList() {
@@ -123,6 +137,32 @@ public class StepSequencerController implements Initializable {
 
     public ListView<SequencerInfo> getAnimationList() {
         return animationList;
+    }
+
+    public void updateStepSequencer(StepSequencerPattern pattern) {
+        int currentClock = pattern.getCalcClock();
+        ObservableList<ColumnConstraints> constraintsList = sequencerGrid.getColumnConstraints();
+        if (constraintsList.size() - COLUMN_INDEX_BOX >= currentClock) {
+            constraintsList.remove(currentClock, constraintsList.size() - COLUMN_INDEX_BOX);
+            return;
+        }
+        double minWidth = 10;
+        double prefWidth = 10;
+        double maxWidth = Control.USE_COMPUTED_SIZE;
+        for (int i = constraintsList.size() - COLUMN_INDEX_BOX; i < currentClock; i++) {
+            ColumnConstraints columnConstraints = new ColumnConstraints(
+                    minWidth, prefWidth, maxWidth
+            );
+            columnConstraints.setFillWidth(true);
+            columnConstraints.setPercentWidth(-1);
+            columnConstraints.setHalignment(HPos.LEFT);
+            columnConstraints.setHgrow(Priority.SOMETIMES);
+            if (sequencerGrid.getColumnConstraints().size() > i + COLUMN_INDEX_BOX) {
+                sequencerGrid.getColumnConstraints().set(i + COLUMN_INDEX_BOX, columnConstraints);
+            } else {
+                sequencerGrid.getColumnConstraints().add(i + COLUMN_INDEX_BOX, columnConstraints);
+            }
+        }
     }
 
 }
