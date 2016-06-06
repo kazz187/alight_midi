@@ -21,6 +21,7 @@ import zone.kaz.alight_midi.sequencer.StepSequencerPattern;
 
 import static zone.kaz.alight_midi.gui.sequencer.StepSequencer.COLUMN_INDEX_BOX;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -34,6 +35,10 @@ public class StepSequencerController implements Initializable {
     private Parent root;
     @FXML
     private ListView<SequencerInfo> animationList;
+    @FXML
+    private ListView<SequencerInfo> colorList;
+    @FXML
+    private ListView<SequencerInfo> patternList;
     @FXML
     private GridPane sequencerGrid;
     @FXML
@@ -58,10 +63,17 @@ public class StepSequencerController implements Initializable {
     private StepSequencerManager stepSequencerManager = DIContainer.get(StepSequencerManager.class);
 
     private HashMap<String, AnimationInfo> animationInfoMap = new HashMap<>();
+    private HashMap<String, PatternInfo> patternInfoMap = new HashMap<>();
+
+    public static final String CONF_DIR_PATH = System.getProperty("user.home") + "/.alight_midi";
+    public static final String PATTERN_DIR_PATH = CONF_DIR_PATH + "/pattern";
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // TODO: Move to Preferences.
+        prepareConfDir();
         loadAnimationList();
+        loadPatternList();
         ControllerManager controllerManager = DIContainer.get(ControllerManager.class);
         controllerManager.register(this);
         for (int i = 0; i < 3; i++) {
@@ -110,33 +122,30 @@ public class StepSequencerController implements Initializable {
             StepSequencerPattern pattern = stepSequencerManager.getPattern();
             ObjectMapper objectMapper = new ObjectMapper();
             try {
-                if (!Objects.equals(patternNameField.getText(), "")) {
-                    StepSequencerPattern p = objectMapper.readValue(patternNameField.getText(), StepSequencerPattern.class);
-                    while (pattern.getSize() != 0) {
-                        pattern.remove();
-                    }
-                    int i = 0;
-                    for (StepSequencer stepSequencer : p.getStepSequencerList()) {
-                        stepSequencer.setController(this);
-                        stepSequencer.setRowIndex(i++);
-                        stepSequencer.initGridPane();
-                        stepSequencer.setButtonWidth(colWidth);
-                        stepSequencer.updateSequencerInfo();
-                        stepSequencer.setClock(p.getCalcClock(), p.getBeats());
-                        stepSequencer.updateButtons();
-                    }
-                    p.setClock(p.getClock());
-
-                    stepSequencerManager.setPattern(p);
-                    rateFader.valueProperty().set(p.getRate());
-                    clockFader.valueProperty().set(p.getClock());
-                }
+                objectMapper.writeValue(new File(PATTERN_DIR_PATH + "/" + patternNameField.getText() + ".json"), pattern);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
         stepSequencerManager.getPattern().setClock(0);
         updateStepSequencer(stepSequencerManager.getPattern());
+    }
+
+    private void prepareConfDir() {
+        new File(CONF_DIR_PATH).mkdir();
+        new File(PATTERN_DIR_PATH).mkdir();
+    }
+
+    public double getColWidth() {
+        return colWidth;
+    }
+
+    public void setRate(int rate) {
+        rateFader.valueProperty().set(rate);
+    }
+
+    public void setClock(int clock) {
+        clockFader.valueProperty().set(clock);
     }
 
     private void loadAnimationList() {
@@ -154,11 +163,26 @@ public class StepSequencerController implements Initializable {
             Set<ClassPath.ClassInfo> classInfoSet = ClassPath.from(loader).getTopLevelClasses("zone.kaz.alight_midi.sequencer.animation");
             for (ClassPath.ClassInfo classInfo : classInfoSet) {
                 AnimationInfo item = new AnimationInfo(classInfo);
-                this.animationList.itemsProperty().getValue().add(item);
+                animationList.itemsProperty().getValue().add(item);
                 animationInfoMap.put(item.toString(), item);
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void loadPatternList() {
+        patternList.setOnMouseClicked(event -> {
+            MultipleSelectionModel<SequencerInfo> items = patternList.getSelectionModel();
+            PatternInfo item = (PatternInfo) items.getSelectedItem();
+            item.loadPattern(this, stepSequencerManager);
+            event.consume();
+        });
+        File[] patternFileList = new File(PATTERN_DIR_PATH).listFiles();
+        for (File patternFile : patternFileList) {
+            PatternInfo patternInfo = new PatternInfo(patternFile.getAbsolutePath());
+            patternList.itemsProperty().getValue().add(patternInfo);
+            patternInfoMap.put(patternInfo.toString(), patternInfo);
         }
     }
 
