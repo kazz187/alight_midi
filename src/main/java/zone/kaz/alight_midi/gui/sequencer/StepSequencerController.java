@@ -123,6 +123,7 @@ public class StepSequencerController implements Initializable {
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 objectMapper.writeValue(new File(PATTERN_DIR_PATH + "/" + patternNameField.getText() + ".json"), pattern);
+                loadPatternList();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -178,6 +179,9 @@ public class StepSequencerController implements Initializable {
             item.loadPattern(this, stepSequencerManager);
             event.consume();
         });
+        patternList.itemsProperty().getValue().removeAll(
+                patternList.itemsProperty().getValue()
+        );
         File[] patternFileList = new File(PATTERN_DIR_PATH).listFiles();
         for (File patternFile : patternFileList) {
             PatternInfo patternInfo = new PatternInfo(patternFile.getAbsolutePath());
