@@ -118,6 +118,11 @@ public class StepSequencerController implements Initializable {
             colWidth = (newValue.doubleValue() - labelWidth) / clock + 1;
             pattern.setButtonWidth(colWidth);
         });
+        patternNameField.setOnKeyTyped(event -> {
+            if (Objects.equals(event.getCharacter(), "\r")) {
+                patternSave.fire();
+            }
+        });
         patternSave.setOnAction(event -> {
             StepSequencerPattern pattern = stepSequencerManager.getPattern();
             ObjectMapper objectMapper = new ObjectMapper();
@@ -177,6 +182,7 @@ public class StepSequencerController implements Initializable {
             MultipleSelectionModel<SequencerInfo> items = patternList.getSelectionModel();
             PatternInfo item = (PatternInfo) items.getSelectedItem();
             item.loadPattern(this, stepSequencerManager);
+            patternNameField.setText(item.toString());
             event.consume();
         });
         patternList.itemsProperty().getValue().removeAll(
