@@ -67,6 +67,8 @@ public class StepSequencerController implements Initializable {
 
     public static final String CONF_DIR_PATH = System.getProperty("user.home") + "/.alight_midi";
     public static final String PATTERN_DIR_PATH = CONF_DIR_PATH + "/pattern";
+    public static final int PAD_NUM_WIDTH = 8;
+    public static final int PAD_NUM_HEIGHT = 4;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -145,13 +147,15 @@ public class StepSequencerController implements Initializable {
             AnchorPane pane = (AnchorPane) tab.getContent();
             pane.getChildren().forEach(child -> {
                 GridPane p = (GridPane) child;
-                Label l = new Label();
-                l.setMaxHeight(Label.USE_COMPUTED_SIZE);
-                l.setMaxWidth(Label.USE_COMPUTED_SIZE);
-                l.backgroundProperty().set(new Background(new BackgroundFill(Paint.valueOf("#EFEEEE"), null, null)));
-                p.add(l, 0, 0);
+                for (int i = 0; i < PAD_NUM_HEIGHT; i++) {
+                    for (int j = 0; j < PAD_NUM_WIDTH; j++) {
+                        PadButton padButton = new PadButton();
+                        padButton.loadPattern("hoge hoge hoge hoge_hoge");
+                        p.add(padButton.getShape(), j, i);
+                        p.add(padButton.getLabel(), j, i);
+                    }
+                }
             });
-            System.out.println(tab.getText());
         }
     }
 
@@ -173,15 +177,7 @@ public class StepSequencerController implements Initializable {
     }
 
     private void loadAnimationList() {
-        animationList.setOnDragDetected(event -> {
-            MultipleSelectionModel<SequencerInfo> items = animationList.getSelectionModel();
-            SequencerInfo item = items.getSelectedItem();
-            Dragboard db = animationList.startDragAndDrop(TransferMode.ANY);
-            ClipboardContent content = new ClipboardContent();
-            content.putString("ANIMATION:" + item);
-            db.setContent(content);
-            event.consume();
-        });
+        animationList.setOnDragDetected(event -> setDraggable(event, animationList, "ANIMATION"));
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         try {
             Set<ClassPath.ClassInfo> classInfoSet = ClassPath.from(loader).getTopLevelClasses("zone.kaz.alight_midi.sequencer.animation");
@@ -203,6 +199,7 @@ public class StepSequencerController implements Initializable {
             patternNameField.setText(item.toString());
             event.consume();
         });
+        patternList.setOnDragDetected(event -> setDraggable(event, patternList, "PATTERN"));
         patternList.itemsProperty().getValue().removeAll(
                 patternList.itemsProperty().getValue()
         );
@@ -212,6 +209,16 @@ public class StepSequencerController implements Initializable {
             patternList.itemsProperty().getValue().add(patternInfo);
             patternInfoMap.put(patternInfo.toString(), patternInfo);
         }
+    }
+
+    private void setDraggable(MouseEvent event, ListView<SequencerInfo> list, String tag) {
+        MultipleSelectionModel<SequencerInfo> items = list.getSelectionModel();
+        SequencerInfo item = items.getSelectedItem();
+        Dragboard db = list.startDragAndDrop(TransferMode.ANY);
+        ClipboardContent content = new ClipboardContent();
+        content.putString(tag + ":" + item);
+        db.setContent(content);
+        event.consume();
     }
 
     public GridPane getSequencerGrid() {

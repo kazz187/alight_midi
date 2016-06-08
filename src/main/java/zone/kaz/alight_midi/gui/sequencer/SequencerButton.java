@@ -52,4 +52,5 @@ public class SequencerButton {
     public void setWidth(double width) {
         rectangle.setWidth(width);
     }
+
 }
