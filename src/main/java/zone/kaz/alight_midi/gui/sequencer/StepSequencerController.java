@@ -1,19 +1,17 @@
 package zone.kaz.alight_midi.gui.sequencer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.reflect.ClassPath;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Paint;
 import zone.kaz.alight_midi.gui.ControllerManager;
 import zone.kaz.alight_midi.inject.DIContainer;
 import zone.kaz.alight_midi.sequencer.StepSequencerManager;
@@ -24,10 +22,8 @@ import static zone.kaz.alight_midi.gui.sequencer.StepSequencer.COLUMN_INDEX_BOX;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Consumer;
 
 public class StepSequencerController implements Initializable {
 
@@ -57,6 +53,10 @@ public class StepSequencerController implements Initializable {
     private TextField patternNameField;
     @FXML
     private Button patternSave;
+    @FXML
+    private TabPane padTabPane;
+
+    private ArrayList<Tab> tabs = new ArrayList<>();
 
     private double colWidth = 0;
 
@@ -74,6 +74,7 @@ public class StepSequencerController implements Initializable {
         prepareConfDir();
         loadAnimationList();
         loadPatternList();
+        loadPadTabPane();
         ControllerManager controllerManager = DIContainer.get(ControllerManager.class);
         controllerManager.register(this);
         for (int i = 0; i < 3; i++) {
@@ -135,6 +136,23 @@ public class StepSequencerController implements Initializable {
         });
         stepSequencerManager.getPattern().setClock(0);
         updateStepSequencer(stepSequencerManager.getPattern());
+    }
+
+    private void loadPadTabPane() {
+        ObservableList<Tab> tabs = padTabPane.getTabs();
+        tabs.forEach(tab -> this.tabs.add(tab));
+        for (Tab tab : this.tabs) {
+            AnchorPane pane = (AnchorPane) tab.getContent();
+            pane.getChildren().forEach(child -> {
+                GridPane p = (GridPane) child;
+                Label l = new Label();
+                l.setMaxHeight(Label.USE_COMPUTED_SIZE);
+                l.setMaxWidth(Label.USE_COMPUTED_SIZE);
+                l.backgroundProperty().set(new Background(new BackgroundFill(Paint.valueOf("#EFEEEE"), null, null)));
+                p.add(l, 0, 0);
+            });
+            System.out.println(tab.getText());
+        }
     }
 
     private void prepareConfDir() {
