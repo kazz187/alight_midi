@@ -1,5 +1,7 @@
 package zone.kaz.alight_midi.device.midi;
 
+import zone.kaz.alight_midi.gui.ControllerManager;
+import zone.kaz.alight_midi.gui.sequencer.StepSequencerController;
 import zone.kaz.alight_midi.inject.DIContainer;
 import zone.kaz.alight_midi.sequencer.ClockManager;
 
@@ -11,29 +13,33 @@ public class MidiControllerMapping {
     private HashMap<Byte, Processor> mapping_on = new HashMap<>();
     private HashMap<Byte, Processor> mapping_off = new HashMap<>();
     private ClockManager clockManager = DIContainer.get(ClockManager.class);
+    private ControllerManager controllerManager = DIContainer.get(ControllerManager.class);
 
     public MidiControllerMapping() {
-        mapping_on.put((byte) 19, (v) ->{
-            clockManager.stopSequencer();
-        });
-        mapping_on.put((byte) 29, (v) ->{
-            clockManager.playSequencer();
-        });
-        mapping_on.put((byte) 39, (v) -> {
-            clockManager.onNudgePressed(-1);
-        });
-        mapping_on.put((byte) 49, (v) -> {
-            clockManager.onNudgePressed(1);
-        });
-        mapping_off.put((byte) 39, (v) -> {
-            clockManager.onNudgeReleased();
-        });
-        mapping_off.put((byte) 49, (v) -> {
-            clockManager.onNudgeReleased();
-        });
-        mapping_on.put((byte) 59, (v) -> {
-            clockManager.tapBpm();
-        });
+        mapping_on.put((byte) 19, v -> clockManager.stopSequencer());
+        mapping_on.put((byte) 29, v -> clockManager.playSequencer());
+        mapping_on.put((byte) 39, v -> clockManager.onNudgePressed(-1));
+        mapping_on.put((byte) 49, v -> clockManager.onNudgePressed(1));
+        mapping_off.put((byte) 39, v -> clockManager.onNudgeReleased());
+        mapping_off.put((byte) 49, v -> clockManager.onNudgeReleased());
+        mapping_on.put((byte) 59, v -> clockManager.tapBpm());
+        int x = 0, y = 0;
+        for (int i = 8; i >= 5 ; i--) {
+            for (int j = 1; j <= 8; j++) {
+                final int finalX = x, finalY = y;
+                mapping_on.put((byte) (i * 10 + j), v -> {
+                    StepSequencerController controller = (StepSequencerController) controllerManager.get(StepSequencerController.class);
+                    controller.onPadPressed(finalX, finalY);
+                });
+                mapping_off.put((byte) (i * 10 + j), v -> {
+                    StepSequencerController controller = (StepSequencerController) controllerManager.get(StepSequencerController.class);
+                    controller.onPadReleased(finalX, finalY);
+                });
+                x++;
+            }
+            y++;
+            x = 0;
+        }
     }
 
     public void invoke(int event, byte note, byte velocity) {

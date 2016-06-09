@@ -6,12 +6,10 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Paint;
 import zone.kaz.alight_midi.gui.ControllerManager;
 import zone.kaz.alight_midi.inject.DIContainer;
 import zone.kaz.alight_midi.sequencer.StepSequencerManager;
@@ -23,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.function.Consumer;
 
 public class StepSequencerController implements Initializable {
 
@@ -64,11 +61,10 @@ public class StepSequencerController implements Initializable {
 
     private HashMap<String, AnimationInfo> animationInfoMap = new HashMap<>();
     private HashMap<String, PatternInfo> patternInfoMap = new HashMap<>();
+    private HashMap<String, PadGroup> padGroupMap = new HashMap<>();
 
     public static final String CONF_DIR_PATH = System.getProperty("user.home") + "/.alight_midi";
     public static final String PATTERN_DIR_PATH = CONF_DIR_PATH + "/pattern";
-    public static final int PAD_NUM_WIDTH = 8;
-    public static final int PAD_NUM_HEIGHT = 4;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -144,18 +140,9 @@ public class StepSequencerController implements Initializable {
         ObservableList<Tab> tabs = padTabPane.getTabs();
         tabs.forEach(tab -> this.tabs.add(tab));
         for (Tab tab : this.tabs) {
-            AnchorPane pane = (AnchorPane) tab.getContent();
-            pane.getChildren().forEach(child -> {
-                GridPane p = (GridPane) child;
-                for (int i = 0; i < PAD_NUM_HEIGHT; i++) {
-                    for (int j = 0; j < PAD_NUM_WIDTH; j++) {
-                        PadButton padButton = new PadButton();
-                        padButton.loadPattern("hoge hoge hoge hoge_hoge");
-                        p.add(padButton.getShape(), j, i);
-                        p.add(padButton.getLabel(), j, i);
-                    }
-                }
-            });
+            PadGroup padGroup = new PadGroup(this, stepSequencerManager);
+            padGroup.createPadButtons(tab);
+            padGroupMap.put(tab.getText(), padGroup);
         }
     }
 
@@ -194,9 +181,8 @@ public class StepSequencerController implements Initializable {
     private void loadPatternList() {
         patternList.setOnMouseClicked(event -> {
             MultipleSelectionModel<SequencerInfo> items = patternList.getSelectionModel();
-            PatternInfo item = (PatternInfo) items.getSelectedItem();
-            item.loadPattern(this, stepSequencerManager);
-            patternNameField.setText(item.toString());
+            PatternInfo patternInfo = (PatternInfo) items.getSelectedItem();
+            patternInfo.loadPattern(this, stepSequencerManager);
             event.consume();
         });
         patternList.setOnDragDetected(event -> setDraggable(event, patternList, "PATTERN"));
@@ -223,6 +209,10 @@ public class StepSequencerController implements Initializable {
 
     public GridPane getSequencerGrid() {
         return sequencerGrid;
+    }
+
+    public void setPatternName(String patternName) {
+        patternNameField.setText(patternName);
     }
 
     public ListView<SequencerInfo> getAnimationList() {
@@ -255,7 +245,35 @@ public class StepSequencerController implements Initializable {
         }
     }
 
-    public SequencerInfo getAnimationInfo(String key) {
+    public AnimationInfo getAnimationInfo(String key) {
         return animationInfoMap.get(key);
     }
+
+    public PatternInfo getPatternInfo(String key) {
+        return patternInfoMap.get(key);
+    }
+
+    private Tab getActivePadTab() {
+        SingleSelectionModel<Tab> selectionModel = padTabPane.getSelectionModel();
+        return selectionModel.getSelectedItem();
+    }
+
+    public void onPadPressed(int x, int y) {
+        setPadButtonEnable(x, y, true);
+    }
+
+    public void onPadReleased(int x, int y) {
+        setPadButtonEnable(x, y, false);
+    }
+
+    private void setPadButtonEnable(int x, int y, boolean isEnable) {
+        PadGroup padGroup = padGroupMap.get(getActivePadTab().getText());
+        if (padGroup == null) {
+            System.err.println("padGroup is null.");
+            return;
+        }
+        PadButton padButton = padGroup.getPadButton(x, y);
+        padButton.setEnable(isEnable);
+    }
+
 }

@@ -45,6 +45,7 @@ public class PatternInfo implements SequencerInfo {
             manager.setPattern(pattern);
             controller.setRate(pattern.getRate());
             controller.setClock(pattern.getClock());
+            controller.setPatternName(toString());
         } catch (IOException e) {
             e.printStackTrace();
         }

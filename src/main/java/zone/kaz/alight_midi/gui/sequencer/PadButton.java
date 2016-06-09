@@ -3,6 +3,9 @@ package zone.kaz.alight_midi.gui.sequencer;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import zone.kaz.alight_midi.sequencer.StepSequencerManager;
+
+import java.util.HashMap;
 
 public class PadButton {
 
@@ -15,10 +18,15 @@ public class PadButton {
     private Label label;
     private boolean isReady = false;
     private boolean isEnable = false;
+    private PatternInfo patternInfo = null;
+    private StepSequencerController controller;
+    private StepSequencerManager manager;
 
-    public PadButton() {
+    public PadButton(StepSequencerController controller, StepSequencerManager manager) {
+        this.controller = controller;
+        this.manager = manager;
         rectangle = new Rectangle();
-        rectangle.setWidth(70);
+        rectangle.setWidth(90);
         rectangle.setHeight(40);
         rectangle.setStrokeWidth(1.0);
         rectangle.setStroke(STROKE_COLOR);
@@ -56,10 +64,23 @@ public class PadButton {
         unloadPattern();
     }
 
-    public void loadPattern(String patternName) {
-        setReady(true);
-        label.setText(patternName);
+    public void updateSequencerInfo(String[] sequencerInfoData, PatternInfo sequencerInfo) {
+        if (sequencerInfoData == null) {
+            return;
+        }
+        switch (sequencerInfoData[0]) {
+            case "PATTERN":
+                loadPattern(sequencerInfo);
+                break;
+            default:
+                break;
+        }
+    }
 
+    public void loadPattern(PatternInfo patternInfo) {
+        setReady(true);
+        label.setText(patternInfo.toString());
+        this.patternInfo = patternInfo;
     }
 
     public void unloadPattern() {
@@ -72,9 +93,14 @@ public class PadButton {
         this.isReady = isReady;
     }
 
-    private void setEnable(boolean isEnable) {
-        rectangle.setFill(isEnable ? ON_COLOR : isReady ? LOADED_COLOR : UNLOADED_COLOR);
-        this.isEnable = isEnable;
+    public void setEnable(boolean isEnabled) {
+        System.out.println("setEnable: " + isEnabled + ", " + label.getText());
+        rectangle.setFill(isEnabled ? ON_COLOR : (isReady ? LOADED_COLOR : UNLOADED_COLOR));
+        if (isEnabled) {
+            System.out.println("setEnable: " + isEnabled + ", " + label.getText());
+            patternInfo.loadPattern(controller, manager);
+        }
+        this.isEnable = isEnabled;
     }
 
     public Rectangle getShape() {
