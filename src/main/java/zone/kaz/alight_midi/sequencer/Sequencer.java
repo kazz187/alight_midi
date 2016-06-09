@@ -10,6 +10,7 @@ import zone.kaz.alight_midi.inject.DIContainer;
 import zone.kaz.alight_midi.sequencer.animation.Wave;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 public class Sequencer {
 
@@ -41,38 +42,46 @@ public class Sequencer {
     }
 
     public void setTick(long tick) {
-        double rate = stepSequencerManager.getPattern().getCalcRate();
-        ArrayList<StepSequencer> stepSequencerList = stepSequencerManager.getPattern().getStepSequencerList();
-        for (StepSequencer stepSequencer : stepSequencerList) {
-            Boolean[] boolArray = stepSequencer.getBoolArray();
-            int size = boolArray.length;
-            int ratedTick = (int) (baseTick / 4 * rate);
-            int loopTick = ratedTick * size;
-            int currentSeqTick = (int) (tick % loopTick);
-            int prevSeqTick = (int) (prevTick % loopTick);
-            if (prevSeqTick > currentSeqTick) {
-                prevSeqTick -= loopTick;
-            }
-            int checkStepNum = currentSeqTick / ratedTick;
-            if ((tick == 0 || prevSeqTick < checkStepNum * ratedTick)
-                    && checkStepNum <= currentSeqTick
-                    && boolArray[checkStepNum]) {
-                StepSequencer.Type type = stepSequencer.getType();
-                if (type == null) continue;
-                switch (type) {
-                    case ANIMATION:
-                        AnimationInfo info = (AnimationInfo) stepSequencer.getSequencerInfo();
-                        Animation animation = info.createAnimation(
-                                tick, ratedTick,
-                                deviceBufferManager.createDeviceBuffer("stripe_test")
-                        );
-                        animationManager.register(animation, MixerChannel.CHANNEL1);
-                        break;
-                    default:
-                        break;
+        Semaphore stepSequencerSemaphore = stepSequencerManager.getStepSequencerSemaphore();
+        try {
+            stepSequencerSemaphore.acquire();
+            StepSequencerPattern pattern = stepSequencerManager.getPattern();
+            double rate = pattern.getCalcRate();
+            ArrayList<StepSequencer> stepSequencerList = pattern.getStepSequencerList();
+            for (StepSequencer stepSequencer : stepSequencerList) {
+                Boolean[] boolArray = stepSequencer.getBoolArray();
+                int size = boolArray.length;
+                int ratedTick = (int) (baseTick / 4 * rate);
+                int loopTick = ratedTick * size;
+                int currentSeqTick = (int) (tick % loopTick);
+                int prevSeqTick = (int) (prevTick % loopTick);
+                if (prevSeqTick > currentSeqTick) {
+                    prevSeqTick -= loopTick;
                 }
+                int checkStepNum = currentSeqTick / ratedTick;
+                if ((tick == 0 || prevSeqTick < checkStepNum * ratedTick)
+                        && checkStepNum <= currentSeqTick
+                        && boolArray[checkStepNum]) {
+                    StepSequencer.Type type = stepSequencer.getType();
+                    if (type == null) continue;
+                    switch (type) {
+                        case ANIMATION:
+                            AnimationInfo info = (AnimationInfo) stepSequencer.getSequencerInfo();
+                            Animation animation = info.createAnimation(
+                                    tick, ratedTick,
+                                    deviceBufferManager.createDeviceBuffer("stripe_test")
+                            );
+                            animationManager.register(animation, MixerChannel.CHANNEL1);
+                            break;
+                        default:
+                            break;
+                    }
 
+                }
             }
+            stepSequencerSemaphore.release();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
         while (tick > nextBeatTick) {

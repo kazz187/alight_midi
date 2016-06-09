@@ -8,6 +8,7 @@ import zone.kaz.alight_midi.sequencer.StepSequencerPattern;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
 
 public class PatternInfo implements SequencerInfo {
@@ -21,8 +22,10 @@ public class PatternInfo implements SequencerInfo {
     }
 
     public void loadPattern(StepSequencerController controller, StepSequencerManager manager) {
-        StepSequencerPattern currentPattern = manager.getPattern();
+        Semaphore stepSequencerSemaphore = manager.getStepSequencerSemaphore();
         try {
+            stepSequencerSemaphore.acquire();
+            StepSequencerPattern currentPattern = manager.getPattern();
             String json = Files.readAllLines(Paths.get(filePath)).stream().collect(Collectors.joining());
             ObjectMapper objectMapper = new ObjectMapper();
             StepSequencerPattern pattern = objectMapper.readValue(json, StepSequencerPattern.class);
@@ -46,7 +49,8 @@ public class PatternInfo implements SequencerInfo {
             controller.setRate(pattern.getRate());
             controller.setClock(pattern.getClock());
             controller.setPatternName(toString());
-        } catch (IOException e) {
+            stepSequencerSemaphore.release();
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }

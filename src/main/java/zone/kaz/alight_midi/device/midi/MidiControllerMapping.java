@@ -1,5 +1,6 @@
 package zone.kaz.alight_midi.device.midi;
 
+import javafx.application.Platform;
 import zone.kaz.alight_midi.gui.ControllerManager;
 import zone.kaz.alight_midi.gui.sequencer.StepSequencerController;
 import zone.kaz.alight_midi.inject.DIContainer;
@@ -29,11 +30,11 @@ public class MidiControllerMapping {
                 final int finalX = x, finalY = y;
                 mapping_on.put((byte) (i * 10 + j), v -> {
                     StepSequencerController controller = (StepSequencerController) controllerManager.get(StepSequencerController.class);
-                    controller.onPadPressed(finalX, finalY);
+                    Platform.runLater(() -> controller.onPadPressed(finalX, finalY));
                 });
                 mapping_off.put((byte) (i * 10 + j), v -> {
                     StepSequencerController controller = (StepSequencerController) controllerManager.get(StepSequencerController.class);
-                    controller.onPadReleased(finalX, finalY);
+                    Platform.runLater(() -> controller.onPadReleased(finalX, finalY));
                 });
                 x++;
             }

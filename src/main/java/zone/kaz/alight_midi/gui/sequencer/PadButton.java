@@ -5,8 +5,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import zone.kaz.alight_midi.sequencer.StepSequencerManager;
 
-import java.util.HashMap;
-
 public class PadButton {
 
     public final static Paint UNLOADED_COLOR = Paint.valueOf("#EFEEEE");
@@ -17,7 +15,7 @@ public class PadButton {
     private Rectangle rectangle;
     private Label label;
     private boolean isReady = false;
-    private boolean isEnable = false;
+    private boolean isEnabled = false;
     private PatternInfo patternInfo = null;
     private StepSequencerController controller;
     private StepSequencerManager manager;
@@ -33,7 +31,7 @@ public class PadButton {
         rectangle.setOnMousePressed(event -> {
             switch (event.getButton()) {
                 case PRIMARY:
-                    setEnable(true);
+                    setEnabled(true);
                     break;
                 default:
                     break;
@@ -42,7 +40,7 @@ public class PadButton {
         rectangle.setOnMouseReleased(event -> {
             switch (event.getButton()) {
                 case PRIMARY:
-                    setEnable(false);
+                    setEnabled(false);
                     break;
                 default:
                     break;
@@ -93,14 +91,12 @@ public class PadButton {
         this.isReady = isReady;
     }
 
-    public void setEnable(boolean isEnabled) {
-        System.out.println("setEnable: " + isEnabled + ", " + label.getText());
+    public void setEnabled(boolean isEnabled) {
         rectangle.setFill(isEnabled ? ON_COLOR : (isReady ? LOADED_COLOR : UNLOADED_COLOR));
-        if (isEnabled) {
-            System.out.println("setEnable: " + isEnabled + ", " + label.getText());
+        if (isEnabled && patternInfo != null) {
             patternInfo.loadPattern(controller, manager);
         }
-        this.isEnable = isEnabled;
+        this.isEnabled = isEnabled;
     }
 
     public Rectangle getShape() {

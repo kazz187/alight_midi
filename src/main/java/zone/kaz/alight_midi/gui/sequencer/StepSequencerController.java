@@ -12,6 +12,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import zone.kaz.alight_midi.gui.ControllerManager;
 import zone.kaz.alight_midi.inject.DIContainer;
+import zone.kaz.alight_midi.sequencer.ClockManager;
 import zone.kaz.alight_midi.sequencer.StepSequencerManager;
 import zone.kaz.alight_midi.sequencer.StepSequencerPattern;
 
@@ -58,6 +59,7 @@ public class StepSequencerController implements Initializable {
     private double colWidth = 0;
 
     private StepSequencerManager stepSequencerManager = DIContainer.get(StepSequencerManager.class);
+    private ClockManager clockManager = DIContainer.get(ClockManager.class);
 
     private HashMap<String, AnimationInfo> animationInfoMap = new HashMap<>();
     private HashMap<String, PatternInfo> patternInfoMap = new HashMap<>();
@@ -267,13 +269,14 @@ public class StepSequencerController implements Initializable {
     }
 
     private void setPadButtonEnable(int x, int y, boolean isEnable) {
+        clockManager.playSequencer();
         PadGroup padGroup = padGroupMap.get(getActivePadTab().getText());
         if (padGroup == null) {
             System.err.println("padGroup is null.");
             return;
         }
         PadButton padButton = padGroup.getPadButton(x, y);
-        padButton.setEnable(isEnable);
+        padButton.setEnabled(isEnable);
     }
 
 }
