@@ -2,6 +2,7 @@ package zone.kaz.alight_midi.gui.sequencer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.reflect.ClassPath;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -269,14 +270,19 @@ public class StepSequencerController implements Initializable {
     }
 
     private void setPadButtonEnable(int x, int y, boolean isEnable) {
-        clockManager.playSequencer();
+        if (isEnable) {
+            clockManager.playSequencer();
+        }
         PadGroup padGroup = padGroupMap.get(getActivePadTab().getText());
         if (padGroup == null) {
             System.err.println("padGroup is null.");
             return;
         }
         PadButton padButton = padGroup.getPadButton(x, y);
-        padButton.setEnabled(isEnable);
+        Platform.runLater(() -> padButton.setEnabled(isEnable));
     }
 
+    public String getPatternName() {
+        return patternNameField.getText();
+    }
 }

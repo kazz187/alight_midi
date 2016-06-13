@@ -1,6 +1,5 @@
 package zone.kaz.alight_midi.device.midi;
 
-import javafx.application.Platform;
 import zone.kaz.alight_midi.gui.ControllerManager;
 import zone.kaz.alight_midi.gui.sequencer.StepSequencerController;
 import zone.kaz.alight_midi.inject.DIContainer;
@@ -15,6 +14,7 @@ public class MidiControllerMapping {
     private HashMap<Byte, Processor> mapping_off = new HashMap<>();
     private ClockManager clockManager = DIContainer.get(ClockManager.class);
     private ControllerManager controllerManager = DIContainer.get(ControllerManager.class);
+    private StepSequencerController controller = null;
 
     public MidiControllerMapping() {
         mapping_on.put((byte) 19, v -> clockManager.stopSequencer());
@@ -29,18 +29,23 @@ public class MidiControllerMapping {
             for (int j = 1; j <= 8; j++) {
                 final int finalX = x, finalY = y;
                 mapping_on.put((byte) (i * 10 + j), v -> {
-                    StepSequencerController controller = (StepSequencerController) controllerManager.get(StepSequencerController.class);
-                    Platform.runLater(() -> controller.onPadPressed(finalX, finalY));
+                    cacheStepSequencerController().onPadPressed(finalX, finalY);
                 });
                 mapping_off.put((byte) (i * 10 + j), v -> {
-                    StepSequencerController controller = (StepSequencerController) controllerManager.get(StepSequencerController.class);
-                    Platform.runLater(() -> controller.onPadReleased(finalX, finalY));
+                    cacheStepSequencerController().onPadReleased(finalX, finalY);
                 });
                 x++;
             }
             y++;
             x = 0;
         }
+    }
+
+    private StepSequencerController cacheStepSequencerController() {
+        if (controller == null) {
+            controller = (StepSequencerController) controllerManager.get(StepSequencerController.class);
+        }
+        return controller;
     }
 
     public void invoke(int event, byte note, byte velocity) {

@@ -22,6 +22,9 @@ public class PatternInfo implements SequencerInfo {
     }
 
     public void loadPattern(StepSequencerController controller, StepSequencerManager manager) {
+        if (patternName.equals(controller.getPatternName())) {
+            return;
+        }
         Semaphore stepSequencerSemaphore = manager.getStepSequencerSemaphore();
         try {
             stepSequencerSemaphore.acquire();
