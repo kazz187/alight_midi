@@ -69,7 +69,8 @@ public class Sequencer {
                             AnimationInfo info = (AnimationInfo) stepSequencer.getSequencerInfo();
                             Animation animation = info.createAnimation(
                                     tick, ratedTick,
-                                    deviceBufferManager.createDeviceBuffer("stripe_test")
+                                    deviceBufferManager.createDeviceBuffer("stripe_test"),
+                                    stepSequencer.getParams()
                             );
                             animationManager.register(animation, MixerChannel.CHANNEL1);
                             break;

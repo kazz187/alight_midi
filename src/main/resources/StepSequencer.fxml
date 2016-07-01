@@ -312,6 +312,8 @@
                 <RowConstraints minHeight="10.0" percentHeight="0.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
             </GridPane>
+            <HBox prefHeight="100.0" prefWidth="200.0" />
+            <TextField fx:id="paramsField" />
          </children>
       </VBox>
    </center>

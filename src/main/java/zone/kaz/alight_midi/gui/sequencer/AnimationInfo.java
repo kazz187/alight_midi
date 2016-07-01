@@ -18,12 +18,13 @@ public class AnimationInfo implements SequencerInfo {
         }
     }
 
-    public Animation createAnimation(long startTick, int tickSize, DeviceBuffer deviceBuffer) {
+    public Animation createAnimation(long startTick, int tickSize, DeviceBuffer deviceBuffer, String params) {
         try {
             Animation animation = animationClass.newInstance();
             animation.setStartTick(startTick);
             animation.setTickSize(tickSize);
             animation.setDeviceBuffer(deviceBuffer);
+            animation.setParams(params);
             return animation;
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();

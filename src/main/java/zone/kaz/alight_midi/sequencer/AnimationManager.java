@@ -19,6 +19,7 @@ public class AnimationManager {
     public boolean register(Animation animation, MixerChannel channel) {
         CopyOnWriteArrayList<Animation> animationList = getChannelAnimationList(channel);
         if (animationList != null) {
+            animation.init();
             animationList.add(animation);
             return true;
         }

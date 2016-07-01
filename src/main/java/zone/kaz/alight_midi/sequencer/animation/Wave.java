@@ -13,15 +13,14 @@ public class Wave extends Animation {
 
     public Wave() {
         super();
-        init();
     }
 
-    public Wave(long startTick, int tickSize, DeviceBuffer deviceBuffer) {
-        super(startTick, tickSize, deviceBuffer);
-        init();
+    public Wave(long startTick, int tickSize, DeviceBuffer deviceBuffer, String params) {
+        super(startTick, tickSize, deviceBuffer, params);
     }
 
-    private void init() {
+    @Override
+    public void init() {
         Random rand = new Random();
         int color = rand.nextInt(3);
         switch (color) {

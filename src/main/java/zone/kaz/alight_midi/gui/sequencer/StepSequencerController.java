@@ -54,6 +54,8 @@ public class StepSequencerController implements Initializable {
     private Button patternSave;
     @FXML
     private TabPane padTabPane;
+    @FXML
+    private TextField paramsField;
 
     private ArrayList<Tab> tabs = new ArrayList<>();
 
@@ -68,6 +70,7 @@ public class StepSequencerController implements Initializable {
 
     public static final String CONF_DIR_PATH = System.getProperty("user.home") + "/.alight_midi";
     public static final String PATTERN_DIR_PATH = CONF_DIR_PATH + "/pattern";
+    private StepSequencer currentStepSequencer;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -137,6 +140,11 @@ public class StepSequencerController implements Initializable {
         });
         stepSequencerManager.getPattern().setClock(0);
         updateStepSequencer(stepSequencerManager.getPattern());
+        paramsField.setOnKeyTyped(event -> {
+            if (Objects.equals(event.getCharacter(), "\r")) {
+                currentStepSequencer.setParams(paramsField.getText());
+            }
+        });
     }
 
     private void loadPadTabPane() {
@@ -285,4 +293,14 @@ public class StepSequencerController implements Initializable {
     public String getPatternName() {
         return patternNameField.getText();
     }
+
+    public void setCurrentStepSequencer(StepSequencer currentStepSequencer) {
+        this.currentStepSequencer = currentStepSequencer;
+        String params = null;
+        if (currentStepSequencer != null) {
+            params = currentStepSequencer.getParams();
+        }
+        paramsField.setText(params);
+    }
+
 }

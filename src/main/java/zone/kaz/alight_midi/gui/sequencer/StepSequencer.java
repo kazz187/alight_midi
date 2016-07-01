@@ -42,6 +42,8 @@ public class StepSequencer {
     private String[] sequencerInfoData = null;
     @JsonProperty
     private Boolean[] boolArray = null;
+    @JsonProperty
+    private String params = "";
 
     public StepSequencer() {
         initLabel();
@@ -106,6 +108,9 @@ public class StepSequencer {
             }
             event.setDropCompleted(success);
             event.consume();
+        });
+        label.setOnMouseClicked(event -> {
+            controller.setCurrentStepSequencer(this);
         });
     }
 
@@ -191,6 +196,14 @@ public class StepSequencer {
     public void setButtonWidth(double buttonWidth) {
         this.buttonWidth = buttonWidth;
         buttons.forEach(btn -> btn.setWidth(buttonWidth));
+    }
+
+    public String getParams() {
+        return params;
+    }
+
+    public void setParams(String params) {
+        this.params = params;
     }
 
 }

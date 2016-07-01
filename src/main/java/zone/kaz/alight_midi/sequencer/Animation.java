@@ -8,19 +8,22 @@ public abstract class Animation {
     protected long startTick;
     protected DeviceBuffer deviceBuffer;
     protected int tickSize;
+    protected String params;
 
     public Animation() {}
 
-    public Animation(long startTick, int tickSize, DeviceBuffer deviceBuffer) {
+    public Animation(long startTick, int tickSize, DeviceBuffer deviceBuffer, String params) {
         this.startTick = startTick;
         this.tickSize = tickSize;
         this.deviceBuffer = deviceBuffer;
+        this.params = params;
     }
+
+    public abstract void init();
 
     public DeviceBuffer getDeviceBuffer() {
         return deviceBuffer;
     }
-
 
     public void setTickSize(int tickSize) {
         this.tickSize = tickSize;
@@ -32,6 +35,10 @@ public abstract class Animation {
 
     public void setDeviceBuffer(DeviceBuffer deviceBuffer) {
         this.deviceBuffer = deviceBuffer;
+    }
+
+    public void setParams(String params) {
+        this.params = params;
     }
 
     public abstract void setTick(long tick);

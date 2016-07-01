@@ -52,6 +52,11 @@ public class PatternInfo implements SequencerInfo {
             controller.setRate(pattern.getRate());
             controller.setClock(pattern.getClock());
             controller.setPatternName(toString());
+            StepSequencer firstStepSequencer = null;
+            if (pattern.getStepSequencerList().size() > 0) {
+                firstStepSequencer = pattern.getStepSequencerList().get(0);
+            }
+            controller.setCurrentStepSequencer(firstStepSequencer);
             stepSequencerSemaphore.release();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
