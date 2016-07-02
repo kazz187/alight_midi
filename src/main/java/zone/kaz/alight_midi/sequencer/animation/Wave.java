@@ -28,6 +28,7 @@ public class Wave extends Animation {
         };
         RandomColor randomColor = new RandomColor(colorList);
         this.color = randomColor.getNext();
+        this.tickSize *= waveParams.getRate();
     }
 
     @Override

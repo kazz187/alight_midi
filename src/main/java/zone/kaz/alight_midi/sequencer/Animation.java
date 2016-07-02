@@ -1,6 +1,5 @@
 package zone.kaz.alight_midi.sequencer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import zone.kaz.alight_midi.device.led.DeviceBuffer;
 import zone.kaz.alight_midi.device.led.Stripe;
 
