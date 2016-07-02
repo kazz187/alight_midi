@@ -3,13 +3,15 @@ package zone.kaz.alight_midi.sequencer.animation;
 import zone.kaz.alight_midi.device.led.DeviceBuffer;
 import zone.kaz.alight_midi.device.led.Stripe;
 import zone.kaz.alight_midi.sequencer.Animation;
+import zone.kaz.alight_midi.sequencer.animation.util.Color;
+import zone.kaz.alight_midi.sequencer.animation.util.RandomColor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Random extends Animation {
 
-    private int r = 0, g = 0, b = 0;
+    private Color color;
     private int[] positions;
 
     public Random() {
@@ -22,22 +24,16 @@ public class Random extends Animation {
 
     @Override
     public void init() {
-        java.util.Random rand = new java.util.Random();
-        int color = rand.nextInt(3);
-        switch (color) {
-            case 0:
-                r = 0; g = 0xff; b = 0xff;
-                break;
-            case 1:
-                r = 0xff; g = 0; b = 0xff;
-                break;
-            case 2:
-                r = 0xff; g = 0xff; b = 0;
-                break;
-        }
+        Color[] colorList = new Color[3];
+        colorList[0] = new Color(0, 0xff, 0xff);
+        colorList[1] = new Color(0xff, 0, 0xff);
+        colorList[2] = new Color(0xff, 0xff, 0);
+        RandomColor randomColor = new RandomColor(colorList);
+        this.color = randomColor.getNext();
 
         List<Stripe> stripes = deviceBuffer.getStripes();
         positions = new int[stripes.size()];
+        java.util.Random rand = new java.util.Random();
         int i = 0;
         for (Stripe stripe : stripes) {
             positions[i] = rand.nextInt(stripe.getBuffer().length/3);
@@ -56,9 +52,9 @@ public class Random extends Animation {
         }
         for (Stripe stripe : stripes) {
             byte[] buffer = stripe.getBuffer();
-            buffer[positions[i]*3]   = (byte) (g * alpha);
-            buffer[positions[i]*3+1] = (byte) (b * alpha);
-            buffer[positions[i]*3+2] = (byte) (r * alpha);
+            buffer[positions[i]*3]   = (byte) (color.getG() * alpha);
+            buffer[positions[i]*3+1] = (byte) (color.getB() * alpha);
+            buffer[positions[i]*3+2] = (byte) (color.getR() * alpha);
             i++;
         }
     }
