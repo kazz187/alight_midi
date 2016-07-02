@@ -1,6 +1,5 @@
 package zone.kaz.alight_midi.sequencer.animation;
 
-import zone.kaz.alight_midi.device.led.DeviceBuffer;
 import zone.kaz.alight_midi.device.led.Stripe;
 import zone.kaz.alight_midi.sequencer.Animation;
 import zone.kaz.alight_midi.sequencer.animation.util.Color;
@@ -18,16 +17,13 @@ public class Random extends Animation {
         super();
     }
 
-    public Random(long startTick, int tickSize, DeviceBuffer deviceBuffer, String params) {
-        super(startTick, tickSize, deviceBuffer, params);
-    }
-
     @Override
     public void init() {
-        Color[] colorList = new Color[3];
-        colorList[0] = new Color(0, 0xff, 0xff);
-        colorList[1] = new Color(0xff, 0, 0xff);
-        colorList[2] = new Color(0xff, 0xff, 0);
+        Color[] colorList = {
+                new Color(0, 0xff, 0xff),
+                new Color(0xff, 0, 0xff),
+                new Color(0xff, 0xff, 0),
+        };
         RandomColor randomColor = new RandomColor(colorList);
         this.color = randomColor.getNext();
 

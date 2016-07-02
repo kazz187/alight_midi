@@ -1,6 +1,5 @@
 package zone.kaz.alight_midi.sequencer.animation;
 
-import zone.kaz.alight_midi.device.led.DeviceBuffer;
 import zone.kaz.alight_midi.device.led.Stripe;
 import zone.kaz.alight_midi.sequencer.Animation;
 
@@ -10,10 +9,6 @@ public class AllFlash extends Animation {
 
     public AllFlash() {
         super();
-    }
-
-    public AllFlash(long startTick, int tickSize, DeviceBuffer deviceBuffer, String params) {
-        super(startTick, tickSize, deviceBuffer, params);
     }
 
     @Override

@@ -1,9 +1,10 @@
 package zone.kaz.alight_midi.sequencer.animation;
 
-import zone.kaz.alight_midi.device.led.DeviceBuffer;
 import zone.kaz.alight_midi.device.led.Stripe;
 import zone.kaz.alight_midi.sequencer.Animation;
+import zone.kaz.alight_midi.sequencer.animation.params.WaveParams;
 import zone.kaz.alight_midi.sequencer.animation.util.Color;
+import zone.kaz.alight_midi.sequencer.animation.util.ParamsLoader;
 import zone.kaz.alight_midi.sequencer.animation.util.RandomColor;
 
 import java.util.ArrayList;
@@ -11,21 +12,20 @@ import java.util.ArrayList;
 public class Wave extends Animation {
 
     private Color color;
+    private WaveParams waveParams;
 
     public Wave() {
         super();
     }
 
-    public Wave(long startTick, int tickSize, DeviceBuffer deviceBuffer, String params) {
-        super(startTick, tickSize, deviceBuffer, params);
-    }
-
     @Override
     public void init() {
-        Color[] colorList = new Color[3];
-        colorList[0] = new Color(0, 0xff, 0xff);
-        colorList[1] = new Color(0xff, 0, 0xff);
-        colorList[2] = new Color(0xff, 0xff, 0);
+        waveParams = new ParamsLoader<WaveParams>(this).load(WaveParams.class);
+        Color[] colorList = {
+                new Color(0, 0xff, 0xff),
+                new Color(0xff, 0, 0xff),
+                new Color(0xff, 0xff, 0),
+        };
         RandomColor randomColor = new RandomColor(colorList);
         this.color = randomColor.getNext();
     }
@@ -35,6 +35,9 @@ public class Wave extends Animation {
         ArrayList<Stripe> stripes = deviceBuffer.getStripes();
         long pos = tick - startTick;
         double posRate = (double) pos / tickSize;
+        if (waveParams.getReverse()) {
+            posRate = 1 - posRate;
+        }
         for (Stripe stripe : stripes) {
             byte[] buffer = stripe.getBuffer();
             for (int i = 0; i < buffer.length / 3; i++) {

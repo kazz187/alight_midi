@@ -81,16 +81,17 @@ public class StepSequencerController implements Initializable {
         loadPadTabPane();
         ControllerManager controllerManager = DIContainer.get(ControllerManager.class);
         controllerManager.register(this);
+        StepSequencerPattern defaultPattern = stepSequencerManager.getPattern();
         for (int i = 0; i < 3; i++) {
-            StepSequencerPattern pattern = stepSequencerManager.getPattern();
-            pattern.add(new StepSequencer(
+            defaultPattern.add(new StepSequencer(
                     this,
                     i,
-                    pattern.getCalcClock(),
-                    pattern.getBeats(),
+                    defaultPattern.getCalcClock(),
+                    defaultPattern.getBeats(),
                     colWidth
             ));
         }
+        currentStepSequencer = defaultPattern.getStepSequencerList().get(0);
         clockFader.valueProperty().addListener(event -> {
             StepSequencerPattern pattern = stepSequencerManager.getPattern();
             pattern.setClock((int) clockFader.getValue());
