@@ -31,6 +31,17 @@ public class DeviceBuffer {
         return stripes;
     }
 
+    public ArrayList<Stripe> getStripes(int[] numbers) {
+        if (numbers == null) {
+            return stripes;
+        }
+        ArrayList<Stripe> stripes = new ArrayList<>();
+        for (int i = 0; i < numbers.length; i++) {
+            stripes.add(this.stripes.get(numbers[i]));
+        }
+        return stripes;
+    }
+
     public int getStripesLength() {
         return stripes.size();
     }

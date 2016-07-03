@@ -2,10 +2,14 @@ package zone.kaz.alight_midi.sequencer.animation;
 
 import zone.kaz.alight_midi.device.led.Stripe;
 import zone.kaz.alight_midi.sequencer.Animation;
+import zone.kaz.alight_midi.sequencer.animation.params.AllFlashParams;
+import zone.kaz.alight_midi.sequencer.animation.util.ParamsLoader;
 
 import java.util.ArrayList;
 
 public class AllFlash extends Animation {
+
+    private AllFlashParams allFlashParams;
 
     public AllFlash() {
         super();
@@ -13,12 +17,13 @@ public class AllFlash extends Animation {
 
     @Override
     public void init() {
-
+        allFlashParams = new ParamsLoader<AllFlashParams>(this).load(AllFlashParams.class);
+        this.tickSize *= allFlashParams.getRate();
     }
 
     @Override
     public void setTick(long tick) {
-        ArrayList<Stripe> stripes = deviceBuffer.getStripes();
+        ArrayList<Stripe> stripes = deviceBuffer.getStripes(allFlashParams.getStripeIds());
         long pos = tick - startTick;
         double alpha = 1;
         if (pos > tickSize / 2) {

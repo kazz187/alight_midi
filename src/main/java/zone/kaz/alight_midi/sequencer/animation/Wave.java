@@ -11,8 +11,8 @@ import java.util.ArrayList;
 
 public class Wave extends Animation {
 
-    private Color color;
-    private WaveParams waveParams;
+    protected Color color;
+    protected WaveParams waveParams;
 
     public Wave() {
         super();
@@ -33,22 +33,27 @@ public class Wave extends Animation {
 
     @Override
     public void setTick(long tick) {
-        ArrayList<Stripe> stripes = deviceBuffer.getStripes();
-        long pos = tick - startTick;
-        double posRate = (double) pos / tickSize;
-        if (waveParams.getReverse()) {
-            posRate = 1 - posRate;
-        }
+        ArrayList<Stripe> stripes = deviceBuffer.getStripes(waveParams.getStripeIds());
+        double posRate = calcPosRate(tick);
         for (Stripe stripe : stripes) {
             byte[] buffer = stripe.getBuffer();
             for (int i = 0; i < buffer.length / 3; i++) {
-                double rate = (double) i / (buffer.length / 3);
+                double rate = ((double) i / (buffer.length / 3)) * 1.1 - 0.05;
                 double diff = Math.abs(posRate - rate);
                 buffer[i*3]   = (byte) (color.getG() * Math.max((1-diff)*2-1, 0));
                 buffer[i*3+1] = (byte) (color.getB() * Math.max((1-diff)*2-1, 0));
                 buffer[i*3+2] = (byte) (color.getR() * Math.max((1-diff)*2-1, 0));
             }
         }
+    }
+
+    protected double calcPosRate(long tick) {
+        long pos = tick - startTick;
+        double posRate = (double) pos / tickSize;
+        if (waveParams.getReverse()) {
+            posRate = 1 - posRate;
+        }
+        return posRate;
     }
 
 }
