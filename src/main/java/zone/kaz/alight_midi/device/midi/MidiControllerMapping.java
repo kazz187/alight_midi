@@ -1,6 +1,8 @@
 package zone.kaz.alight_midi.device.midi;
 
+import javafx.application.Platform;
 import zone.kaz.alight_midi.gui.ControllerManager;
+import zone.kaz.alight_midi.gui.main.MainController;
 import zone.kaz.alight_midi.gui.sequencer.StepSequencerController;
 import zone.kaz.alight_midi.inject.DIContainer;
 import zone.kaz.alight_midi.sequencer.ClockManager;
@@ -17,6 +19,15 @@ public class MidiControllerMapping {
     private StepSequencerController controller = null;
 
     public MidiControllerMapping() {
+        mapping_on.put((byte) 89, v -> {
+
+            MainController mainController = (MainController) controllerManager.get(MainController.class);
+            Platform.runLater(mainController::setMasterFaderToMax);
+        });
+        mapping_on.put((byte) 79, v -> {
+            MainController mainController = (MainController) controllerManager.get(MainController.class);
+            Platform.runLater(mainController::setMasterFaderToMin);
+        });
         mapping_on.put((byte) 19, v -> clockManager.stopSequencer());
         mapping_on.put((byte) 29, v -> clockManager.setNeedPlay(true));
         mapping_on.put((byte) 39, v -> clockManager.onNudgePressed(-1));

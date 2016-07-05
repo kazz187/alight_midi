@@ -117,6 +117,14 @@ public class MainController implements Initializable {
         return masterFader.getValue();
     }
 
+    public void setMasterFaderToMax() {
+        masterFader.setValue(masterFader.getMax());
+    }
+
+    public void setMasterFaderToMin() {
+        masterFader.setValue(masterFader.getMin());
+    }
+
     public double getCrossFader() {
         return crossFader.getValue();
     }
