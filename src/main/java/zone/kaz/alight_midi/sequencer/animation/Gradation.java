@@ -47,10 +47,12 @@ public class Gradation extends Animation {
 
     protected double calcPosRate(long tick) {
         long pos = tick - startTick;
-        double posRate = (double) pos / tickSize;
+        double linearRate = (double) pos / tickSize;
         if (gradationParams.getReverse()) {
-            posRate = 1 - posRate;
+            linearRate = 1 - linearRate;
         }
+        double rad = Math.toRadians(linearRate * 180);
+        double posRate = (-Math.cos(rad) + 1) / 2;
         return posRate;
     }
 
