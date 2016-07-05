@@ -280,7 +280,7 @@ public class StepSequencerController implements Initializable {
 
     private void setPadButtonEnable(int x, int y, boolean isEnable) {
         if (isEnable) {
-            clockManager.playSequencer();
+            clockManager.setNeedPlay(true);
         }
         PadGroup padGroup = padGroupMap.get(getActivePadTab().getText());
         if (padGroup == null) {

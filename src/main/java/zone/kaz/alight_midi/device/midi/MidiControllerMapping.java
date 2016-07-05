@@ -18,7 +18,7 @@ public class MidiControllerMapping {
 
     public MidiControllerMapping() {
         mapping_on.put((byte) 19, v -> clockManager.stopSequencer());
-        mapping_on.put((byte) 29, v -> clockManager.playSequencer());
+        mapping_on.put((byte) 29, v -> clockManager.setNeedPlay(true));
         mapping_on.put((byte) 39, v -> clockManager.onNudgePressed(-1));
         mapping_on.put((byte) 49, v -> clockManager.onNudgePressed(1));
         mapping_off.put((byte) 39, v -> clockManager.onNudgeReleased());

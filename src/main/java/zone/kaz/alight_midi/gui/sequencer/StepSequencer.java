@@ -12,6 +12,7 @@ import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public class StepSequencer {
@@ -25,7 +26,7 @@ public class StepSequencer {
     @JsonIgnore
     private StepSequencerController controller = null;
     @JsonIgnore
-    private ArrayList<SequencerButton> buttons = new ArrayList<>();
+    private CopyOnWriteArrayList<SequencerButton> buttons = new CopyOnWriteArrayList<>();
     @JsonIgnore
     private Type type = null;
     @JsonIgnore

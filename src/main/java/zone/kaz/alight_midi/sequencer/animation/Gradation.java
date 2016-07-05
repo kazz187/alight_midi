@@ -3,10 +3,7 @@ package zone.kaz.alight_midi.sequencer.animation;
 import zone.kaz.alight_midi.device.led.Stripe;
 import zone.kaz.alight_midi.sequencer.Animation;
 import zone.kaz.alight_midi.sequencer.animation.params.GradationParams;
-import zone.kaz.alight_midi.sequencer.animation.params.WaveParams;
-import zone.kaz.alight_midi.sequencer.animation.util.Color;
 import zone.kaz.alight_midi.sequencer.animation.util.ParamsLoader;
-import zone.kaz.alight_midi.sequencer.animation.util.RandomColor;
 
 import java.util.ArrayList;
 

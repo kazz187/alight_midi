@@ -27,6 +27,7 @@ public class ClockManager extends Thread {
     private long tickCounter = 0;
     private int baseTick = 480;
     private Sequencer sequencer = new Sequencer(baseTick, 4, 4);
+    private boolean needPlay = false;
 
     // for calculating BPM
     private LocalDateTime prevTap, nowTap;
@@ -35,6 +36,13 @@ public class ClockManager extends Thread {
 
     public ClockManager() {}
 
+    public void setNeedPlay(boolean needPlay) {
+        this.needPlay = needPlay;
+        if (!isPlaying) {
+            interrupt();
+        }
+    }
+
     public void playSequencer() {
         if (isPlaying) {
             resetSequencer();
@@ -42,7 +50,6 @@ public class ClockManager extends Thread {
         }
         isPlaying = true;
         needInit = true;
-        interrupt();
     }
 
     public void stopSequencer() {
@@ -120,6 +127,10 @@ public class ClockManager extends Thread {
     public void run() {
         resetSequencer();
         while (true) {
+            if (needPlay) {
+                playSequencer();
+                needPlay = false;
+            }
             if (isPlaying) {
                 if (needInit) {
                     initialize();
