@@ -46,7 +46,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </HBox>
-                  <Slider fx:id="masterFader" max="90.0" value="90.0" GridPane.columnIndex="2">
+                  <Slider fx:id="masterFader" max="85.0" value="85.0" GridPane.columnIndex="2">
                      <GridPane.margin>
                         <Insets left="40.0" right="40.0" />
                      </GridPane.margin>

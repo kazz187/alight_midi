@@ -2,8 +2,6 @@ package zone.kaz.alight_midi.sequencer;
 
 import com.google.inject.Singleton;
 import javafx.application.Platform;
-import zone.kaz.alight_midi.device.LedDeviceManager;
-import zone.kaz.alight_midi.device.MixerManager;
 import zone.kaz.alight_midi.gui.ControllerManager;
 import zone.kaz.alight_midi.gui.main.MainController;
 import zone.kaz.alight_midi.inject.DIContainer;
@@ -17,7 +15,7 @@ public class ClockManager extends Thread {
     ControllerManager controllerManager = DIContainer.get(ControllerManager.class);
 
     private boolean isPlaying = false;
-    private boolean isInit = false;
+    private boolean needInit = false;
     private double bpm = 135.0;
     private double realBpm = 135.0;
     private double nudgeDir;
@@ -43,7 +41,7 @@ public class ClockManager extends Thread {
             return;
         }
         isPlaying = true;
-        isInit = true;
+        needInit = true;
         interrupt();
     }
 
@@ -112,7 +110,7 @@ public class ClockManager extends Thread {
 
     public void initialize() {
         clock = LocalDateTime.now();
-        isInit = false;
+        needInit = false;
     }
 
     public Sequencer getSequencer() {
@@ -123,7 +121,7 @@ public class ClockManager extends Thread {
         resetSequencer();
         while (true) {
             if (isPlaying) {
-                if (isInit) {
+                if (needInit) {
                     initialize();
                 }
 
@@ -163,7 +161,7 @@ public class ClockManager extends Thread {
                 }
             } else {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     // DO NOTHING
                 }
