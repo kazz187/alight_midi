@@ -13,7 +13,7 @@ public class Wave extends Animation {
 
     protected Color color;
     protected WaveParams waveParams;
-
+    protected ArrayList<Stripe> stripes;
     public Wave() {
         super();
     }
@@ -29,11 +29,11 @@ public class Wave extends Animation {
         RandomColor randomColor = new RandomColor(colorList);
         this.color = randomColor.getNext();
         this.tickSize *= waveParams.getRate();
+        this.stripes = deviceBuffer.getStripes(waveParams.getStripeIds());
     }
 
     @Override
     public void setTick(long tick) {
-        ArrayList<Stripe> stripes = deviceBuffer.getStripes(waveParams.getStripeIds());
         double posRate = calcPosRate(tick);
         for (Stripe stripe : stripes) {
             byte[] buffer = stripe.getBuffer();

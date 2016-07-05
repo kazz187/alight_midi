@@ -2,6 +2,7 @@ package zone.kaz.alight_midi.device.led;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Random;
 
 public class DeviceBuffer {
 
@@ -36,6 +37,11 @@ public class DeviceBuffer {
             return stripes;
         }
         ArrayList<Stripe> stripes = new ArrayList<>();
+        if (numbers.length == 0) {
+            Random random = new Random();
+            stripes.add(this.stripes.get(random.nextInt(this.stripes.size())));
+            return stripes;
+        }
         for (int i = 0; i < numbers.length; i++) {
             stripes.add(this.stripes.get(numbers[i]));
         }

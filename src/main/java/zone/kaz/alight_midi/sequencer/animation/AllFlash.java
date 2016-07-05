@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class AllFlash extends Animation {
 
     private AllFlashParams allFlashParams;
+    private ArrayList<Stripe> stripes;
 
     public AllFlash() {
         super();
@@ -19,11 +20,11 @@ public class AllFlash extends Animation {
     public void init() {
         allFlashParams = new ParamsLoader<AllFlashParams>(this).load(AllFlashParams.class);
         this.tickSize *= allFlashParams.getRate();
+        stripes = deviceBuffer.getStripes(allFlashParams.getStripeIds());
     }
 
     @Override
     public void setTick(long tick) {
-        ArrayList<Stripe> stripes = deviceBuffer.getStripes(allFlashParams.getStripeIds());
         long pos = tick - startTick;
         double alpha = 1;
         if (pos > tickSize / 2) {

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class Gradation extends Animation {
 
     protected GradationParams gradationParams;
+    protected ArrayList<Stripe> stripes;
 
     public Gradation() {
         super();
@@ -22,11 +23,11 @@ public class Gradation extends Animation {
     public void init() {
         gradationParams = new ParamsLoader<GradationParams>(this).load(GradationParams.class);
         this.tickSize *= gradationParams.getRate();
+        stripes = deviceBuffer.getStripes(gradationParams.getStripeIds());
     }
 
     @Override
     public void setTick(long tick) {
-        ArrayList<Stripe> stripes = deviceBuffer.getStripes(gradationParams.getStripeIds());
         double posRate = calcPosRate(tick);
         for (Stripe stripe : stripes) {
             byte[] buffer = stripe.getBuffer();

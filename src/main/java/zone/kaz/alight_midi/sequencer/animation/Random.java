@@ -12,7 +12,7 @@ public class Random extends Animation {
 
     private Color color;
     private int[] positions;
-
+    private List<Stripe> stripes;
     public Random() {
         super();
     }
@@ -27,7 +27,7 @@ public class Random extends Animation {
         RandomColor randomColor = new RandomColor(colorList);
         this.color = randomColor.getNext();
 
-        List<Stripe> stripes = deviceBuffer.getStripes();
+        stripes = deviceBuffer.getStripes();
         positions = new int[stripes.size()];
         java.util.Random rand = new java.util.Random();
         int i = 0;
@@ -39,7 +39,6 @@ public class Random extends Animation {
 
     @Override
     public void setTick(long tick) {
-        ArrayList<Stripe> stripes = deviceBuffer.getStripes();
         int i = 0;
         long pos = tick - startTick;
         double alpha = 1;
