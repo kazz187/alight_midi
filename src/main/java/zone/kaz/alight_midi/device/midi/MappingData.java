@@ -3,11 +3,13 @@ package zone.kaz.alight_midi.device.midi;
 public class MappingData {
 
     private String processorName;
-    private MidiData midiData;
+    private MidiData pressedMidiData;
+    private MidiData releasedMidiData;
 
-    public MappingData(String processorName, MidiData midiData) {
+    public MappingData(String processorName, MidiData pressedMidiData, MidiData releasedMidiData) {
         this.processorName = processorName;
-        this.midiData = midiData;
+        this.pressedMidiData = pressedMidiData;
+        this.releasedMidiData = releasedMidiData;
     }
 
     public String getProcessorName() {
@@ -18,12 +20,20 @@ public class MappingData {
         this.processorName = processorName;
     }
 
-    public MidiData getMidiData() {
-        return midiData;
+    public MidiData getPressedMidiData() {
+        return pressedMidiData;
     }
 
-    public void setMidiData(MidiData midiData) {
-        this.midiData = midiData;
+    public void setPressedMidiData(MidiData pressedMidiData) {
+        this.pressedMidiData = pressedMidiData;
+    }
+
+    public MidiData getReleasedMidiData() {
+        return releasedMidiData;
+    }
+
+    public void setReleasedMidiData(MidiData releasedMidiData) {
+        this.releasedMidiData = releasedMidiData;
     }
 
 }

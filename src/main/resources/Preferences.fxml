@@ -56,7 +56,8 @@
                         <TableView fx:id="midiMapTable" prefHeight="400.0">
                           <columns>
                             <TableColumn fx:id="functionColumn" prefWidth="110.0" text="Function" />
-                            <TableColumn fx:id="assignToColumn" minWidth="8.0" prefWidth="92.0" text="Assign to" />
+                            <TableColumn fx:id="assignToPressedColumn" minWidth="8.0" prefWidth="167.0" text="Assign to (pressed)" />
+                              <TableColumn fx:id="assignToReleasedColumn" minWidth="0.0" prefWidth="157.0" text="Assign to (released)" />
                           </columns>
                            <VBox.margin>
                               <Insets />

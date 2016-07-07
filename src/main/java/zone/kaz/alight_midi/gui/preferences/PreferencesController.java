@@ -38,7 +38,9 @@ public class PreferencesController implements Initializable {
     @FXML
     private TableColumn<MappingData, String> functionColumn;
     @FXML
-    private TableColumn<MappingData, MidiData> assignToColumn;
+    private TableColumn<MappingData, MidiData> assignToPressedColumn;
+    @FXML
+    private TableColumn<MappingData, MidiData> assignToReleasedColumn;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -64,10 +66,11 @@ public class PreferencesController implements Initializable {
         Set<String> processorNameList =  devicePair.getProcessorNameSet();
         Set<MappingData> mappingDataSet = new HashSet<>();
         for (String processorName : processorNameList) {
-            mappingDataSet.add(new MappingData(processorName, new MidiData()));
+            mappingDataSet.add(new MappingData(processorName, new MidiData(), new MidiData()));
         }
         functionColumn.setCellValueFactory(new PropertyValueFactory<>("processorName"));
-        assignToColumn.setCellValueFactory(new PropertyValueFactory<>("midiData"));
+        assignToPressedColumn.setCellValueFactory(new PropertyValueFactory<>("pressedMidiData"));
+        assignToReleasedColumn.setCellValueFactory(new PropertyValueFactory<>("releasedMidiData"));
         setMappingData(mappingDataSet);
     }
 
