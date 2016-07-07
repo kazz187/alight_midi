@@ -13,8 +13,8 @@ import java.util.Set;
 
 public class MidiControllerMapping {
 
-    private HashMap<Byte, Processor> mappingOn = new HashMap<>();
-    private HashMap<Byte, Processor> mappingOff = new HashMap<>();
+    private HashMap<String, Processor> mappingOn = new HashMap<>();
+    private HashMap<String, Processor> mappingOff = new HashMap<>();
     private ClockManager clockManager = DIContainer.get(ClockManager.class);
     private ControllerManager controllerManager = DIContainer.get(ControllerManager.class);
     private StepSequencerController controller = null;
@@ -96,10 +96,10 @@ public class MidiControllerMapping {
     private void setMappingDataImpl(String processorName, MidiData midiData) {
         switch (midiData.getType()) {
             case ShortMessage.NOTE_ON:
-                mappingOn.put(midiData.getNote(), processors.get(processorName));
+                mappingOn.put(midiData.getNote() + "_" + midiData.getVelocity(), processors.get(processorName));
                 break;
             case ShortMessage.NOTE_OFF:
-                mappingOff.put(midiData.getNote(), processors.get(processorName));
+                mappingOff.put(midiData.getNote() + "_" + midiData.getVelocity(), processors.get(processorName));
                 break;
             default: break;
         }
@@ -110,7 +110,7 @@ public class MidiControllerMapping {
     }
 
     public void invoke(int event, byte note, byte velocity) {
-        HashMap<Byte, Processor> mapping;
+        HashMap<String, Processor> mapping;
         switch (event) {
             case ShortMessage.NOTE_ON:
                 mapping = mappingOn;
@@ -121,7 +121,7 @@ public class MidiControllerMapping {
             default:
                 return;
         }
-        Processor processor = mapping.get(note);
+        Processor processor = mapping.get(note + "_" + velocity);
         if (processor == null) {
             return;
         }
