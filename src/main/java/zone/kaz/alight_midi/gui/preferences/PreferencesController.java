@@ -14,7 +14,6 @@ import zone.kaz.alight_midi.device.midi.MappingData;
 import zone.kaz.alight_midi.device.midi.MidiData;
 import zone.kaz.alight_midi.device.midi.MidiDevicePair;
 import zone.kaz.alight_midi.gui.ControllerManager;
-import zone.kaz.alight_midi.gui.sequencer.StepSequencer;
 import zone.kaz.alight_midi.gui.sequencer.StepSequencerController;
 import zone.kaz.alight_midi.inject.DIContainer;
 
@@ -22,8 +21,10 @@ import javax.sound.midi.MidiDevice;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -52,7 +53,8 @@ public class PreferencesController implements Initializable {
     private TableColumn<MappingData, MidiData> assignToReleasedColumn;
     @FXML
     private CheckBox editModeCheck;
-    @FXML ObservableList<MappingData> mappingDataList;
+    @FXML
+    ObservableList<MappingData> mappingDataList;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -73,23 +75,10 @@ public class PreferencesController implements Initializable {
                 }
         );
 
-        MidiDevicePair devicePair = getDevicePair();
-        Set<String> processorNameList =  devicePair.getProcessorNameSet();
-        Set<String> functionNameList = new HashSet<>();
-        Pattern pattern = Pattern.compile("^(.*)_O[NF]F?$");
-        for (String name : processorNameList) {
-            Matcher matcher = pattern.matcher(name);
-            if (matcher.matches()) {
-                functionNameList.add(matcher.group(1));
-            }
-        }
-        Set<MappingData> mappingDataSet = functionNameList.stream()
-                .map(functionName -> new MappingData(functionName, new MidiData(), new MidiData()))
-                .collect(Collectors.toSet());
         functionColumn.setCellValueFactory(new PropertyValueFactory<>("processorName"));
         assignToPressedColumn.setCellValueFactory(new PropertyValueFactory<>("pressedMidiData"));
         assignToReleasedColumn.setCellValueFactory(new PropertyValueFactory<>("releasedMidiData"));
-        setMappingData(mappingDataSet);
+        //setMappingData();
         editModeCheck.setOnAction(e -> {
             if (editModeCheck.isSelected()) {
                 MidiDevicePair currentDevicePair = getDevicePair();
@@ -100,6 +89,7 @@ public class PreferencesController implements Initializable {
                 currentDevicePair.setMappingEditMode(false);
             }
         });
+        mappingDataList = midiMapTable.getItems();
     }
 
     public void saveMappingMidiData(MidiData on, MidiData off) {
@@ -108,12 +98,15 @@ public class PreferencesController implements Initializable {
         mappingData.setPressedMidiData(on);
         mappingData.setReleasedMidiData(off);
         ObjectMapper objectMapper = new ObjectMapper();
+        String controllerName = getDevicePair().getInputDevice().getDevice().getDeviceInfo().getName();
+        String fileName = StepSequencerController.MAPPING_DIR_PATH + "/" + controllerName + ".json";
         try {
-            objectMapper.writeValue(new File(StepSequencerController.DEVICE_DIR_PATH + "/" + getDevicePair().getInputDevice().getDevice().getDeviceInfo().getName() + ".json"), mappingDataList);
+            MapSetting mapSetting = new MapSetting();
+            mapSetting.setMappingList(new ArrayList<>(mappingDataList));
+            objectMapper.writeValue(new File(fileName), mapSetting);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private MidiDevicePair getDevicePair() {
@@ -137,12 +130,22 @@ public class PreferencesController implements Initializable {
         preferencesMidiOutput.setConverter(converter);
     }
 
-    public void setMappingData(Set<MappingData> mappingDataSet) {
-        mappingDataList =  midiMapTable.getItems();
-        for (MappingData mappingData : mappingDataSet) {
-            mappingDataList.add(mappingData);
+    public void setMappingData() {
+        MidiDevicePair devicePair = getDevicePair();
+        Set<String> processorNameList = devicePair.getProcessorNameSet();
+        Set<String> functionNameList = new HashSet<>();
+        Pattern pattern = Pattern.compile("^(.*)_O[NF]F?$");
+        for (String name : processorNameList) {
+            Matcher matcher = pattern.matcher(name);
+            if (matcher.matches()) {
+                functionNameList.add(matcher.group(1));
+            }
         }
-        midiMapTable.setItems(mappingDataList);
+        Set<MappingData> mappingDataSet = functionNameList.stream()
+                .map(functionName -> new MappingData(functionName, new MidiData(), new MidiData()))
+                .collect(Collectors.toSet());
+        mappingDataList.removeAll(mappingDataList);
+        mappingDataList.addAll(mappingDataSet.stream().collect(Collectors.toList()));
     }
 
     private void prepareDeviceList() {
@@ -158,6 +161,7 @@ public class PreferencesController implements Initializable {
             MidiDevice.Info inputDeviceInfo = preferencesMidiInput.getValue();
             MidiDevice.Info outputDeviceInfo = preferencesMidiOutput.getValue();
             manager.registerDevice(0, inputDeviceInfo, outputDeviceInfo);
+            loadDeviceMapping();
         });
         preferencesMidiOutput.setOnAction(event -> {
             MidiDevice.Info inputDeviceInfo = preferencesMidiInput.getValue();
@@ -177,6 +181,24 @@ public class PreferencesController implements Initializable {
             if (outputDevice != null) {
                 preferencesMidiOutput.setValue(outputDevice.getDeviceInfo());
             }
+        }
+    }
+
+    private void loadDeviceMapping() {
+        String controllerName = getDevicePair().getInputDevice().getDevice().getDeviceInfo().getName();
+        String fileName = StepSequencerController.MAPPING_DIR_PATH + "/" + controllerName + ".json";
+        if (!new File(fileName).exists()) {
+            setMappingData();
+            return;
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String json = Files.readAllLines(Paths.get(fileName)).stream().collect(Collectors.joining());
+            ObservableList<MappingData> data = FXCollections.observableArrayList(objectMapper.readValue(json, MapSetting.class).getMappingList());
+            mappingDataList.removeAll(mappingDataList);
+            mappingDataList.addAll(data.stream().collect(Collectors.toList()));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

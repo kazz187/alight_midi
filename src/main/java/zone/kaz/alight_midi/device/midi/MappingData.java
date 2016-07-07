@@ -12,6 +12,12 @@ public class MappingData {
 
     private ObjectProperty<MidiData> releasedMidiData;
 
+    public MappingData() {
+        this.processorName = new SimpleStringProperty("");
+        this.pressedMidiData = new SimpleObjectProperty<>(null);
+        this.releasedMidiData = new SimpleObjectProperty<>(null);
+    }
+
     public MappingData(String processorName, MidiData pressedMidiData, MidiData releasedMidiData) {
         this.processorName = new SimpleStringProperty(processorName);
         this.pressedMidiData = new SimpleObjectProperty<>(pressedMidiData);

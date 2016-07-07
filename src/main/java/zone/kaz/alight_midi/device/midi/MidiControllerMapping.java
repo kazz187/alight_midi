@@ -73,7 +73,7 @@ public class MidiControllerMapping {
         processors.put("NUDGE_BACKWARD_OFF", v -> clockManager.onNudgeReleased());
         processors.put("NUDGE_FORWARD_OFF", v -> clockManager.onNudgeReleased());
         processors.put("TAP_BPM_ON", v -> clockManager.tapBpm());
-        for (int y = 0; y < 8; y++) {
+        for (int y = 0; y < 4; y++) {
             for (int x = 0; x < 8; x++) {
                 final int finalX = x, finalY = y;
                 processors.put("PAD_" + x + "_" + y + "_ON",
