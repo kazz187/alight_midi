@@ -40,7 +40,7 @@ public class MidiDevicePair {
         return null;
     }
 
-    public Receiver getReceiver() {
+    public ControllerReceiver getReceiver() {
         return controllerReceiver;
     }
 
@@ -146,7 +146,7 @@ public class MidiDevicePair {
         this.mappingStart = mappingStart;
     }
 
-    private class ControllerReceiver implements Receiver {
+    public class ControllerReceiver implements Receiver {
 
         private Receiver receiver;
         private MidiControllerMapping mapping = new MidiControllerMapping();
@@ -200,20 +200,16 @@ public class MidiDevicePair {
             }
         }
 
-        public MidiData getFirstMidiData() {
-            return first;
-        }
-
-        public MidiData getLatestMidiData() {
-            return latest;
-        }
-
         public void setReceiver(Receiver receiver) {
             this.receiver = receiver;
         }
 
         public Set<String> getProcessorNameSet() {
             return mapping.getProcessorNameSet();
+        }
+
+        public MidiControllerMapping getMapping() {
+            return mapping;
         }
 
         @Override

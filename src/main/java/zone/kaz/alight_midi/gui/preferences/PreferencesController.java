@@ -11,6 +11,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.StringConverter;
 import zone.kaz.alight_midi.device.MidiDeviceManager;
 import zone.kaz.alight_midi.device.midi.MappingData;
+import zone.kaz.alight_midi.device.midi.MidiControllerMapping;
 import zone.kaz.alight_midi.device.midi.MidiData;
 import zone.kaz.alight_midi.device.midi.MidiDevicePair;
 import zone.kaz.alight_midi.gui.ControllerManager;
@@ -97,6 +98,8 @@ public class PreferencesController implements Initializable {
         MappingData mappingData = mappingDataList.get(model.getSelectedIndex());
         mappingData.setPressedMidiData(on);
         mappingData.setReleasedMidiData(off);
+        MidiControllerMapping mapping = getDevicePair().getReceiver().getMapping();
+        mappingDataList.forEach(mapping::setMappingData);
         ObjectMapper objectMapper = new ObjectMapper();
         String controllerName = getDevicePair().getInputDevice().getDevice().getDeviceInfo().getName();
         String fileName = StepSequencerController.MAPPING_DIR_PATH + "/" + controllerName + ".json";
@@ -200,6 +203,8 @@ public class PreferencesController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        MidiControllerMapping mapping = getDevicePair().getReceiver().getMapping();
+        mappingDataList.forEach(mapping::setMappingData);
     }
 
 }
