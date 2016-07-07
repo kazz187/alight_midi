@@ -1,8 +1,10 @@
 package zone.kaz.alight_midi.device.midi;
 
+import javax.sound.midi.ShortMessage;
+
 public class MidiData {
 
-    private byte type;
+    private int type;
     private byte note;
     private byte velocity;
 
@@ -10,7 +12,7 @@ public class MidiData {
 
     }
 
-    public byte getType() {
+    public int getType() {
         return type;
     }
 
@@ -32,6 +34,21 @@ public class MidiData {
 
     public void setVelocity(byte velocity) {
         this.velocity = velocity;
+    }
+
+    public String toString() {
+        String typeStr = "";
+        switch (type) {
+            case ShortMessage.NOTE_ON:
+                typeStr = "ON";
+                break;
+            case ShortMessage.NOTE_OFF:
+                typeStr = "OFF";
+                break;
+            default:
+                break;
+        }
+        return typeStr + " - " + note + " - " + velocity;
     }
 
 }
