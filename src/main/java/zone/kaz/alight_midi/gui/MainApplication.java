@@ -7,6 +7,7 @@ import zone.kaz.alight_midi.device.LedDeviceManager;
 import zone.kaz.alight_midi.device.MidiDeviceManager;
 import zone.kaz.alight_midi.device.led.DeviceInfo;
 import zone.kaz.alight_midi.gui.main.MainWindow;
+import zone.kaz.alight_midi.gui.sequencer.StepSequencerController;
 import zone.kaz.alight_midi.gui.sequencer.StepSequencerWindow;
 import zone.kaz.alight_midi.inject.AlightModule;
 import zone.kaz.alight_midi.inject.DIContainer;
@@ -34,7 +35,7 @@ public class MainApplication extends Application {
 
         // TODO: move to preference
         try {
-            DeviceInfo deviceInfo = bufferManager.registerDeviceInfo("./src/main/resources/stripe_test.json");
+            DeviceInfo deviceInfo = bufferManager.registerDeviceInfo(StepSequencerController.DEVICE_DIR_PATH + "/led8.json");
             LedDeviceManager ledDeviceManager = DIContainer.get(LedDeviceManager.class);
             ledDeviceManager.openDevice(deviceInfo);
         } catch (IOException e) {

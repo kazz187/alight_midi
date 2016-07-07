@@ -72,6 +72,7 @@ public class StepSequencerController implements Initializable {
     public static final String CONF_DIR_PATH = System.getProperty("user.home") + "/.alight_midi";
     public static final String PATTERN_DIR_PATH = CONF_DIR_PATH + "/pattern";
     public static final String MAPPING_DIR_PATH = CONF_DIR_PATH + "/mapping";
+    public static final String DEVICE_DIR_PATH = CONF_DIR_PATH + "/device";
 
     private StepSequencer currentStepSequencer;
 
@@ -165,6 +166,7 @@ public class StepSequencerController implements Initializable {
         new File(CONF_DIR_PATH).mkdir();
         new File(PATTERN_DIR_PATH).mkdir();
         new File(MAPPING_DIR_PATH).mkdir();
+        new File(DEVICE_DIR_PATH).mkdir();
     }
 
     public double getColWidth() {
