@@ -22,8 +22,8 @@ public class StepSequencerWindow {
             e.printStackTrace();
         }
         stage.setX(0);
-        stage.setY(200);
-        stage.setScene(new Scene(root, 800, 600));
+        stage.setY(0);
+        stage.setScene(new Scene(root, 800, 1000));
     }
 
     public void show() {
