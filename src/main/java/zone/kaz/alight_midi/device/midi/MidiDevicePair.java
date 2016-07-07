@@ -1,7 +1,10 @@
 package zone.kaz.alight_midi.device.midi;
 
+import javafx.application.Platform;
 import zone.kaz.alight_midi.device.SequenceDisplayManager;
 import zone.kaz.alight_midi.device.sequence_display.MidiSequenceDisplay;
+import zone.kaz.alight_midi.gui.ControllerManager;
+import zone.kaz.alight_midi.gui.preferences.PreferencesController;
 import zone.kaz.alight_midi.inject.DIContainer;
 
 import javax.sound.midi.*;
@@ -147,6 +150,7 @@ public class MidiDevicePair {
 
         private Receiver receiver;
         private MidiControllerMapping mapping = new MidiControllerMapping();
+        private ControllerManager controllerManager = DIContainer.get(ControllerManager.class);
 
         public ControllerReceiver(Receiver receiver) {
             this.receiver = receiver;
@@ -167,12 +171,16 @@ public class MidiDevicePair {
                     default:
                         break;
                 }
-                System.out.println(midiData);
                 if (mappingStart) {
                     first = midiData;
                     mappingStart = false;
                 } else {
                     latest = midiData;
+                    Platform.runLater(()->{
+                        PreferencesController preferencesController = (PreferencesController) controllerManager.get(PreferencesController.class);
+                        preferencesController.saveMappingMidiData(first, latest);
+                    });
+                    mappingStart = true;
                 }
             } else {
                 switch (buf[0] & 0xF0) {

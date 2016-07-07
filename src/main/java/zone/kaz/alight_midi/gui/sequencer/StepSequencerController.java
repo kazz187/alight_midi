@@ -68,8 +68,11 @@ public class StepSequencerController implements Initializable {
     private HashMap<String, PatternInfo> patternInfoMap = new HashMap<>();
     private HashMap<String, PadGroup> padGroupMap = new HashMap<>();
 
+    // TODO: Move to other class
     public static final String CONF_DIR_PATH = System.getProperty("user.home") + "/.alight_midi";
     public static final String PATTERN_DIR_PATH = CONF_DIR_PATH + "/pattern";
+    public static final String DEVICE_DIR_PATH = CONF_DIR_PATH + "/device";
+
     private StepSequencer currentStepSequencer;
 
     @Override

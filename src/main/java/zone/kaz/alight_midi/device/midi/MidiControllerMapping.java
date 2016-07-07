@@ -58,21 +58,21 @@ public class MidiControllerMapping {
     }
 
     private void prepareProcessors() {
-        processors.put("MASTER_FADER_TO_MAX", v -> {
+        processors.put("MASTER_FADER_TO_MAX_ON", v -> {
             MainController mainController = (MainController) controllerManager.get(MainController.class);
             Platform.runLater(mainController::setMasterFaderToMax);
         });
-        processors.put("MASTER_FADER_TO_MIN", v -> {
+        processors.put("MASTER_FADER_TO_MIN_ON", v -> {
             MainController mainController = (MainController) controllerManager.get(MainController.class);
             Platform.runLater(mainController::setMasterFaderToMin);
         });
-        processors.put("STOP", v -> clockManager.stopSequencer());
-        processors.put("START", v -> clockManager.setNeedPlay(true));
+        processors.put("STOP_ON", v -> clockManager.stopSequencer());
+        processors.put("START_ON", v -> clockManager.setNeedPlay(true));
         processors.put("NUDGE_BACKWARD_ON", v -> clockManager.onNudgePressed(-1));
         processors.put("NUDGE_FORWARD_ON", v -> clockManager.onNudgePressed(1));
         processors.put("NUDGE_BACKWARD_OFF", v -> clockManager.onNudgeReleased());
         processors.put("NUDGE_FORWARD_OFF", v -> clockManager.onNudgeReleased());
-        processors.put("TAP_BPM", v -> clockManager.tapBpm());
+        processors.put("TAP_BPM_ON", v -> clockManager.tapBpm());
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
                 final int finalX = x, finalY = y;
