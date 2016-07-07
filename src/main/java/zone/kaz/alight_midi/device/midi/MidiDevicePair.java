@@ -7,6 +7,7 @@ import zone.kaz.alight_midi.inject.DIContainer;
 import javax.sound.midi.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 import static javax.sound.midi.ShortMessage.*;
 
@@ -124,6 +125,13 @@ public class MidiDevicePair {
         }
     }
 
+    public Set<String> getProcessorNameSet() {
+        if (controllerReceiver != null) {
+            return controllerReceiver.getProcessorNameSet();
+        }
+        return null;
+    }
+
     private class ControllerReceiver implements Receiver {
 
         private Receiver receiver;
@@ -138,13 +146,10 @@ public class MidiDevicePair {
             byte[] buf = message.getMessage();
             switch (buf[0] & 0xF0) {
                 case NOTE_ON:
-                    if (buf[2] != 0) {
-                        mapping.invoke(NOTE_ON, buf[1], buf[2]);
-                    } else {
-                        mapping.invoke(NOTE_OFF, buf[1], buf[2]);
-                    }
+                    mapping.invoke(NOTE_ON, buf[1], buf[2]);
                     break;
                 case NOTE_OFF:
+                    mapping.invoke(NOTE_OFF, buf[1], buf[2]);
                     break;
                 default:
                     break;
@@ -157,6 +162,10 @@ public class MidiDevicePair {
 
         public void setReceiver(Receiver receiver) {
             this.receiver = receiver;
+        }
+
+        public Set<String> getProcessorNameSet() {
+            return mapping.getProcessorNameSet();
         }
 
         @Override

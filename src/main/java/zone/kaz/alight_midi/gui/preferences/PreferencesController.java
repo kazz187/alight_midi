@@ -6,15 +6,20 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.StringConverter;
 import zone.kaz.alight_midi.device.MidiDeviceManager;
+import zone.kaz.alight_midi.device.midi.MappingData;
+import zone.kaz.alight_midi.device.midi.MidiData;
 import zone.kaz.alight_midi.device.midi.MidiDevicePair;
 import zone.kaz.alight_midi.gui.ControllerManager;
 import zone.kaz.alight_midi.inject.DIContainer;
 
 import javax.sound.midi.MidiDevice;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public class PreferencesController implements Initializable {
 
@@ -28,9 +33,17 @@ public class PreferencesController implements Initializable {
     private ComboBox<MidiDevice.Info> preferencesMidiInput;
     @FXML
     private ComboBox<MidiDevice.Info> preferencesMidiOutput;
+    @FXML
+    private TableView<MappingData> midiMapTable;
+    @FXML
+    private TableColumn<MappingData, String> functionColumn;
+    @FXML
+    private TableColumn<MappingData, MidiData> assignToColumn;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        ControllerManager controllerManager = DIContainer.get(ControllerManager.class);
+        controllerManager.register(this);
         initializePreferencesMidi();
         preferences.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
@@ -45,8 +58,17 @@ public class PreferencesController implements Initializable {
                     }
                 }
         );
-        ControllerManager controllerManager = DIContainer.get(ControllerManager.class);
-        controllerManager.register(this);
+
+        MidiDeviceManager manager = DIContainer.get(MidiDeviceManager.class);
+        MidiDevicePair devicePair = manager.getEnabledDevicePair(0);
+        Set<String> processorNameList =  devicePair.getProcessorNameSet();
+        Set<MappingData> mappingDataSet = new HashSet<>();
+        for (String processorName : processorNameList) {
+            mappingDataSet.add(new MappingData(processorName, new MidiData()));
+        }
+        functionColumn.setCellValueFactory(new PropertyValueFactory<>("processorName"));
+        assignToColumn.setCellValueFactory(new PropertyValueFactory<>("midiData"));
+        setMappingData(mappingDataSet);
     }
 
     private void initializePreferencesMidi() {
@@ -63,6 +85,14 @@ public class PreferencesController implements Initializable {
         };
         preferencesMidiInput.setConverter(converter);
         preferencesMidiOutput.setConverter(converter);
+    }
+
+    public void setMappingData(Set<MappingData> mappingDataSet) {
+        ObservableList<MappingData> mappingDataList =  midiMapTable.getItems();
+        for (MappingData mappingData : mappingDataSet) {
+            mappingDataList.add(mappingData);
+        }
+        midiMapTable.setItems(mappingDataList);
     }
 
     private void prepareDeviceList() {
