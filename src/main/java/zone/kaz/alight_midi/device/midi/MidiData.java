@@ -8,8 +8,11 @@ public class MidiData {
     private byte note;
     private byte velocity;
 
-    public MidiData() {
-
+    public MidiData() {}
+    public MidiData(int type, byte note, byte velocity) {
+        this.type = type;
+        this.note = note;
+        this.velocity = velocity;
     }
 
     public int getType() {

@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class PreferencesController implements Initializable {
 
@@ -41,6 +42,8 @@ public class PreferencesController implements Initializable {
     private TableColumn<MappingData, MidiData> assignToPressedColumn;
     @FXML
     private TableColumn<MappingData, MidiData> assignToReleasedColumn;
+    @FXML
+    private CheckBox editModeCheck;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -61,17 +64,30 @@ public class PreferencesController implements Initializable {
                 }
         );
 
-        MidiDeviceManager manager = DIContainer.get(MidiDeviceManager.class);
-        MidiDevicePair devicePair = manager.getEnabledDevicePair(0);
+        MidiDevicePair devicePair = getDevicePair();
         Set<String> processorNameList =  devicePair.getProcessorNameSet();
-        Set<MappingData> mappingDataSet = new HashSet<>();
-        for (String processorName : processorNameList) {
-            mappingDataSet.add(new MappingData(processorName, new MidiData(), new MidiData()));
-        }
+        Set<MappingData> mappingDataSet = processorNameList.stream()
+                .map(processorName -> new MappingData(processorName, new MidiData(), new MidiData()))
+                .collect(Collectors.toSet());
         functionColumn.setCellValueFactory(new PropertyValueFactory<>("processorName"));
         assignToPressedColumn.setCellValueFactory(new PropertyValueFactory<>("pressedMidiData"));
         assignToReleasedColumn.setCellValueFactory(new PropertyValueFactory<>("releasedMidiData"));
         setMappingData(mappingDataSet);
+        editModeCheck.setOnAction(e -> {
+            if (editModeCheck.isSelected()) {
+                MidiDevicePair currentDevicePair = getDevicePair();
+                currentDevicePair.setMappingEditMode(true);
+                currentDevicePair.setMappingStart(true);
+            } else {
+                MidiDevicePair currentDevicePair = getDevicePair();
+                currentDevicePair.setMappingEditMode(false);
+            }
+        });
+    }
+
+    private MidiDevicePair getDevicePair() {
+        MidiDeviceManager manager = DIContainer.get(MidiDeviceManager.class);
+        return manager.getEnabledDevicePair(0);
     }
 
     private void initializePreferencesMidi() {

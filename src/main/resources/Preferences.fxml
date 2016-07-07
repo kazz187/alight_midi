@@ -63,6 +63,7 @@
                               <Insets />
                            </VBox.margin>
                         </TableView>
+                        <CheckBox fx:id="editModeCheck" mnemonicParsing="false" text="Edit mode" />
                      </children>
                   </VBox>
                </children></AnchorPane>

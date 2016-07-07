@@ -19,6 +19,9 @@ public class MidiDevicePair {
     private HashMap<Type, EnabledMidiDevice> devices = new HashMap<>();
     private MidiSequenceDisplay display = null;
     private ControllerReceiver controllerReceiver = null;
+    private boolean mappingEditMode = false;
+    private boolean mappingStart;
+    private MidiData first, latest;
 
     public EnabledMidiDevice getInputDevice() {
         if (devices.containsKey(Type.INPUT)) {
@@ -132,6 +135,14 @@ public class MidiDevicePair {
         return null;
     }
 
+    public void setMappingEditMode(boolean mappinEeditMode) {
+        this.mappingEditMode = mappinEeditMode;
+    }
+
+    public void setMappingStart(boolean mappingStart) {
+        this.mappingStart = mappingStart;
+    }
+
     private class ControllerReceiver implements Receiver {
 
         private Receiver receiver;
@@ -144,20 +155,49 @@ public class MidiDevicePair {
         @Override
         public void send(MidiMessage message, long timeStamp) {
             byte[] buf = message.getMessage();
-            switch (buf[0] & 0xF0) {
-                case NOTE_ON:
-                    mapping.invoke(NOTE_ON, buf[1], buf[2]);
-                    break;
-                case NOTE_OFF:
-                    mapping.invoke(NOTE_OFF, buf[1], buf[2]);
-                    break;
-                default:
-                    break;
+            if (mappingEditMode) {
+                MidiData midiData = null;
+                switch (buf[0] & 0xF0) {
+                    case NOTE_ON:
+                        midiData = new MidiData(NOTE_ON, buf[1], buf[2]);
+                        break;
+                    case NOTE_OFF:
+                        midiData = new MidiData(NOTE_OFF, buf[1], buf[2]);
+                        break;
+                    default:
+                        break;
+                }
+                System.out.println(midiData);
+                if (mappingStart) {
+                    first = midiData;
+                    mappingStart = false;
+                } else {
+                    latest = midiData;
+                }
+            } else {
+                switch (buf[0] & 0xF0) {
+                    case NOTE_ON:
+                        mapping.invoke(NOTE_ON, buf[1], buf[2]);
+                        break;
+                    case NOTE_OFF:
+                        mapping.invoke(NOTE_OFF, buf[1], buf[2]);
+                        break;
+                    default:
+                        break;
+                }
+                if (receiver == null) {
+                    return;
+                }
+                receiver.send(message, timeStamp);
             }
-            if (receiver == null) {
-                return;
-            }
-            receiver.send(message, timeStamp);
+        }
+
+        public MidiData getFirstMidiData() {
+            return first;
+        }
+
+        public MidiData getLatestMidiData() {
+            return latest;
         }
 
         public void setReceiver(Receiver receiver) {
