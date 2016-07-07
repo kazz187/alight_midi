@@ -1,12 +1,16 @@
 package zone.kaz.alight_midi.device.midi;
 
+import javafx.application.Platform;
 import zone.kaz.alight_midi.device.SequenceDisplayManager;
 import zone.kaz.alight_midi.device.sequence_display.MidiSequenceDisplay;
+import zone.kaz.alight_midi.gui.ControllerManager;
+import zone.kaz.alight_midi.gui.preferences.PreferencesController;
 import zone.kaz.alight_midi.inject.DIContainer;
 
 import javax.sound.midi.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 import static javax.sound.midi.ShortMessage.*;
 
@@ -18,6 +22,9 @@ public class MidiDevicePair {
     private HashMap<Type, EnabledMidiDevice> devices = new HashMap<>();
     private MidiSequenceDisplay display = null;
     private ControllerReceiver controllerReceiver = null;
+    private boolean mappingEditMode = false;
+    private boolean mappingStart;
+    private MidiData first, latest;
 
     public EnabledMidiDevice getInputDevice() {
         if (devices.containsKey(Type.INPUT)) {
@@ -33,7 +40,7 @@ public class MidiDevicePair {
         return null;
     }
 
-    public Receiver getReceiver() {
+    public ControllerReceiver getReceiver() {
         return controllerReceiver;
     }
 
@@ -124,10 +131,26 @@ public class MidiDevicePair {
         }
     }
 
-    private class ControllerReceiver implements Receiver {
+    public Set<String> getProcessorNameSet() {
+        if (controllerReceiver != null) {
+            return controllerReceiver.getProcessorNameSet();
+        }
+        return null;
+    }
+
+    public void setMappingEditMode(boolean mappinEeditMode) {
+        this.mappingEditMode = mappinEeditMode;
+    }
+
+    public void setMappingStart(boolean mappingStart) {
+        this.mappingStart = mappingStart;
+    }
+
+    public class ControllerReceiver implements Receiver {
 
         private Receiver receiver;
         private MidiControllerMapping mapping = new MidiControllerMapping();
+        private ControllerManager controllerManager = DIContainer.get(ControllerManager.class);
 
         public ControllerReceiver(Receiver receiver) {
             this.receiver = receiver;
@@ -136,27 +159,57 @@ public class MidiDevicePair {
         @Override
         public void send(MidiMessage message, long timeStamp) {
             byte[] buf = message.getMessage();
-            switch (buf[0] & 0xF0) {
-                case NOTE_ON:
-                    if (buf[2] != 0) {
+            if (mappingEditMode) {
+                MidiData midiData = null;
+                switch (buf[0] & 0xF0) {
+                    case NOTE_ON:
+                        midiData = new MidiData(NOTE_ON, buf[1], buf[2]);
+                        break;
+                    case NOTE_OFF:
+                        midiData = new MidiData(NOTE_OFF, buf[1], buf[2]);
+                        break;
+                    default:
+                        break;
+                }
+                if (mappingStart) {
+                    first = midiData;
+                    mappingStart = false;
+                } else {
+                    latest = midiData;
+                    Platform.runLater(()->{
+                        PreferencesController preferencesController = (PreferencesController) controllerManager.get(PreferencesController.class);
+                        preferencesController.saveMappingMidiData(first, latest);
+                    });
+                    mappingStart = true;
+                }
+            } else {
+                switch (buf[0] & 0xF0) {
+                    case NOTE_ON:
                         mapping.invoke(NOTE_ON, buf[1], buf[2]);
-                    } else {
+                        break;
+                    case NOTE_OFF:
                         mapping.invoke(NOTE_OFF, buf[1], buf[2]);
-                    }
-                    break;
-                case NOTE_OFF:
-                    break;
-                default:
-                    break;
+                        break;
+                    default:
+                        break;
+                }
+                if (receiver == null) {
+                    return;
+                }
+                receiver.send(message, timeStamp);
             }
-            if (receiver == null) {
-                return;
-            }
-            receiver.send(message, timeStamp);
         }
 
         public void setReceiver(Receiver receiver) {
             this.receiver = receiver;
+        }
+
+        public Set<String> getProcessorNameSet() {
+            return mapping.getProcessorNameSet();
+        }
+
+        public MidiControllerMapping getMapping() {
+            return mapping;
         }
 
         @Override
