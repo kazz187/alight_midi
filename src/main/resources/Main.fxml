@@ -6,7 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zone.kaz.alight_midi.gui.main.MainController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zone.kaz.alight_midi.gui.main.MainController">
    <center>
       <VBox prefHeight="585.0" prefWidth="1026.0" BorderPane.alignment="CENTER">
          <children>
@@ -35,7 +35,7 @@
                         <Insets left="5.0" top="5.0" />
                      </GridPane.margin>
                   </HBox>
-                  <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="3">
+                  <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="4">
                      <children>
                         <Rectangle fx:id="sequenceDisplay0" arcHeight="2.0" arcWidth="5.0" fill="#ffdd87" height="26.0" stroke="#ffd15c" strokeType="INSIDE" width="26.0" />
                         <Rectangle fx:id="sequenceDisplay1" arcHeight="5.0" arcWidth="5.0" fill="#ffdd87" height="26.0" stroke="#ffd15c" strokeType="INSIDE" width="26.0" />
@@ -46,16 +46,22 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </HBox>
-                  <Slider fx:id="masterFader" max="85.0" value="85.0" GridPane.columnIndex="2">
+                  <Slider fx:id="masterFader" max="85.0" prefHeight="16.0" prefWidth="124.0" value="85.0" GridPane.columnIndex="2">
                      <GridPane.margin>
                         <Insets left="40.0" right="40.0" />
                      </GridPane.margin>
                   </Slider>
+                  <Button fx:id="reconnectButton" mnemonicParsing="false" text="reconnect" GridPane.columnIndex="3">
+                     <GridPane.margin>
+                        <Insets left="5.0" />
+                     </GridPane.margin>
+                  </Button>
                </children>
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="195.65110778808594" minWidth="10.0" prefWidth="90.63150787353516" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="445.2333068847656" minWidth="10.0" prefWidth="192.98037719726562" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="445.2333068847656" minWidth="10.0" prefWidth="180.01962280273438" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="445.2333068847656" minWidth="10.0" prefWidth="197.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="445.2333068847656" minWidth="10.0" prefWidth="105.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="172.77618408203125" minWidth="10.0" prefWidth="142.333984375" />
                </columnConstraints>
                <rowConstraints>

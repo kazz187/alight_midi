@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.scene.control.*;
 import javafx.scene.shape.Rectangle;
+import zone.kaz.alight_midi.device.LedDeviceManager;
 import zone.kaz.alight_midi.device.SequenceDisplayManager;
 import zone.kaz.alight_midi.device.sequence_display.VirtualSequenceDisplay;
 import zone.kaz.alight_midi.gui.ControllerManager;
@@ -46,10 +47,13 @@ public class MainController implements Initializable {
     private Slider crossFader;
     @FXML
     private Slider masterFader;
+    @FXML
+    private Button reconnectButton;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ClockManager clockManager = DIContainer.get(ClockManager.class);
+        LedDeviceManager ledDeviceManager = DIContainer.get(LedDeviceManager.class);
         playButton.setOnAction(event -> {
             clockManager.playSequencer();
         });
@@ -80,6 +84,10 @@ public class MainController implements Initializable {
             if (!newValue) {
                 applyBpm();
             }
+        });
+        reconnectButton.setOnAction(event -> {
+            ledDeviceManager.closeAllDevices();
+            ledDeviceManager.openAllDevices();
         });
         setupSequenceDisplay();
         ControllerManager controllerManager = DIContainer.get(ControllerManager.class);

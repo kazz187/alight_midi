@@ -29,6 +29,9 @@ public class LedDeviceManager {
             ledDevices.remove(key);
         }
     }
+    public void openAllDevices() {
+        ledDevices.values().forEach(LedDevice::connect);
+    }
 
     public void closeAllDevices() {
         ledDevices.values().forEach(LedDevice::close);

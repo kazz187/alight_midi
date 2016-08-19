@@ -17,17 +17,17 @@ public class LedDevice {
     public LedDevice(String hostname, int port) {
         this.hostname = hostname;
         this.port = port;
+        connect();
+    }
+
+    public void connect() {
         try {
-            connect();
+            socket = new Socket(hostname, port);
+            outputStream = socket.getOutputStream();
+            isConnecting = true;
         } catch (IOException e) {
             System.err.println("Failed to connect to LED device server. (" + hostname + ":" + port + ")");
         }
-    }
-
-    private void connect() throws IOException {
-        socket = new Socket(hostname, port);
-        outputStream = socket.getOutputStream();
-        isConnecting = true;
     }
 
     public void send(DeviceBuffer deviceBuffer) {
@@ -43,6 +43,7 @@ public class LedDevice {
             outputStream.write(message);
             outputStream.flush();
         } catch (IOException e) {
+            close();
             e.printStackTrace();
         }
     }
