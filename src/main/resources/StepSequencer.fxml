@@ -6,9 +6,10 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zone.kaz.alight_midi.gui.sequencer.StepSequencerController">
-   <center>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+
+<AnchorPane prefHeight="1000.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zone.kaz.alight_midi.gui.sequencer.StepSequencerController">
+   <children>
+      <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <GridPane>
               <columnConstraints>
@@ -20,7 +21,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0">
+                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0">
                            <children>
@@ -29,7 +30,7 @@
                         </AnchorPane>
                     </content>
                   </ScrollPane>
-                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
+                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" style="-fx-background-color: #fff;">
                            <children>
@@ -38,7 +39,7 @@
                         </AnchorPane>
                     </content>
                   </ScrollPane>
-                  <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
+                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0">
                            <children>
@@ -261,60 +262,76 @@
                   </Tab>
               </tabs>
             </TabPane>
-            <HBox prefHeight="25.0" prefWidth="600.0">
-               <children>
-                  <Button fx:id="addSequence" maxHeight="26.0" maxWidth="26.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="26.0" text="+">
-                     <HBox.margin>
-                        <Insets left="5.0" />
-                     </HBox.margin>
-                  </Button>
-                  <Button fx:id="removeSequence" maxHeight="26.0" maxWidth="26.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="26.0" text="-" />
-                  <Label text="Rate: ">
-                     <HBox.margin>
-                        <Insets left="5.0" top="5.0" />
-                     </HBox.margin>
-                  </Label>
-                  <Label fx:id="rateLabel" maxWidth="30.0" prefHeight="16.0" prefWidth="30.0" text="1.0">
-                     <HBox.margin>
-                        <Insets top="5.0" />
-                     </HBox.margin>
-                  </Label>
-                  <Slider fx:id="rateFader" blockIncrement="1.0" majorTickUnit="1.0" max="3.0" min="-3.0" minorTickCount="0" showTickMarks="true" snapToTicks="true">
-                     <HBox.margin>
-                        <Insets top="5.0" />
-                     </HBox.margin>
-                  </Slider>
-                  <Label text="Clock: ">
-                     <HBox.margin>
-                        <Insets left="5.0" top="5.0" />
-                     </HBox.margin>
-                  </Label>
-                  <Label fx:id="clockLabel" maxWidth="20.0" prefHeight="16.0" prefWidth="20.0" text="4">
-                     <HBox.margin>
-                        <Insets top="5.0" />
-                     </HBox.margin>
-                  </Label>
-                  <Slider fx:id="clockFader" blockIncrement="1.0" majorTickUnit="1.0" max="4.0" minorTickCount="0" showTickMarks="true" snapToTicks="true">
-                     <HBox.margin>
-                        <Insets top="5.0" />
-                     </HBox.margin>
-                  </Slider>
-                  <TextField fx:id="patternNameField" />
-                  <Button fx:id="patternSave" mnemonicParsing="false" text="Save" />
-               </children>
-            </HBox>
-            <GridPane fx:id="sequencerGrid">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" />
-                <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" percentHeight="0.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-            </GridPane>
-            <HBox prefHeight="100.0" prefWidth="200.0" />
-            <TextField fx:id="paramsField" />
          </children>
       </VBox>
-   </center>
-</BorderPane>
+      <AnchorPane layoutY="371.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="371.0">
+         <children>
+            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="629.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <content>
+                <AnchorPane minHeight="500.0" minWidth="0.0">
+                     <children>
+                        <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <HBox prefHeight="25.0" prefWidth="600.0">
+                                 <children>
+                                    <Button fx:id="addSequence" maxHeight="26.0" maxWidth="26.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="26.0" text="+">
+                                       <HBox.margin>
+                                          <Insets left="5.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="removeSequence" maxHeight="26.0" maxWidth="26.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="26.0" text="-" />
+                                    <Label text="Rate: ">
+                                       <HBox.margin>
+                                          <Insets left="5.0" top="5.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <Label fx:id="rateLabel" maxWidth="30.0" prefHeight="16.0" prefWidth="30.0" text="1.0">
+                                       <HBox.margin>
+                                          <Insets top="5.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <Slider fx:id="rateFader" blockIncrement="1.0" majorTickUnit="1.0" max="3.0" min="-3.0" minorTickCount="0" showTickMarks="true" snapToTicks="true">
+                                       <HBox.margin>
+                                          <Insets top="5.0" />
+                                       </HBox.margin>
+                                    </Slider>
+                                    <Label text="Clock: ">
+                                       <HBox.margin>
+                                          <Insets left="5.0" top="5.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <Label fx:id="clockLabel" maxWidth="20.0" prefHeight="16.0" prefWidth="20.0" text="4">
+                                       <HBox.margin>
+                                          <Insets top="5.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <Slider fx:id="clockFader" blockIncrement="1.0" majorTickUnit="1.0" max="4.0" minorTickCount="0" showTickMarks="true" snapToTicks="true">
+                                       <HBox.margin>
+                                          <Insets top="5.0" />
+                                       </HBox.margin>
+                                    </Slider>
+                                    <TextField fx:id="patternNameField" />
+                                    <Button fx:id="patternSave" mnemonicParsing="false" text="Save" />
+                                 </children>
+                              </HBox>
+                              <GridPane fx:id="sequencerGrid">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" />
+                                  <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" percentHeight="0.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                              </GridPane>
+                              <HBox prefHeight="100.0" prefWidth="200.0" />
+                              <TextField fx:id="paramsField" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </ScrollPane>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>
