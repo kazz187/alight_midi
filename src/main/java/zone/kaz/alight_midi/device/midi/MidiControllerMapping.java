@@ -113,7 +113,7 @@ public class MidiControllerMapping {
         HashMap<String, Processor> mapping;
         switch (event) {
             case ShortMessage.NOTE_ON:
-                mapping = mappingOn;
+                mapping = velocity == 0 ? mappingOff : mappingOn;
                 break;
             case ShortMessage.NOTE_OFF:
                 mapping = mappingOff;

@@ -23,8 +23,6 @@ public class MidiDevicePair {
     private MidiSequenceDisplay display = null;
     private ControllerReceiver controllerReceiver = null;
     private boolean mappingEditMode = false;
-    private boolean mappingStart;
-    private MidiData first, latest;
 
     public EnabledMidiDevice getInputDevice() {
         if (devices.containsKey(Type.INPUT)) {
@@ -160,28 +158,14 @@ public class MidiDevicePair {
         public void send(MidiMessage message, long timeStamp) {
             byte[] buf = message.getMessage();
             if (mappingEditMode) {
-                MidiData midiData = null;
-                switch (buf[0] & 0xF0) {
-                    case NOTE_ON:
-                        midiData = new MidiData(NOTE_ON, buf[1], buf[2]);
-                        break;
-                    case NOTE_OFF:
-                        midiData = new MidiData(NOTE_OFF, buf[1], buf[2]);
-                        break;
-                    default:
-                        break;
+                if ((buf[0] & 0xF0) != NOTE_ON || buf[2] == 0) {
+                    return;
                 }
-                if (mappingStart) {
-                    first = midiData;
-                    mappingStart = false;
-                } else {
-                    latest = midiData;
-                    Platform.runLater(()->{
-                        PreferencesController preferencesController = (PreferencesController) controllerManager.get(PreferencesController.class);
-                        preferencesController.saveMappingMidiData(first, latest);
-                    });
-                    mappingStart = true;
-                }
+                MidiData midiData = new MidiData(NOTE_ON, buf[1], buf[2]);
+                Platform.runLater(()->{
+                    PreferencesController preferencesController = (PreferencesController) controllerManager.get(PreferencesController.class);
+                    preferencesController.saveMappingMidiData(midiData);
+                });
             } else {
                 switch (buf[0] & 0xF0) {
                     case NOTE_ON:
