@@ -13,8 +13,8 @@ import java.util.Set;
 
 public class MidiControllerMapping {
 
-    private HashMap<String, Processor> mappingOn = new HashMap<>();
-    private HashMap<String, Processor> mappingOff = new HashMap<>();
+    private HashMap<Byte, Processor> mappingOn = new HashMap<>();
+    private HashMap<Byte, Processor> mappingOff = new HashMap<>();
     private ClockManager clockManager = DIContainer.get(ClockManager.class);
     private ControllerManager controllerManager = DIContainer.get(ControllerManager.class);
     private StepSequencerController controller = null;
@@ -89,20 +89,8 @@ public class MidiControllerMapping {
     }
 
     public void setMappingData(MappingData mappingData) {
-        setMappingDataImpl(mappingData.getProcessorName() + "_ON", mappingData.getPressedMidiData());
-        setMappingDataImpl(mappingData.getProcessorName() + "_OFF", mappingData.getReleasedMidiData());
-    }
-
-    private void setMappingDataImpl(String processorName, MidiData midiData) {
-        switch (midiData.getType()) {
-            case ShortMessage.NOTE_ON:
-                mappingOn.put(midiData.getNote() + "_" + midiData.getVelocity(), processors.get(processorName));
-                break;
-            case ShortMessage.NOTE_OFF:
-                mappingOff.put(midiData.getNote() + "_" + midiData.getVelocity(), processors.get(processorName));
-                break;
-            default: break;
-        }
+        mappingOn.put((byte) mappingData.getNote(), processors.get(mappingData.getProcessorName() + "_ON"));
+        mappingOff.put((byte) mappingData.getNote(), processors.get(mappingData.getProcessorName() + "_OFF"));
     }
 
     public Set<String> getProcessorNameSet() {
@@ -110,10 +98,10 @@ public class MidiControllerMapping {
     }
 
     public void invoke(int event, byte note, byte velocity) {
-        HashMap<String, Processor> mapping;
+        HashMap<Byte, Processor> mapping;
         switch (event) {
             case ShortMessage.NOTE_ON:
-                mapping = mappingOn;
+                mapping = velocity == 0 ? mappingOff : mappingOn;
                 break;
             case ShortMessage.NOTE_OFF:
                 mapping = mappingOff;
@@ -121,7 +109,7 @@ public class MidiControllerMapping {
             default:
                 return;
         }
-        Processor processor = mapping.get(note + "_" + velocity);
+        Processor processor = mapping.get(note);
         if (processor == null) {
             return;
         }

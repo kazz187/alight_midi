@@ -12,7 +12,6 @@ import javafx.util.StringConverter;
 import zone.kaz.alight_midi.device.MidiDeviceManager;
 import zone.kaz.alight_midi.device.midi.MappingData;
 import zone.kaz.alight_midi.device.midi.MidiControllerMapping;
-import zone.kaz.alight_midi.device.midi.MidiData;
 import zone.kaz.alight_midi.device.midi.MidiDevicePair;
 import zone.kaz.alight_midi.gui.ControllerManager;
 import zone.kaz.alight_midi.gui.sequencer.StepSequencerController;
@@ -49,9 +48,7 @@ public class PreferencesController implements Initializable {
     @FXML
     private TableColumn<MappingData, String> functionColumn;
     @FXML
-    private TableColumn<MappingData, MidiData> assignToPressedColumn;
-    @FXML
-    private TableColumn<MappingData, MidiData> assignToReleasedColumn;
+    private TableColumn<MappingData, Integer> assignToColumn;
     @FXML
     private CheckBox editModeCheck;
     @FXML
@@ -77,27 +74,18 @@ public class PreferencesController implements Initializable {
         );
 
         functionColumn.setCellValueFactory(new PropertyValueFactory<>("processorName"));
-        assignToPressedColumn.setCellValueFactory(new PropertyValueFactory<>("pressedMidiData"));
-        assignToReleasedColumn.setCellValueFactory(new PropertyValueFactory<>("releasedMidiData"));
-        //setMappingData();
+        assignToColumn.setCellValueFactory(new PropertyValueFactory<>("note"));
         editModeCheck.setOnAction(e -> {
-            if (editModeCheck.isSelected()) {
-                MidiDevicePair currentDevicePair = getDevicePair();
-                currentDevicePair.setMappingEditMode(true);
-                currentDevicePair.setMappingStart(true);
-            } else {
-                MidiDevicePair currentDevicePair = getDevicePair();
-                currentDevicePair.setMappingEditMode(false);
-            }
+            MidiDevicePair currentDevicePair = getDevicePair();
+            currentDevicePair.setMappingEditMode(editModeCheck.isSelected());
         });
         mappingDataList = midiMapTable.getItems();
     }
 
-    public void saveMappingMidiData(MidiData on, MidiData off) {
+    public void saveMappingNote(byte note) {
         TableView.TableViewSelectionModel<MappingData> model = midiMapTable.getSelectionModel();
         MappingData mappingData = mappingDataList.get(model.getSelectedIndex());
-        mappingData.setPressedMidiData(on);
-        mappingData.setReleasedMidiData(off);
+        mappingData.setNote(note);
         MidiControllerMapping mapping = getDevicePair().getReceiver().getMapping();
         mappingDataList.forEach(mapping::setMappingData);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -145,7 +133,7 @@ public class PreferencesController implements Initializable {
             }
         }
         Set<MappingData> mappingDataSet = functionNameList.stream()
-                .map(functionName -> new MappingData(functionName, new MidiData(), new MidiData()))
+                .map(functionName -> new MappingData(functionName, 9999))
                 .collect(Collectors.toSet());
         mappingDataList.removeAll(mappingDataList);
         mappingDataList.addAll(mappingDataSet.stream().collect(Collectors.toList()));
