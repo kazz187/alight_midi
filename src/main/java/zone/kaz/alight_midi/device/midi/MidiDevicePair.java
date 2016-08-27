@@ -136,12 +136,8 @@ public class MidiDevicePair {
         return null;
     }
 
-    public void setMappingEditMode(boolean mappinEeditMode) {
-        this.mappingEditMode = mappinEeditMode;
-    }
-
-    public void setMappingStart(boolean mappingStart) {
-        this.mappingStart = mappingStart;
+    public void setMappingEditMode(boolean mappinEditMode) {
+        this.mappingEditMode = mappinEditMode;
     }
 
     public class ControllerReceiver implements Receiver {
@@ -161,10 +157,9 @@ public class MidiDevicePair {
                 if ((buf[0] & 0xF0) != NOTE_ON || buf[2] == 0) {
                     return;
                 }
-                MidiData midiData = new MidiData(NOTE_ON, buf[1], buf[2]);
                 Platform.runLater(()->{
                     PreferencesController preferencesController = (PreferencesController) controllerManager.get(PreferencesController.class);
-                    preferencesController.saveMappingMidiData(midiData);
+                    preferencesController.saveMappingNote(buf[1]);
                 });
             } else {
                 switch (buf[0] & 0xF0) {

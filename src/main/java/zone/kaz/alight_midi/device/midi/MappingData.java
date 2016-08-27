@@ -1,27 +1,20 @@
 package zone.kaz.alight_midi.device.midi;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 
 public class MappingData {
 
     private StringProperty processorName;
-    private ObjectProperty<MidiData> pressedMidiData;
-
-    private ObjectProperty<MidiData> releasedMidiData;
+    private ObjectProperty<Note> note;
 
     public MappingData() {
         this.processorName = new SimpleStringProperty("");
-        this.pressedMidiData = new SimpleObjectProperty<>(null);
-        this.releasedMidiData = new SimpleObjectProperty<>(null);
+        this.note = new SimpleObjectProperty(0);
     }
 
-    public MappingData(String processorName, MidiData pressedMidiData, MidiData releasedMidiData) {
+    public MappingData(String processorName, int note) {
         this.processorName = new SimpleStringProperty(processorName);
-        this.pressedMidiData = new SimpleObjectProperty<>(pressedMidiData);
-        this.releasedMidiData = new SimpleObjectProperty<>(releasedMidiData);
+        this.note = new SimpleObjectProperty<Note>(new Note(note));
     }
 
     public StringProperty processorNameProperty() {
@@ -36,28 +29,37 @@ public class MappingData {
         this.processorName.set(processorName);
     }
 
-    public ObjectProperty<MidiData> pressedMidiDataProperty() {
-        return pressedMidiData;
+    public ObjectProperty<Note> noteProperty() {
+        return note;
     }
 
-    public MidiData getPressedMidiData() {
-        return pressedMidiData.get();
+    public int getNote() {
+        return note.get().getNote();
     }
 
-    public void setPressedMidiData(MidiData pressedMidiData) {
-        this.pressedMidiData.set(pressedMidiData);
+    public void setNote(int note) {
+        this.note.set(new Note(note));
     }
 
-    public ObjectProperty<MidiData> releasedMidiDataProperty() {
-        return releasedMidiData;
-    }
+    public class Note {
 
-    public MidiData getReleasedMidiData() {
-        return releasedMidiData.get();
-    }
+        int note;
 
-    public void setReleasedMidiData(MidiData releasedMidiData) {
-        this.releasedMidiData.set(releasedMidiData);
+        public Note(Integer note) {
+            this.note = note;
+        }
+
+        public int getNote() {
+            return note;
+        }
+
+        public String toString() {
+            if (note == 9999) {
+                return "-";
+            }
+            return Integer.toString(note);
+        }
+
     }
 
 }
