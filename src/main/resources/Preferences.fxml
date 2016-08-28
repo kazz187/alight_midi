@@ -9,7 +9,10 @@
   <tabs>
     <Tab fx:id="preferencesGeneral" text="General">
       <content>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <CheckBox fx:id="releaseToStopModeCheck" layoutX="34.0" layoutY="31.0" mnemonicParsing="false" selected="true" text="Enable release to stop mode" />
+               </children></AnchorPane>
       </content>
     </Tab>
     <Tab fx:id="preferencesMidi" text="MIDI">

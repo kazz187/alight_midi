@@ -73,8 +73,10 @@ public class StepSequencerController implements Initializable {
     public static final String PATTERN_DIR_PATH = CONF_DIR_PATH + "/pattern";
     public static final String MAPPING_DIR_PATH = CONF_DIR_PATH + "/mapping";
     public static final String DEVICE_DIR_PATH = CONF_DIR_PATH + "/device";
+    public static final String PAD_DIR_PATH = CONF_DIR_PATH + "/pad";
 
     private StepSequencer currentStepSequencer;
+    private boolean releaseToStopMode = true;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -167,6 +169,7 @@ public class StepSequencerController implements Initializable {
         new File(PATTERN_DIR_PATH).mkdir();
         new File(MAPPING_DIR_PATH).mkdir();
         new File(DEVICE_DIR_PATH).mkdir();
+        new File(PAD_DIR_PATH).mkdir();
     }
 
     public double getColWidth() {
@@ -277,17 +280,16 @@ public class StepSequencerController implements Initializable {
     }
 
     public void onPadPressed(int x, int y) {
+        startClock();
         setPadButtonEnable(x, y, true);
     }
 
     public void onPadReleased(int x, int y) {
         setPadButtonEnable(x, y, false);
+        stopClock();
     }
 
     private void setPadButtonEnable(int x, int y, boolean isEnable) {
-        if (isEnable) {
-            clockManager.setNeedPlay(true);
-        }
         PadGroup padGroup = padGroupMap.get(getActivePadTab().getText());
         if (padGroup == null) {
             System.err.println("padGroup is null.");
@@ -295,6 +297,17 @@ public class StepSequencerController implements Initializable {
         }
         PadButton padButton = padGroup.getPadButton(x, y);
         Platform.runLater(() -> padButton.setEnabled(isEnable));
+    }
+
+    public void startClock() {
+        clockManager.setNeedPlay(true);
+    }
+
+    public void stopClock() {
+        if (this.releaseToStopMode) {
+            clockManager.stopSequencer();
+            clockManager.stopSequencer();
+        }
     }
 
     public String getPatternName() {
@@ -310,4 +323,7 @@ public class StepSequencerController implements Initializable {
         paramsField.setText(params);
     }
 
+    public void setReleaseToStopMode(boolean releaseToStopMode) {
+        this.releaseToStopMode = releaseToStopMode;
+    }
 }

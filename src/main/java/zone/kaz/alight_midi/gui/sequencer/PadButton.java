@@ -31,6 +31,7 @@ public class PadButton {
         rectangle.setOnMousePressed(event -> {
             switch (event.getButton()) {
                 case PRIMARY:
+                    controller.startClock();
                     setEnabled(true);
                     break;
                 default:
@@ -41,6 +42,7 @@ public class PadButton {
             switch (event.getButton()) {
                 case PRIMARY:
                     setEnabled(false);
+                    controller.stopClock();
                     break;
                 default:
                     break;

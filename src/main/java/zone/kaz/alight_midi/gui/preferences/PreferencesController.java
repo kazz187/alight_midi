@@ -40,6 +40,8 @@ public class PreferencesController implements Initializable {
     @FXML
     private Tab preferencesMidi;
     @FXML
+    private CheckBox releaseToStopModeCheck;
+    @FXML
     private ComboBox<MidiDevice.Info> preferencesMidiInput;
     @FXML
     private ComboBox<MidiDevice.Info> preferencesMidiOutput;
@@ -73,6 +75,10 @@ public class PreferencesController implements Initializable {
                 }
         );
 
+        releaseToStopModeCheck.setOnAction(e -> {
+            StepSequencerController controller = (StepSequencerController) controllerManager.get(StepSequencerController.class);
+            controller.setReleaseToStopMode(releaseToStopModeCheck.isSelected());
+        });
         functionColumn.setCellValueFactory(new PropertyValueFactory<>("processorName"));
         assignToColumn.setCellValueFactory(new PropertyValueFactory<>("note"));
         editModeCheck.setOnAction(e -> {
