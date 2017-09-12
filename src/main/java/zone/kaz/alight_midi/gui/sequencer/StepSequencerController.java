@@ -76,7 +76,7 @@ public class StepSequencerController implements Initializable {
     public static final String PAD_DIR_PATH = CONF_DIR_PATH + "/pad";
 
     private StepSequencer currentStepSequencer;
-    private boolean releaseToStopMode = true;
+    private boolean releaseToStopMode = false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

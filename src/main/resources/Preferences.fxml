@@ -11,7 +11,7 @@
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <CheckBox fx:id="releaseToStopModeCheck" layoutX="34.0" layoutY="31.0" mnemonicParsing="false" selected="true" text="Enable release to stop mode" />
+                  <CheckBox fx:id="releaseToStopModeCheck" layoutX="34.0" layoutY="31.0" mnemonicParsing="false" selected="false" text="Enable release to stop mode" />
                </children></AnchorPane>
       </content>
     </Tab>
