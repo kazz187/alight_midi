@@ -29,6 +29,6 @@ task executableJar(type: Jar, dependsOn: jar) {
     }
 
     from configurations.compile.collect {it.isDirectory() ? it : zipTree(it)}
-    from "$buildDir/classes/main"
+    from "$buildDir/classes/java/main"
     from "$buildDir/resources/main"
 }
