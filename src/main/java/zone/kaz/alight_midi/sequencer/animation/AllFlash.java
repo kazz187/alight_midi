@@ -28,12 +28,17 @@ public class AllFlash extends Animation {
         long pos = tick - startTick;
         double alpha = 1;
         if (pos > tickSize / 2) {
-            alpha = (double) (tickSize - pos) / (tickSize / 2);
+            alpha = (double) (tickSize - pos) / (tickSize / 2.0);
         }
+        byte r = (byte) (allFlashParams.getColor()[0] * alpha);
+        byte g = (byte) (allFlashParams.getColor()[1] * alpha);
+        byte b = (byte) (allFlashParams.getColor()[2] * alpha);
         for (Stripe stripe : stripes) {
             byte[] buffer = stripe.getBuffer();
-            for (int i = 0; i < buffer.length; i++) {
-                buffer[i] = (byte) (0xff * alpha);
+            for (int i = 0; i < buffer.length / 3; i++) {
+                buffer[i*3]   = r;
+                buffer[i*3+1] = g;
+                buffer[i*3+2] = b;
             }
         }
     }

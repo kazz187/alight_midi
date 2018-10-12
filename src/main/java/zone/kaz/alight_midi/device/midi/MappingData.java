@@ -7,14 +7,14 @@ public class MappingData {
     private StringProperty processorName;
     private ObjectProperty<Note> note;
 
-    public MappingData() {
+/*    public MappingData() {
         this.processorName = new SimpleStringProperty("");
         this.note = new SimpleObjectProperty(0);
-    }
+    }*/
 
     public MappingData(String processorName, int note) {
         this.processorName = new SimpleStringProperty(processorName);
-        this.note = new SimpleObjectProperty<Note>(new Note(note));
+        this.note = new SimpleObjectProperty<>(new Note(note));
     }
 
     public StringProperty processorNameProperty() {

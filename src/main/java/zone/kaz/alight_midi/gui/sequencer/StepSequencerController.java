@@ -13,9 +13,14 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import zone.kaz.alight_midi.gui.ControllerManager;
 import zone.kaz.alight_midi.inject.DIContainer;
+import zone.kaz.alight_midi.sequencer.Animation;
 import zone.kaz.alight_midi.sequencer.ClockManager;
 import zone.kaz.alight_midi.sequencer.StepSequencerManager;
 import zone.kaz.alight_midi.sequencer.StepSequencerPattern;
+import zone.kaz.alight_midi.sequencer.animation.AllFlash;
+import zone.kaz.alight_midi.sequencer.animation.Gradation;
+import zone.kaz.alight_midi.sequencer.animation.ParabolaWave;
+import zone.kaz.alight_midi.sequencer.animation.Wave;
 
 import static zone.kaz.alight_midi.gui.sequencer.StepSequencer.COLUMN_INDEX_BOX;
 
@@ -186,16 +191,18 @@ public class StepSequencerController implements Initializable {
 
     private void loadAnimationList() {
         animationList.setOnDragDetected(event -> setDraggable(event, animationList, "ANIMATION"));
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        try {
-            Set<ClassPath.ClassInfo> classInfoSet = ClassPath.from(loader).getTopLevelClasses("zone.kaz.alight_midi.sequencer.animation");
-            for (ClassPath.ClassInfo classInfo : classInfoSet) {
-                AnimationInfo item = new AnimationInfo(classInfo);
-                animationList.itemsProperty().getValue().add(item);
-                animationInfoMap.put(item.toString(), item);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        String[] animationNameList = {
+                "AllFlash",
+                "Gradation",
+                "ParabolaWave",
+                "Random",
+                "Wave"
+        };
+
+        for (String animationName : animationNameList) {
+            AnimationInfo item = new AnimationInfo(animationName);
+            animationList.itemsProperty().getValue().add(item);
+            animationInfoMap.put(item.toString(), item);
         }
     }
 

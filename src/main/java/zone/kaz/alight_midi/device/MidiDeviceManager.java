@@ -1,8 +1,8 @@
 package zone.kaz.alight_midi.device;
 
 import com.google.inject.Singleton;
-import com.sun.media.sound.MidiInDeviceProvider;
-import com.sun.media.sound.MidiOutDeviceProvider;
+//import com.sun.media.sound.MidiInDeviceProvider;
+//import com.sun.media.sound.MidiOutDeviceProvider;
 import zone.kaz.alight_midi.device.midi.EnabledMidiDevice;
 import zone.kaz.alight_midi.device.midi.MidiDeviceFactory;
 import zone.kaz.alight_midi.device.midi.MidiDevicePair;
@@ -14,8 +14,8 @@ import java.util.HashMap;
 @Singleton
 public class MidiDeviceManager {
 
-    private static final Class MIDI_IN = MidiInDeviceProvider.class;
-    private static final Class MIDI_OUT = MidiOutDeviceProvider.class;
+//    private static final Class MIDI_IN = MidiInDeviceProvider.class;
+//    private static final Class MIDI_OUT = MidiOutDeviceProvider.class;
 
     private ArrayList<MidiDevice.Info> inputDevices = new ArrayList<>();
     private ArrayList<MidiDevice.Info> outputDevices = new ArrayList<>();
@@ -28,7 +28,7 @@ public class MidiDeviceManager {
         ArrayList<MidiDevice.Info> inputDevices = new ArrayList<>();
         ArrayList<MidiDevice.Info> outputDevices = new ArrayList<>();
         MidiDevice.Info[] devices = MidiSystem.getMidiDeviceInfo();
-        for (MidiDevice.Info device : devices) {
+/*        for (MidiDevice.Info device : devices) {
             if (device.getClass().getEnclosingClass().equals(MIDI_IN)) {
                 if (!inputDevices.contains(device)) {
                     inputDevices.add(device);
@@ -38,7 +38,7 @@ public class MidiDeviceManager {
                     outputDevices.add(device);
                 }
             }
-        }
+        }*/
         this.inputDevices = inputDevices;
         this.outputDevices = outputDevices;
     }

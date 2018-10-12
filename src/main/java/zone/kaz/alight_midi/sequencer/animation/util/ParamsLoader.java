@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import zone.kaz.alight_midi.sequencer.Animation;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 public class ParamsLoader<T> {
 
@@ -23,8 +24,8 @@ public class ParamsLoader<T> {
             }
         }
         try {
-            return clazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
         }
         return null;
